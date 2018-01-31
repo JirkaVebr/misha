@@ -36,7 +36,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	def term: Rule1[Term.Term] = rule {
-		functionCall | number | variable | delimitedList
+		functionCall | variable | delimitedList
 	}
 
 	def arithmeticNegation: Rule1[UnaryOperation] = rule {
@@ -46,14 +46,6 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	// TODO remove the left-recursion
 	def exponentiation: Rule1[BinaryOperation] = rule {
 		(Expression ~ "^" ~ Expression) ~> ((l: Expression, r: Expression) => BinaryOperation(Exponentiation, l, r))
-	}
-
-	def number: Rule1[Term.Number] = rule {
-		(digits ~ whitespace) ~> Term.Number
-	}
-
-	def digits: Rule1[Double] = rule {
-		capture(CharPredicate.Digit19 ~ zeroOrMore(CharPredicate.Digit)) ~> ((numeric: String) => numeric.toDouble)
 	}
 
 	def variable: Rule1[Term.Variable] = rule {

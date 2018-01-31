@@ -16,7 +16,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 
 
 	def Literal: Rule1[Value] = rule {
-		flag | boolean | colorKeyword
+		flag | boolean | number | colorKeyword
 	}
 
 	private def flag: Rule1[Flag] = rule {
@@ -27,9 +27,43 @@ trait L1_Literals { this: org.parboiled2.Parser
 		(capture("true") | capture("false")) ~> ((literal: String) => Value.Boolean(literal == "true"))
 	}
 
+
+	/* NUMBERS */
+
+	private def number: Rule1[Value.Number] = rule {
+		sign ~ integral ~ optional(fractional) ~> ((sign: Int, integral: Double, fractional: Option[Double]) => parseNumber(sign, integral, fractional, None))
+	}
+
+	private def integral: Rule1[Double] = rule {
+		digits ~> ((digits: String) => digits.toDouble)
+	}
+
+	private def fractional: Rule1[Double] = rule {
+		'.' ~ digits ~> (digitsToFractional(_))
+	}
+
+	private def sign: Rule1[Int] = rule {
+		capture(optional(Signs)) ~> (signToFactor(_))
+	}
+
+	private def digits: Rule1[String] = rule {
+		capture(oneOrMore(CharPredicate.Digit))
+	}
+
+	//private def exponent: Rule2[String, Double] = rule {
+	//	capture(Exponent) ~ capture(optional(Signs)) ~ digits
+	//}
+
+
+
+	/* COLORS */
+
 	private def colorKeyword: Rule1[Color] = rule {
 		valueMap(ColorKeywords.map, ignoreCase = true)
 	}
+
+
+	/* STRINGS */
 
 	def string: Rule1[String] = rule {
 		quotedString | unquotedString
@@ -68,5 +102,22 @@ trait L1_Literals { this: org.parboiled2.Parser
 }
 
 object L1_Literals {
+	val Signs = CharPredicate("+-")
+	val Exponent = CharPredicate("eE")
 	val StringDelimiterOrBackslash = CharPredicate("\"\\'")
+
+
+	private def signToFactor(sign: String): Int = if (sign == "-") -1 else 1
+
+	private def digitsToFractional(digits: String): Double = {
+		val digitsCount = digits.length
+		if (digitsCount == 0) 0
+		else digits.toDouble / Math.pow(10, digitsCount)
+	}
+
+	private def parseNumber(sign: Int, integral: Double, fractional: Option[Double], exponent: Option[Double]): Value.Number = {
+		Value.Number(
+			Math.pow(sign * (integral + fractional.getOrElse(0.0d)), exponent.getOrElse(1.0d))
+		)
+	}
 }

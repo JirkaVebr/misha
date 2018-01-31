@@ -21,6 +21,24 @@ class LiteralsSpec extends BaseParserSpec {
 		assert(parse("false") == Value.Boolean(false))
 	}
 
+	it should "parse an integer literal" in {
+		assert(parse("+0") == Value.Number(0))
+		assert(parse("0") == Value.Number(0))
+		assert(parse("-0") == Value.Number(0))
+		assert(parse("+123") == Value.Number(123))
+		assert(parse("123") == Value.Number(123))
+		assert(parse("-123") == Value.Number(-123))
+	}
+
+	it should "parse a fractional literal" in {
+		assert(parse("+0.00") == Value.Number(0))
+		assert(parse("0.00") == Value.Number(0))
+		assert(parse("-0.00") == Value.Number(0))
+		assert(parse("+123.456") == Value.Number(123.456))
+		assert(parse("123.456") == Value.Number(123.456))
+		assert(parse("-123.456") == Value.Number(-123.456))
+	}
+
 	it should "parse a keyword rgba color" in {
 		assert(parse("black") == Rgba(0, 0, 0, 0))
 		assert(parse("navy") == Rgba(0, 0, 128, 0))
@@ -45,7 +63,8 @@ class LiteralsSpec extends BaseParserSpec {
 		parser.Literal.run() match {
 			case Success(result) => result
 			case Failure(failure: ParseError) =>
-				fail(failure.traces.asInstanceOf[String])
+				println(failure.traces)
+				fail()
 			case a =>
 				fail(a.asInstanceOf[String])
 		}
