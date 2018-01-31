@@ -2,10 +2,10 @@ package com.preprocessor.spec
 
 import com.preprocessor.ast.Ast.Value._
 
-import scala.collection.immutable.TreeMap
-
 
 /**
+	* If you want to add another color, make sure the key is lowercase.
+	*
 	* @see https://drafts.csswg.org/css-color/#colorunits
 	*/
 object ColorKeywords {

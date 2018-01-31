@@ -64,7 +64,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 	/* COLORS */
 
 	private def colorKeyword: Rule1[Color] = rule {
-		valueMap(ColorKeywords.map, ignoreCase = true)
+		valueMap(ColorKeywords.map, ignoreCase = true) ~ whitespace
 	}
 
 
