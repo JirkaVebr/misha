@@ -21,10 +21,17 @@ object Ast {
 
 		case class Number(value: Double) extends Primitive
 		case class Boolean(value: scala.Boolean) extends Primitive
-		case class String(value: String) extends Primitive
-		case class Color(r: Int, g: Int, b: Int, a: Int) extends Primitive
+		case class String(value: java.lang.String) extends Primitive
 		case class Angle(radians: Double) extends Primitive
 		case class Time(seconds: Double) extends Primitive
+
+		sealed trait Color extends Primitive
+		case class Rgba(r: Short, g: Short, b: Short, a: Short) extends Color
+		case object CurrentColor extends Color
+		case object Transparent extends Color
+
+		sealed trait Flag extends Primitive
+		case object Important extends Flag
 
 		// Composite types
 		case class Tuple2Value(first: Value, second: Value) extends Composite

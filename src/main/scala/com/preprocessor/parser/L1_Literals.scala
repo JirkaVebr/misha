@@ -1,5 +1,7 @@
 package com.preprocessor.parser
 
+import com.preprocessor.ast.Ast.Value.{Color, Flag, Important, Value}
+import com.preprocessor.spec.ColorKeywords
 import org.parboiled2._
 
 
@@ -11,8 +13,18 @@ trait L1_Literals { this: org.parboiled2.Parser
 	import CharPredicate.HexDigit
 	import L1_Literals._
 
-	//def Literal: Rule1
 
+	def Literal: Rule1[Value] = rule {
+		flag | colorKeyword
+	}
+
+	private def flag: Rule1[Flag] = rule {
+		atomic("!important") ~> (() => Important)
+	}
+
+	private def colorKeyword: Rule1[Color] = rule {
+		valueMap(ColorKeywords.map, ignoreCase = true)
+	}
 
 	def string: Rule1[String] = rule {
 		quotedString | unquotedString

@@ -87,9 +87,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	def functionCall: Rule1[Term.FunctionCall] = rule {
-		functionName ~ "(" ~ zeroOrMore(Expression).separatedBy(",") ~ optional(",") ~ ")" ~> ((name, arguments) => {
-			Term.FunctionCall(name, arguments)
-		})
+		functionName ~ "(" ~ zeroOrMore(Expression).separatedBy(",") ~ optional(",") ~ ")" ~> Term.FunctionCall
 	}
 
 	def functionName: Rule1[Expression] = rule {
@@ -100,9 +98,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 		"(" ~ Expression ~ ")" ~> SubExpression
 	}
 
-	def conditional: Rule1[Conditional] = rule {
-		("@if" ~ Expression ~ "@then" ~ Expression ~ optional("@else" ~ Expression)) ~> (
-			(condition, consequent, alternative) => Conditional(condition, consequent, alternative)
-			)
+	private def conditional: Rule1[Conditional] = rule {
+		("@if" ~ subExpression ~ Expression ~ optional("@else" ~ Expression)) ~> Conditional
 	}
 }
