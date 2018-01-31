@@ -1,7 +1,7 @@
 package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Value
-import com.preprocessor.ast.Ast.Value.{Color, Flag, Important, Value}
+import com.preprocessor.ast.Ast.Value.{Color, Flag, Important, Primitive}
 import com.preprocessor.spec.ColorKeywords
 import org.parboiled2._
 
@@ -15,7 +15,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 	import L1_Literals._
 
 
-	def Literal: Rule1[Value] = rule {
+	def Literal: Rule1[Primitive] = rule {
 		flag | boolean | number | colorKeyword
 	}
 

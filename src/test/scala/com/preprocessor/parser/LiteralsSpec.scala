@@ -8,8 +8,6 @@ import scala.util.{Failure, Success}
 
 class LiteralsSpec extends BaseParserSpec {
 
-	//import org.parboiled2.Parser.DeliveryScheme.Throw
-
 	behavior of "The literal parser"
 
 	it should "parse a flag keyword" in {

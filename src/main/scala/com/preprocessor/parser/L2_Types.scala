@@ -21,18 +21,24 @@ trait L2_Types { this: org.parboiled2.Parser
 	}
 
 	private def nonCompoundType: Rule1[Ast.Type.Any] = rule {
-		compositeType | primitiveType
+		compositeType | primitiveType | literalType
 	}
 
 	private def primitiveType: Rule1[Ast.Type.Primitive] = rule {
-		(atomic("Unit") ~> (() => Ast.Type.Unit)) |
-		(atomic("Boolean") ~> (() => Ast.Type.Boolean)) |
-		(atomic("String") ~> (() => Ast.Type.String)) |
-		(atomic("Integer") ~> (() => Ast.Type.Integer))
+		valueMap(Map(
+			"Boolean" -> Ast.Type.Boolean,
+			"Integer" -> Ast.Type.Integer,
+			"String" -> Ast.Type.String,
+			"Unit" -> Ast.Type.Unit
+		)) ~ whitespace
+	}
+
+	private def literalType: Rule1[Ast.Type.Literal] = rule {
+		Literal ~> Ast.Type.Literal
 	}
 
 	private def compositeType: Rule1[Ast.Type.Composite] = rule {
-		functionType | tuple2Type //| unionType
+		functionType | tuple2Type
 	}
 
 	// This syntax error is just IntelliJ being stupid; to the compiler this is fine.

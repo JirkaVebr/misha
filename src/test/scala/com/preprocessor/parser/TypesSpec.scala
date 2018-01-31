@@ -1,6 +1,7 @@
 package com.preprocessor.parser
 
-import com.preprocessor.ast.Ast.Type
+import com.preprocessor.ast.Ast.{Type, Value}
+import com.preprocessor.ast.Ast.Value.Value
 
 import scala.util.Success
 
@@ -54,6 +55,15 @@ class TypesSpec extends BaseParserSpec {
 
 	it should "parse a union type" in {
 		assert(parse("Integer | String | Boolean") == Type.Union(Set(Type.Integer, Type.String, Type.Boolean)))
+	}
+
+	it should "parse a literal type" in {
+		assert(parse("123") == Type.Literal(Value.Number(123)))
+		assert(parse("true") == Type.Literal(Value.Boolean(true)))
+	}
+
+	it should "parse a literal type in a union" in {
+		assert(parse("Integer | 123") == Type.Union(Set(Type.Integer, Type.Literal(Value.Number(123)))))
 	}
 
 
