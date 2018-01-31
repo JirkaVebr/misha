@@ -11,7 +11,7 @@ object Ast {
 	sealed abstract class Node
 
 	// Temporary
-	case class 	Program(program: Expression.Expression) extends Node
+	case class Program(program: Expression.Expression) extends Node
 
 	object Value {
 		sealed abstract class Value extends Node
