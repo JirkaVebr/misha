@@ -24,6 +24,7 @@ class LiteralsSpec extends BaseParserSpec {
 	it should "parse an integer literal" in {
 		assert(parse("+0") == Value.Number(0))
 		assert(parse("0") == Value.Number(0))
+		assert(parse("0000") == Value.Number(0))
 		assert(parse("-0") == Value.Number(0))
 		assert(parse("+123") == Value.Number(123))
 		assert(parse("123") == Value.Number(123))
@@ -37,6 +38,22 @@ class LiteralsSpec extends BaseParserSpec {
 		assert(parse("+123.456") == Value.Number(123.456))
 		assert(parse("123.456") == Value.Number(123.456))
 		assert(parse("-123.456") == Value.Number(-123.456))
+	}
+
+	it should "parse a literal without an integral" in {
+		assert(parse("+.0") == Value.Number(0))
+		assert(parse("-.0") == Value.Number(0))
+		assert(parse("+.123") == Value.Number(.123))
+		assert(parse(".456") == Value.Number(.456))
+		assert(parse("-.456") == Value.Number(-.456))
+	}
+
+	it should "parse a number with an exponent" in {
+		assert(parse("10e2") == Value.Number(100))
+		assert(parse("2E2") == Value.Number(4))
+		assert(parse("1e0") == Value.Number(1))
+		assert(Math.round(parse("1.2e3").asInstanceOf[Value.Number].value * 1000.0) == 1728)
+		assert(parse("-8.0e2") == Value.Number(64))
 	}
 
 	it should "parse a keyword rgba color" in {

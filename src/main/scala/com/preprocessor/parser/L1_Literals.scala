@@ -31,7 +31,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 	/* NUMBERS */
 
 	private def number: Rule1[Value.Number] = rule {
-		sign ~ integral ~ optional(fractional) ~> ((sign: Int, integral: Double, fractional: Option[Double]) => parseNumber(sign, integral, fractional, None))
+		(base ~ optional(exponent)) ~> (computeExponential(_, _))
 	}
 
 	private def integral: Rule1[Double] = rule {
@@ -42,6 +42,11 @@ trait L1_Literals { this: org.parboiled2.Parser
 		'.' ~ digits ~> (digitsToFractional(_))
 	}
 
+	private def base: Rule1[Double] = rule {
+		((sign ~ integral ~ optional(fractional)) ~> (computeBase(_, _, _))) |
+		(sign ~ fractional ~> ((sign: Int, fractional: Double) => computeBase(sign, 0, Some(fractional))))
+	}
+
 	private def sign: Rule1[Int] = rule {
 		capture(optional(Signs)) ~> (signToFactor(_))
 	}
@@ -50,9 +55,9 @@ trait L1_Literals { this: org.parboiled2.Parser
 		capture(oneOrMore(CharPredicate.Digit))
 	}
 
-	//private def exponent: Rule2[String, Double] = rule {
-	//	capture(Exponent) ~ capture(optional(Signs)) ~ digits
-	//}
+	private def exponent: Rule1[Double] = rule {
+		(Exponent ~ sign ~ digits) ~> ((sign: Int, digits: String) => sign * digits.toDouble)
+	}
 
 
 
@@ -115,9 +120,9 @@ object L1_Literals {
 		else digits.toDouble / Math.pow(10, digitsCount)
 	}
 
-	private def parseNumber(sign: Int, integral: Double, fractional: Option[Double], exponent: Option[Double]): Value.Number = {
-		Value.Number(
-			Math.pow(sign * (integral + fractional.getOrElse(0.0d)), exponent.getOrElse(1.0d))
-		)
-	}
+	private def computeBase(sign: Int, integral: Double, fractional: Option[Double]): Double =
+		sign * (integral + fractional.getOrElse(0.0d))
+
+	private def computeExponential(base: Double, exponent: Option[Double]): Value.Number =
+		Value.Number(Math.pow(base, exponent.getOrElse(1.0d)))
 }
