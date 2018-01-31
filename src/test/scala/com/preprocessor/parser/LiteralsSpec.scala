@@ -16,6 +16,11 @@ class LiteralsSpec extends BaseParserSpec {
 		assert(parse("!important") == Important)
 	}
 
+	it should "parse a boolean literal" in {
+		assert(parse("true") == Value.Boolean(true))
+		assert(parse("false") == Value.Boolean(false))
+	}
+
 	it should "parse a keyword rgba color" in {
 		assert(parse("black") == Rgba(0, 0, 0, 0))
 		assert(parse("navy") == Rgba(0, 0, 128, 0))

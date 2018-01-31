@@ -36,7 +36,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	def term: Rule1[Term.Term] = rule {
-		boolean | functionCall | number | variable | delimitedList
+		functionCall | number | variable | delimitedList
 	}
 
 	def arithmeticNegation: Rule1[UnaryOperation] = rule {
@@ -59,10 +59,6 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	def variable: Rule1[Term.Variable] = rule {
 		// Deliberately using $ as a char and not a string as not to allow whitespace there
 		'$' ~ variableName ~> Term.Variable
-	}
-
-	def boolean: Rule1[Term.Boolean] = rule {
-		((capture("true") | capture("false")) ~ whitespace) ~> ((literal: String) => Term.Boolean(literal == "true"))
 	}
 
 
