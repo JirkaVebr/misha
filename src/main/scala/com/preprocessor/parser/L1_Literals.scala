@@ -102,11 +102,11 @@ trait L1_Literals { this: org.parboiled2.Parser
 			| 'n' ~ appendSB('\n')
 			| 'r' ~ appendSB('\r')
 			| 't' ~ appendSB('\t')
-			//| unicodeSequence ~> { (code: Int) => sb.append(code.asInstanceOf[Char]); () }
+			| unicodeSequence ~> { (code: Int) => sb.append(code.asInstanceOf[Char]); () }
 	)
 
 	private def unicodeSequence: Rule1[Int] = rule {
-		capture(oneOrMore(HexDigit)) ~> ((hexDigits: String) => java.lang.Integer.parseInt(hexDigits, 16))
+		capture((1 to 4).times(HexDigit)) ~> ((hexDigits: String) => java.lang.Integer.parseInt(hexDigits, 16))
 	}
 
 	private def unquotedString: Rule1[Value.String] = rule {

@@ -85,7 +85,11 @@ class LiteralsSpec extends BaseParserSpec {
 		assert(parse("'j\"k\"l'") == Value.String("j\"k\"l"))
 		assert(parse("\"m\\'n\\'o\"") == Value.String("m'n'o")) // Needlessly escaped
 		assert(parse("'p\\\"q\\\"r'") == Value.String("p\"q\"r"))
+	}
+
+	it should "parse complex escape sequences" in {
 		assert(parse(""""\"\'\\\n\r\t"""") == Value.String("\"\'\\\n\r\t"))
+		assert(parse("\"\\2026\\B1\"") == Value.String("…±"))
 	}
 
 	it should "parse unquoted strings" in {
