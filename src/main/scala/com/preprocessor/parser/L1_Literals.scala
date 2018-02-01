@@ -17,7 +17,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 
 
 	def Literal: Rule1[Primitive] = rule {
-		flag | boolean | number | quotedString //| colorKeyword
+		flag | boolean | number | quotedString | colorKeyword | unquotedString
 	}
 
 	private def flag: Rule1[Flag] = rule {
@@ -109,8 +109,8 @@ trait L1_Literals { this: org.parboiled2.Parser
 		capture(oneOrMore(HexDigit)) ~> ((hexDigits: String) => java.lang.Integer.parseInt(hexDigits, 16))
 	}
 
-	private def unquotedString: Rule1[String] = rule {
-		capture("")
+	private def unquotedString: Rule1[Value.String] = rule {
+		capture(oneOrMore(AlphaNumUnderscore) ~ zeroOrMore(AlphaNumDashUnderscore)) ~> Value.String
 	}
 
 }
@@ -119,8 +119,9 @@ object L1_Literals {
 	val Signs = CharPredicate("+-")
 	val Exponent = CharPredicate("eE")
 	val AlphaNumUnderscore: CharPredicate = CharPredicate.AlphaNum ++ '_'
-	val SingleQuoteOrBackslash: CharPredicate = CharPredicate("'\\")
-	val DoubleQuoteOrBackslash: CharPredicate = CharPredicate("\"\\")
+	val AlphaNumDashUnderscore: CharPredicate = AlphaNumUnderscore ++ '-'
+	val SingleQuoteOrBackslash = CharPredicate("'\\")
+	val DoubleQuoteOrBackslash = CharPredicate("\"\\")
 	val StringDelimiterOrBackslash = CharPredicate("\"\\'")
 
 
