@@ -17,7 +17,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 
 
 	def Literal: Rule1[Primitive] = rule {
-		flag | boolean | number | colorKeyword
+		flag | boolean | number | quotedString //| colorKeyword
 	}
 
 	private def flag: Rule1[Flag] = rule {
@@ -74,39 +74,43 @@ trait L1_Literals { this: org.parboiled2.Parser
 
 
 	/* STRINGS */
+	// The string parsing is heavily based on the parboiled2 example Json parser
 
-	def string: Rule1[String] = rule {
-		quotedString | unquotedString
+	private def quotedString: Rule1[Value.String] = rule {
+		(('\'' ~ clearSB() ~ singleQuotedStrChars ~ '\'' ~ whitespace ~ push(sb.toString)) |
+		('"' ~ clearSB() ~ doubleQuotedStrChars ~ '"' ~ whitespace ~ push(sb.toString))) ~> Value.String
 	}
 
-	def quotedString: Rule1[String] = rule {
-		capture("")
+	private def singleQuotedStrChars: Rule0 = rule {
+		zeroOrMore(normalSingleQuotedStrChar | '\\' ~ escapedChar)
 	}
 
-	def unquotedString: Rule1[String] = rule {
-		capture("")
+	private def normalSingleQuotedStrChar: Rule0 = rule {
+		!SingleQuoteOrBackslash ~ ANY ~ appendSB()
 	}
 
-
-
-	def characters: Rule0 = rule {
-		zeroOrMore(normalChar | '\\' ~ escapedChar)
+	private def doubleQuotedStrChars: Rule0 = rule {
+		zeroOrMore(normalDoubleQuotedStrChar | '\\' ~ escapedChar)
 	}
 
-	def normalChar: Rule0 = rule {
-		!StringDelimiterOrBackslash ~ ANY ~ appendSB()
+	private def normalDoubleQuotedStrChar: Rule0 = rule {
+		!DoubleQuoteOrBackslash ~ ANY ~ appendSB()
 	}
 
-	def escapedChar: Rule0 = rule (
+	private def escapedChar: Rule0 = rule (
 		StringDelimiterOrBackslash ~ appendSB()
 			| 'n' ~ appendSB('\n')
 			| 'r' ~ appendSB('\r')
 			| 't' ~ appendSB('\t')
-			| unicodeSequence ~> { (code: Int) => sb.append(code.asInstanceOf[Char]); () }
+			//| unicodeSequence ~> { (code: Int) => sb.append(code.asInstanceOf[Char]); () }
 	)
 
-	def unicodeSequence: Rule1[Int] = rule {
+	private def unicodeSequence: Rule1[Int] = rule {
 		capture(oneOrMore(HexDigit)) ~> ((hexDigits: String) => java.lang.Integer.parseInt(hexDigits, 16))
+	}
+
+	private def unquotedString: Rule1[String] = rule {
+		capture("")
 	}
 
 }
@@ -114,6 +118,9 @@ trait L1_Literals { this: org.parboiled2.Parser
 object L1_Literals {
 	val Signs = CharPredicate("+-")
 	val Exponent = CharPredicate("eE")
+	val AlphaNumUnderscore: CharPredicate = CharPredicate.AlphaNum ++ '_'
+	val SingleQuoteOrBackslash: CharPredicate = CharPredicate("'\\")
+	val DoubleQuoteOrBackslash: CharPredicate = CharPredicate("\"\\")
 	val StringDelimiterOrBackslash = CharPredicate("\"\\'")
 
 

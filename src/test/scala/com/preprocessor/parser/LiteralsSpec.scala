@@ -61,7 +61,7 @@ class LiteralsSpec extends BaseParserSpec {
 		assert(parse("-7e2ms") == Value.Number(-700, UnitOfMeasure(Map("ms" -> 1))))
 	}
 
-	it should "parse a keyword rgba color" in {
+	/*it should "parse a keyword rgba color" in {
 		assert(parse("black") == Rgba(0, 0, 0, 0))
 		assert(parse("navy") == Rgba(0, 0, 128, 0))
 		assert(parse("white") == Rgba(255, 255, 255, 0))
@@ -76,6 +76,16 @@ class LiteralsSpec extends BaseParserSpec {
 		assert(parse("cUrReNtCoLor") == CurrentColor)
 		assert(parse("transPARent") == Transparent)
 		assert(parse("RED") == Rgba(255, 0, 0, 0))
+	}*/
+
+	it should "parse quoted strings" in {
+		assert(parse("\"abc\"") == Value.String("abc"))
+		assert(parse("'def'") == Value.String("def"))
+		assert(parse("\"g'h'i\"") == Value.String("g'h'i"))
+		assert(parse("'j\"k\"l'") == Value.String("j\"k\"l"))
+		assert(parse("\"m\\'n\\'o\"") == Value.String("m'n'o")) // Needlessly escaped
+		assert(parse("'p\\\"q\\\"r'") == Value.String("p\"q\"r"))
+		assert(parse(""""\"\'\\\n\r\t"""") == Value.String("\"\'\\\n\r\t"))
 	}
 
 
