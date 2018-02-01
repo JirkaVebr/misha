@@ -2,6 +2,7 @@ package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.Ast.Value.{CurrentColor, Important, Rgba, Transparent}
+import com.preprocessor.ast.UnitOfMeasure
 import org.parboiled2.ParseError
 
 import scala.util.{Failure, Success}
@@ -38,7 +39,7 @@ class LiteralsSpec extends BaseParserSpec {
 		assert(parse("-123.456") == Value.Number(-123.456))
 	}
 
-	it should "parse a literal without an integral" in {
+	it should "parse a number literal without an integral" in {
 		assert(parse("+.0") == Value.Number(0))
 		assert(parse("-.0") == Value.Number(0))
 		assert(parse("+.123") == Value.Number(.123))
@@ -47,11 +48,17 @@ class LiteralsSpec extends BaseParserSpec {
 	}
 
 	it should "parse a number with an exponent" in {
-		assert(parse("10e2") == Value.Number(100))
-		assert(parse("2E2") == Value.Number(4))
+		assert(parse("10e2") == Value.Number(1000))
+		assert(parse("2E2") == Value.Number(200))
 		assert(parse("1e0") == Value.Number(1))
-		assert(Math.round(parse("1.2e3").asInstanceOf[Value.Number].value * 1000.0) == 1728)
-		assert(parse("-8.0e2") == Value.Number(64))
+		assert(parse("1.2e3") == Value.Number(1200))
+		assert(parse("-8.0e2") == Value.Number(-800))
+	}
+
+	it should "parse a number with a simple unit" in {
+		assert(parse("10e2s") == Value.Number(1000, UnitOfMeasure(Map("s" -> 1))))
+		assert(parse("0km") == Value.Number(0, UnitOfMeasure(Map("km" -> 1))))
+		assert(parse("-7e2ms") == Value.Number(-700, UnitOfMeasure(Map("ms" -> 1))))
 	}
 
 	it should "parse a keyword rgba color" in {

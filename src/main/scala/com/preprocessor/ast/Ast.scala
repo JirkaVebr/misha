@@ -19,11 +19,9 @@ object Ast {
 		sealed trait Primitive extends Value
 		sealed trait Composite extends Value
 
-		case class Number(value: Double) extends Primitive
+		case class Number(value: Double, unit: UnitOfMeasure = UnitOfMeasure()) extends Primitive
 		case class Boolean(value: scala.Boolean) extends Primitive
 		case class String(value: java.lang.String) extends Primitive
-		case class Angle(radians: Double) extends Primitive
-		case class Time(seconds: Double) extends Primitive
 
 		sealed trait Color extends Primitive
 		case class Rgba(r: Short, g: Short, b: Short, a: Short) extends Color

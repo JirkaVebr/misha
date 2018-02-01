@@ -2,6 +2,7 @@ package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.Ast.Value.{Color, Flag, Important, Primitive}
+import com.preprocessor.ast.UnitOfMeasure
 import com.preprocessor.spec.ColorKeywords
 import org.parboiled2._
 
@@ -31,7 +32,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 	/* NUMBERS */
 
 	private def number: Rule1[Value.Number] = rule {
-		(base ~ optional(exponent)) ~> (computeExponential(_, _))
+		(base ~ optional(exponent) ~ optional(unitOfMeasure) ~ whitespace) ~> (createNumber(_, _, _))
 	}
 
 	private def integral: Rule1[Double] = rule {
@@ -57,6 +58,10 @@ trait L1_Literals { this: org.parboiled2.Parser
 
 	private def exponent: Rule1[Double] = rule {
 		(Exponent ~ sign ~ digits) ~> ((sign: Int, digits: String) => sign * digits.toDouble)
+	}
+
+	private def unitOfMeasure: Rule1[UnitOfMeasure] = rule {
+		capture(oneOrMore(CharPredicate.Alpha)) ~> ((unitOfMeasure: String) => UnitOfMeasure(Map(unitOfMeasure -> 1)))
 	}
 
 
@@ -123,6 +128,9 @@ object L1_Literals {
 	private def computeBase(sign: Int, integral: Double, fractional: Option[Double]): Double =
 		sign * (integral + fractional.getOrElse(0.0d))
 
-	private def computeExponential(base: Double, exponent: Option[Double]): Value.Number =
-		Value.Number(Math.pow(base, exponent.getOrElse(1.0d)))
+	private def createNumber(base: Double, exponent: Option[Double], unitOfMeasure: Option[UnitOfMeasure]): Value.Number =
+		Value.Number(
+			if (exponent.isEmpty) base else base * Math.pow(10, exponent.get),
+			unitOfMeasure.getOrElse(UnitOfMeasure())
+		)
 }

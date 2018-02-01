@@ -66,6 +66,19 @@ class TypesSpec extends BaseParserSpec {
 		assert(parse("Integer | 123") == Type.Union(Set(Type.Integer, Type.Literal(Value.Number(123)))))
 	}
 
+	it should "parse a basic subtraction type" in {
+		assert(parse("Integer -- 123") == Type.Subtraction(Type.Integer, Type.Literal(Value.Number(123))))
+	}
+
+	it should "parse a complex subtraction type" in {
+		assert(parse("Integer | String | Boolean -- 123 | true") ==
+			Type.Subtraction(
+				Type.Union(Set(Type.Integer, Type.String, Type.Boolean)),
+				Type.Union(Set(Type.Literal(Value.Number(123)), Type.Literal(Value.Boolean(true))))
+			)
+		)
+	}
+
 
 	protected def parse(input: String, failMessage: => String = ""): Type.Any = {
 		val parser = this.getParser(input)
