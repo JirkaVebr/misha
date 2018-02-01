@@ -11,7 +11,13 @@ trait L2_Types { this: org.parboiled2.Parser
 
 
 	def Type: Rule1[Ast.Type.Any] = rule {
-		/* intersectionType | */ unionType
+		/* intersectionType | */ subtractionType
+	}
+
+	private def subtractionType: Rule1[Ast.Type.Any] = rule {
+		unionType ~ optional(
+			"--" ~ unionType ~> Ast.Type.Subtraction
+		)
 	}
 
 	private def unionType: Rule1[Ast.Type.Any] = rule {
@@ -21,7 +27,7 @@ trait L2_Types { this: org.parboiled2.Parser
 	}
 
 	private def nonCompoundType: Rule1[Ast.Type.Any] = rule {
-		compositeType | primitiveType | literalType
+		simpleCompositeType | primitiveType | literalType
 	}
 
 	private def primitiveType: Rule1[Ast.Type.Primitive] = rule {
@@ -37,7 +43,7 @@ trait L2_Types { this: org.parboiled2.Parser
 		Literal ~> Ast.Type.Literal
 	}
 
-	private def compositeType: Rule1[Ast.Type.Composite] = rule {
+	private def simpleCompositeType: Rule1[Ast.Type.Composite] = rule {
 		functionType | tuple2Type
 	}
 
