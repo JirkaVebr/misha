@@ -25,7 +25,8 @@ trait L1_Literals { this: org.parboiled2.Parser
 	}
 
 	private def boolean: Rule1[Value.Boolean] = rule {
-		(capture(atomic("true")) | capture(atomic("false"))) ~> ((literal: String) => Value.Boolean(literal == "true"))
+		(capture(atomic("true")) | capture(atomic("false"))) ~>
+			((literal: String) => Value.Boolean(literal.charAt(0) == 't'))
 	}
 
 
