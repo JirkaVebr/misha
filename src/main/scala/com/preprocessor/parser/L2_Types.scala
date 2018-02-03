@@ -27,13 +27,22 @@ trait L2_Types { this: org.parboiled2.Parser
 	}
 
 	private def nonCompoundType: Rule1[Ast.Type.Any] = rule {
-		simpleCompositeType | primitiveType | literalType
+		simpleCompositeType | nonCompositeType | literalType
 	}
 
-	private def primitiveType: Rule1[Ast.Type.Primitive] = rule {
+	private def nonCompositeType: Rule1[Ast.Type.Any] = rule {
 		valueMap(Map(
+			"Any" -> Ast.Type.Any,
+			"Color" -> Ast.Type.Color,
 			"Boolean" -> Ast.Type.Boolean,
+			"Dimensioned" -> Ast.Type.Dimensioned,
+			"Formula" -> Ast.Type.Formula,
 			"Integer" -> Ast.Type.Integer,
+			"Number" -> Ast.Type.Number,
+			"Numeric" -> Ast.Type.Numeric,
+			"Percentage" -> Ast.Type.Numeric,
+			"Rational" -> Ast.Type.Rational,
+			"Ratio" -> Ast.Type.Ratio,
 			"String" -> Ast.Type.String,
 			"Unit" -> Ast.Type.Unit
 		)) ~ whitespace

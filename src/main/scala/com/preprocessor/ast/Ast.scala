@@ -40,6 +40,7 @@ object Ast {
 
 	object Type {
 		sealed trait Any extends Node
+		case object Any extends Any
 
 		sealed trait Primitive extends Any
 		sealed trait Composite extends Any
@@ -61,21 +62,17 @@ object Ast {
 		sealed trait Numeric extends Primitive
 		sealed trait Formula extends Numeric
 		sealed trait Rational extends Formula
-		sealed trait Dimensioned extends Formula
 		sealed trait Number extends Rational
 
 		case object Color extends Numeric
-
-		case object Percentage extends Rational
-		case object Ratio extends Rational
-
+		case object Dimensioned extends Formula
+		case object Formula extends Formula
 		case object Integer extends Number
-
-		case object Length extends Dimensioned
-		case object Angle extends Dimensioned
-		case object Time extends Dimensioned
-		case object Resolution extends Dimensioned
-		case object Frequency extends Dimensioned
+		case object Number extends Number
+		case object Numeric extends Numeric
+		case object Percentage extends Rational
+		case object Rational extends Rational
+		case object Ratio extends Rational
 	}
 
 
