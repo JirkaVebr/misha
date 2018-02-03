@@ -80,12 +80,5 @@ class TypesSpec extends BaseParserSpec {
 	}
 
 
-	protected def parse(input: String, failMessage: => String = ""): Type.Any = {
-		val parser = this.getParser(input)
-
-		parser.Type.run() match {
-			case Success(result) => result
-			case _ => fail(failMessage)
-		}
-	}
+	protected def parse(input: String): Type.Any = parseRule(getParser(input).Type)
 }

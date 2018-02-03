@@ -3,9 +3,6 @@ package com.preprocessor.parser
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.Ast.Value.{CurrentColor, Important, Rgba, Transparent}
 import com.preprocessor.ast.UnitOfMeasure
-import org.parboiled2.ParseError
-
-import scala.util.{Failure, Success}
 
 class LiteralsSpec extends BaseParserSpec {
 
@@ -98,16 +95,5 @@ class LiteralsSpec extends BaseParserSpec {
 	}
 
 
-	protected def parse(input: String, failMessage: => String = ""): Value.Value = {
-		val parser = this.getParser(input)
-
-		parser.Literal.run() match {
-			case Success(result) => result
-			case Failure(failure: ParseError) =>
-				println(failure.traces)
-				fail()
-			case a =>
-				fail(a.asInstanceOf[String])
-		}
-	}
+	protected def parse(input: String): Value.Value = parseRule(getParser(input).Literal)
 }
