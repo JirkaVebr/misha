@@ -2,7 +2,7 @@ package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.Ast.Value.{Color, Flag, Important, Primitive}
-import com.preprocessor.ast.UnitOfMeasure
+import com.preprocessor.ast.UnitOfMeasure.{GenericUnit, Percentage, Scalar, UnitOfMeasure}
 import com.preprocessor.spec.ColorKeywords
 import org.parboiled2._
 
@@ -62,7 +62,8 @@ trait L1_Literals { this: org.parboiled2.Parser
 	}
 
 	private def unitOfMeasure: Rule1[UnitOfMeasure] = rule {
-		capture(oneOrMore(CharPredicate.Alpha)) ~> ((unitOfMeasure: String) => UnitOfMeasure(Map(unitOfMeasure -> 1)))
+		('%' ~ whitespace ~> Percentage) |
+		capture(oneOrMore(CharPredicate.Alpha)) ~> ((unitOfMeasure: String) => GenericUnit(Map(unitOfMeasure -> 1)))
 	}
 
 
@@ -137,9 +138,9 @@ object L1_Literals {
 	private def computeBase(sign: Int, integral: Double, fractional: Option[Double]): Double =
 		sign * (integral + fractional.getOrElse(0.0d))
 
+	private def getNumericValue(base: Double, exponent: Option[Double]) =
+		if (exponent.isEmpty) base else base * Math.pow(10, exponent.get)
+
 	private def createNumber(base: Double, exponent: Option[Double], unitOfMeasure: Option[UnitOfMeasure]): Value.Number =
-		Value.Number(
-			if (exponent.isEmpty) base else base * Math.pow(10, exponent.get),
-			unitOfMeasure.getOrElse(UnitOfMeasure())
-		)
+		Value.Number(getNumericValue(base, exponent), unitOfMeasure.getOrElse(Scalar()))
 }

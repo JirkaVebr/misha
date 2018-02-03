@@ -1,5 +1,7 @@
 package com.preprocessor.ast
 
+import com.preprocessor.ast.UnitOfMeasure.{Scalar, UnitOfMeasure}
+
 import scala.collection.immutable.{Map => SMap}
 
 
@@ -19,7 +21,7 @@ object Ast {
 		sealed trait Primitive extends Value
 		sealed trait Composite extends Value
 
-		case class Number(value: Double, unit: UnitOfMeasure = UnitOfMeasure()) extends Primitive
+		case class Number(value: Double, unit: UnitOfMeasure = Scalar()) extends Primitive
 		case class Boolean(value: scala.Boolean) extends Primitive
 		case class String(value: java.lang.String) extends Primitive
 

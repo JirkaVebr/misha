@@ -2,7 +2,7 @@ package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.Ast.Value.{CurrentColor, Important, Rgba, Transparent}
-import com.preprocessor.ast.UnitOfMeasure
+import com.preprocessor.ast.UnitOfMeasure.{GenericUnit, Percentage}
 
 class LiteralsSpec extends BaseParserSpec {
 
@@ -53,9 +53,16 @@ class LiteralsSpec extends BaseParserSpec {
 	}
 
 	it should "parse a number with a simple unit" in {
-		assert(parse("10e2s") == Value.Number(1000, UnitOfMeasure(Map("s" -> 1))))
-		assert(parse("0km") == Value.Number(0, UnitOfMeasure(Map("km" -> 1))))
-		assert(parse("-7e2ms") == Value.Number(-700, UnitOfMeasure(Map("ms" -> 1))))
+		assert(parse("10e2s") == Value.Number(1000, GenericUnit(Map("s" -> 1))))
+		assert(parse("0km") == Value.Number(0, GenericUnit(Map("km" -> 1))))
+		assert(parse("-7e2ms") == Value.Number(-700, GenericUnit(Map("ms" -> 1))))
+	}
+
+	it should "parse a percentage" in {
+		assert(parse("+0%") == Value.Number(0, Percentage()))
+		assert(parse("0%") == Value.Number(0, Percentage()))
+		assert(parse("123%") == Value.Number(123, Percentage()))
+		assert(parse("11.22%") == Value.Number(11.22, Percentage()))
 	}
 
 	it should "parse a keyword rgba color" in {
