@@ -1,9 +1,6 @@
 package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.{Type, Value}
-import com.preprocessor.ast.Ast.Value.Value
-
-import scala.util.Success
 
 class TypesSpec extends BaseParserSpec {
 
@@ -80,5 +77,5 @@ class TypesSpec extends BaseParserSpec {
 	}
 
 
-	protected def parse(input: String): Type.Any = parseRule(getParser(input).Type)
+	protected def parse(input: String): Type.Any = parseRule(input, _.Type)
 }

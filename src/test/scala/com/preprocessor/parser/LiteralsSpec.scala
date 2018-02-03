@@ -102,5 +102,5 @@ class LiteralsSpec extends BaseParserSpec {
 	}
 
 
-	protected def parse(input: String): Value.Value = parseRule(getParser(input).Literal)
+	protected def parse(input: String): Value.Value = parseRule(input, _.Literal)
 }
