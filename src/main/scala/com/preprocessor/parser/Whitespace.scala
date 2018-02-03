@@ -6,11 +6,11 @@ trait Whitespace extends org.parboiled2.Parser {
 	import Whitespace._
 
 	def whitespace: Rule0 = rule {
-		zeroOrMore(WhiteSpaceChar)
+		quiet(zeroOrMore(WhiteSpaceChar))
 	}
 
 	implicit def whitespaceAfterString(stringToken: String): Rule0 = rule {
-		atomic(str(stringToken)) ~ quiet(whitespace)
+		atomic(str(stringToken)) ~ whitespace
 	}
 
 }
