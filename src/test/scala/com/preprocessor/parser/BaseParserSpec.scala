@@ -21,7 +21,8 @@ class BaseParserSpec extends BaseSpec {
 				println(failure.traces)
 				fail()
 			case a =>
-				fail(a.asInstanceOf[String])
+				println(a)
+				fail()
 		}
 	}
 }

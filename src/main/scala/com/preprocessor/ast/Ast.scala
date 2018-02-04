@@ -26,7 +26,7 @@ object Ast {
 		case class String(value: java.lang.String) extends Primitive
 
 		sealed trait Color extends Primitive
-		case class Rgba(r: Short, g: Short, b: Short, a: Short) extends Color
+		case class Rgba(r: Int, g: Int, b: Int, a: Int = 0) extends Color
 		case object CurrentColor extends Color
 		case object Transparent extends Color
 

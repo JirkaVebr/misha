@@ -65,10 +65,17 @@ class LiteralsSpec extends BaseParserSpec {
 		assert(parse("11.22%") == Value.Number(11.22, Percentage()))
 	}
 
+	it should "parse a hex color" in {
+		assert(parse("#123") == Rgba(17, 34, 51))
+		assert(parse("#1234") == Rgba(17, 34, 51, 68))
+		assert(parse("#123123") == Rgba(18, 49, 35))
+		assert(parse("#12341234") == Rgba(18, 52, 18, 52))
+	}
+
 	it should "parse a keyword rgba color" in {
-		assert(parse("black") == Rgba(0, 0, 0, 0))
-		assert(parse("navy") == Rgba(0, 0, 128, 0))
-		assert(parse("white") == Rgba(255, 255, 255, 0))
+		assert(parse("black") == Rgba(0, 0, 0))
+		assert(parse("navy") == Rgba(0, 0, 128))
+		assert(parse("white") == Rgba(255, 255, 255))
 	}
 
 	it should "parse non-rgba color keywords" in {
@@ -79,7 +86,7 @@ class LiteralsSpec extends BaseParserSpec {
 	it should "ignore case while parsing color keywords" in {
 		assert(parse("cUrReNtCoLor") == CurrentColor)
 		assert(parse("transPARent") == Transparent)
-		assert(parse("RED") == Rgba(255, 0, 0, 0))
+		assert(parse("RED") == Rgba(255, 0, 0))
 	}
 
 	it should "parse quoted strings" in {
