@@ -117,6 +117,9 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def delimitedList: Rule1[Term.List] = rule {
+		// They need to be separate rules as both body-subrules must allow empty input, and so if we had
+		// "[" ~ (undelimitedListBody | delimitedListBody) ~ "]", things would always only work for one or the other
+		// depending on the order.
 		("[" ~ undelimitedListBody ~ "]" |
 			"[" ~ delimitedListBody ~ "]") ~> Term.List
 	}
