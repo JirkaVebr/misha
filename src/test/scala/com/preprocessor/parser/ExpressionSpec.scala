@@ -30,6 +30,18 @@ class ExpressionSpec extends BaseParserSpec {
 		)
 	}
 
+	it should "correctly parse exponentiation" in {
+		assert(parse("2 ^ 3 ^ 4") == BinaryOperation(Exponentiation, Number(2), BinaryOperation(Exponentiation, Number(3), Number(4))))
+	}
+
+	it should "correctly parse unary expressions" in {
+		assert(parse("-(1)") == UnaryOperation(ArithmeticNegation, Number(1)))
+		assert(parse("---(1)") == UnaryOperation(ArithmeticNegation, UnaryOperation(ArithmeticNegation, UnaryOperation(ArithmeticNegation, Number(1)))))
+		assert(parse("---1") == UnaryOperation(ArithmeticNegation, UnaryOperation(ArithmeticNegation, UnaryOperation(ArithmeticNegation, Number(-1)))))
+		assert(parse("!true") == UnaryOperation(LogicalNegation, Boolean(true)))
+		assert(parse("!!!true") == UnaryOperation(LogicalNegation, UnaryOperation(LogicalNegation, UnaryOperation(LogicalNegation, Boolean(true)))))
+	}
+
 	it should "correctly parse variable names" in {
 		assert(parse("$myVariable") == Variable("myVariable"))
 	}
