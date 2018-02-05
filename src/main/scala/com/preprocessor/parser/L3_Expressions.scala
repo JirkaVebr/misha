@@ -102,9 +102,13 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def exponentiation: Rule1[Expression] = rule { // Right associative
-		factor ~ zeroOrMore(
+		computedMemberAccess ~ zeroOrMore(
 			"^" ~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Exponentiation, l, r))
 		)
+	}
+
+	private def computedMemberAccess: Rule1[Expression] = rule {
+		factor ~ zeroOrMore("[" ~ Expression ~ "]" ~> MemberAccess)
 	}
 
 	private def factor: Rule1[Expression] = rule {

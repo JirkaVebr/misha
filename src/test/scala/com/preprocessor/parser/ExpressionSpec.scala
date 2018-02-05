@@ -2,7 +2,7 @@ package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Term
-import com.preprocessor.ast.Ast.Term.{FunctionCall, Variable}
+import com.preprocessor.ast.Ast.Term.{FunctionCall, MemberAccess, Variable}
 import com.preprocessor.ast.Ast.Value._
 
 class ExpressionSpec extends BaseParserSpec {
@@ -112,6 +112,15 @@ class ExpressionSpec extends BaseParserSpec {
 	it should "correctly parse a conditional" in {
 		assert(parse("@if ($myVariable) 1 @else 2") ==
 			Conditional(Variable("myVariable"), Number(1), Some(Number(2))))
+	}
+
+	it should "correctly parse computed member access" in {
+		assert(parse("$a[1 + 1]") == MemberAccess(Variable("a"), BinaryOperation(Addition, Number(1), Number(2))))
+	}
+
+	it should "correctly parse complicated arithmetic expressions" in {
+		assert(parse("2 * 3 ^ 4") == BinaryOperation(Multiplication, Number(2), BinaryOperation(Exponentiation, Number(3), Number(4))))
+		assert(parse("(1 + 2) / 3") == BinaryOperation(Division, BinaryOperation(Addition, Number(1), Number(2)), Number(3)))
 	}
 
 	/*it should "correctly parse left associativity" in {
