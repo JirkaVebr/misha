@@ -6,16 +6,20 @@ class TypesSpec extends BaseParserSpec {
 
 	behavior of "The type parser"
 
-	it should "parse the Unit type" in {
-		assert(parse("Unit") == Type.Unit)
-	}
-
-	it should "parse the Boolean type" in {
+	it should "parse builtin types" in {
+		assert(parse("Any") == Type.Any)
+		assert(parse("Color") == Type.Color)
 		assert(parse("Boolean") == Type.Boolean)
-	}
-
-	it should "parse the String type" in {
+		assert(parse("Dimensioned") == Type.Dimensioned)
+		assert(parse("Formula") == Type.Formula)
+		assert(parse("Integer") == Type.Integer)
+		assert(parse("Number") == Type.Number)
+		assert(parse("Numeric") == Type.Numeric)
+		assert(parse("Percentage") == Type.Numeric)
+		assert(parse("Rational") == Type.Rational)
+		assert(parse("Ratio") == Type.Ratio)
 		assert(parse("String") == Type.String)
+		assert(parse("Unit") == Type.Unit)
 	}
 
 	it should "parse the Integer type" in {
