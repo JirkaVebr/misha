@@ -45,7 +45,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def assignment: Rule1[Expression] = rule { // Right associative
-		logical ~ zeroOrMore(
+		logicalOr ~ zeroOrMore(
 			"="  ~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, r)) |
 			"+=" ~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Addition, l, r))) |
 			"-=" ~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Subtraction, l, r))) |
@@ -56,10 +56,15 @@ trait L3_Expressions { this: org.parboiled2.Parser
 		)
 	}
 
-	private def logical: Rule1[Expression] = rule { // Left associative
+	private def logicalOr: Rule1[Expression] = rule { // Left associative
+		logicalAnd ~ zeroOrMore(
+			"||" ~ logicalAnd ~> ((l: Expression, r: Expression) => BinaryOperation(LogicalOr, l, r))
+		)
+	}
+
+	private def logicalAnd: Rule1[Expression] = rule { // Left associative
 		equalityComparison ~ zeroOrMore(
-			("&&" ~ equalityComparison ~> ((l: Expression, r: Expression) => BinaryOperation(LogicalAnd, l, r))) |
-			("||" ~ equalityComparison ~> ((l: Expression, r: Expression) => BinaryOperation(LogicalOr, l, r)))
+			"&&" ~ equalityComparison ~> ((l: Expression, r: Expression) => BinaryOperation(LogicalAnd, l, r))
 		)
 	}
 

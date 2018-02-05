@@ -9,7 +9,13 @@ class ExpressionSpec extends BaseParserSpec {
 
 	behavior of "The expression parser"
 
-	it should "correctly parse comparison" in {
+	it should "correctly parse logical operations" in {
+		assert(parse("false && true") == BinaryOperation(LogicalAnd, Boolean(false), Boolean(true)))
+		assert(parse("true || false") == BinaryOperation(LogicalOr, Boolean(true), Boolean(false)))
+		assert(parse("$a || $b && $c") == BinaryOperation(LogicalOr, Variable("a"), BinaryOperation(LogicalAnd, Variable("b"), Variable("c"))))
+	}
+
+	it should "correctly parse equality comparison" in {
 		assert(parse("1 == 2 == 3") ==
 			BinaryOperation(IsEqualTo, BinaryOperation(IsEqualTo, Number(1), Number(2)), Number(3))
 		)
@@ -18,6 +24,9 @@ class ExpressionSpec extends BaseParserSpec {
 				IsEqualTo, UnaryOperation(LogicalNegation, BinaryOperation(IsEqualTo, Number(1), Number(2))), Number(3))
 			)
 		)
+	}
+
+	it should "correctly parse other comparison" in {
 		assert(parse("1 < 2 < 3") ==
 			BinaryOperation(LowerThan, BinaryOperation(LowerThan, Number(1), Number(2)), Number(3))
 		)
