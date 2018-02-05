@@ -18,27 +18,6 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	with L1_Literals
 	with L2_Types =>
 
-	/*def AssociativityTest: Rule1[Expr] = rule {
-		rightAssoc
-	}
-
-	/*def leftAssoc: Rule1[Expr] = rule {
-		num ~ zeroOrMore(
-			"lop" ~ num ~> BinLop
-		)
-	}*/
-
-	def rightAssoc: Rule1[Expr] = rule {
-		num ~ zeroOrMore(
-			"rop1" ~ rightAssoc ~> BinRop1 |
-			"rop2" ~ rightAssoc ~> BinRop2
-		)
-	}
-
-	def num: Rule1[Num] = rule {
-		(capture(oneOrMore(CharPredicate.Digit)) ~ whitespace) ~> ((a: String) => Num(Integer.parseInt(a)))
-	}*/
-
 
 	def Expression: Rule1[Expression] = rule {
 		assignment

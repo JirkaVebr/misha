@@ -123,15 +123,6 @@ class ExpressionSpec extends BaseParserSpec {
 		assert(parse("(1 + 2) / 3") == BinaryOperation(Division, BinaryOperation(Addition, Number(1), Number(2)), Number(3)))
 	}
 
-	/*it should "correctly parse left associativity" in {
-		assert(parse("1 lop 2 lop 3 lop 4") == BinLop(BinLop(BinLop(Num(1), Num(2)), Num(3)), Num(4)))
-	}*/
-
-	/*it should "correctly parse right associativity" in {
-		assert(parse("1 rop1 2 rop1 3 rop2 4") == BinRop1(Num(1), BinRop1(Num(2), BinRop2(Num(3), Num(4)))))
-	}*/
-
-	//protected def parse(input: String): Expr = parseRule(input, _.AssociativityTest)
 
 	protected def parse(input: java.lang.String): Expression = parseRule(input, _.Expression)
 
