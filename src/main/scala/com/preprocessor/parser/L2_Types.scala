@@ -27,7 +27,7 @@ trait L2_Types { this: org.parboiled2.Parser
 	}
 
 	private def nonCompoundType: Rule1[Ast.Type.Any] = rule {
-		simpleCompositeType | nonCompositeType | literalType
+		simpleCompositeType | nonCompositeType | TypeAlias | literalType
 	}
 
 	private def nonCompositeType: Rule1[Ast.Type.Any] = rule {
@@ -46,6 +46,10 @@ trait L2_Types { this: org.parboiled2.Parser
 			"String" -> Ast.Type.String,
 			"Unit" -> Ast.Type.Unit
 		)) ~ whitespace
+	}
+
+	def TypeAlias: Rule1[Ast.Type.TypeAlias] = rule {
+		capture(CharPredicate.UpperAlpha ~ zeroOrMore(CharPredicate.AlphaNum)) ~> Ast.Type.TypeAlias
 	}
 
 	private def literalType: Rule1[Ast.Type.Literal] = rule {

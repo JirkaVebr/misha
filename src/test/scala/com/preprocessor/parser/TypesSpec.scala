@@ -22,10 +22,9 @@ class TypesSpec extends BaseParserSpec {
 		assert(parse("Unit") == Type.Unit)
 	}
 
-	it should "parse the Integer type" in {
-		assert(parse("Integer") == Type.Integer)
+	it should "parse type aliases" in {
+		assert(parse("MyCustomType") == Type.TypeAlias("MyCustomType"))
 	}
-
 
 	it should "parse a nullary Function type" in {
 		assert(parse("() => Unit") == Type.Function(List(), Type.Unit))

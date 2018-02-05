@@ -53,6 +53,7 @@ object Ast {
 		case object Boolean extends Primitive
 		case object String extends Primitive
 		case class Literal(value: Value.Primitive) extends Primitive
+		case class TypeAlias(name: String) extends Any
 
 		case class Union(subs: Set[Any]) extends Composite
 		case class Function(arguments: Seq[Any], output: Any) extends Composite
