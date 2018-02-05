@@ -117,7 +117,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def delimitedList: Rule1[Term.List] = rule {
-		("[" ~ listBody ~ "]" | "(" ~ listBody ~ ")") ~> Term.List
+		("[" ~ listBody ~ "]" | "(" ~ oneOrMore(Expression ~ ",") ~ ")") ~> Term.List
 	}
 
 	private def listBody: Rule1[Seq[Expression]] = rule {

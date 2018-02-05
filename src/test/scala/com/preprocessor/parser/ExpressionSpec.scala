@@ -39,6 +39,14 @@ class ExpressionSpec extends BaseParserSpec {
 		assert(parse("($myFunction)()") == FunctionCall(Variable("myFunction")))
 	}
 
+	it should "correctly parse a function call with arguments" in {
+		assert(parse("myFunction(1)") == FunctionCall(Variable("myFunction"), Vector(Number(1))))
+		assert(parse("myFunction(1, 2)") == FunctionCall(Variable("myFunction"), Vector(Number(1), Number(2))))
+		assert(parse("myFunction(1, 2,)") == FunctionCall(Variable("myFunction"), Vector(Number(1), Number(2))))
+		assert(parse("$myFunction(1 + 2,)") ==
+			FunctionCall(Variable("myFunction"), Vector(BinaryOperation(Addition, Number(1), Number(2)))))
+	}
+
 	it should "correctly parse a sub-expression" in {
 		assert(parse("(1)") == Number(1))
 	}
