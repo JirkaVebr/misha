@@ -9,6 +9,32 @@ class ExpressionSpec extends BaseParserSpec {
 
 	behavior of "The expression parser"
 
+	it should "correctly parse comparison" in {
+		assert(parse("1 == 2 == 3") ==
+			BinaryOperation(IsEqualTo, BinaryOperation(IsEqualTo, Number(1), Number(2)), Number(3))
+		)
+		assert(parse("1 != 2 != 3") ==
+			UnaryOperation(LogicalNegation, BinaryOperation(
+				IsEqualTo, UnaryOperation(LogicalNegation, BinaryOperation(IsEqualTo, Number(1), Number(2))), Number(3))
+			)
+		)
+		assert(parse("1 < 2 < 3") ==
+			BinaryOperation(LowerThan, BinaryOperation(LowerThan, Number(1), Number(2)), Number(3))
+		)
+		assert(parse("1 <= 2 <= 3") ==
+			BinaryOperation(LowerEquals, BinaryOperation(LowerEquals, Number(1), Number(2)), Number(3))
+		)
+		assert(parse("1 > 2 > 3") ==
+			BinaryOperation(GreaterThan, BinaryOperation(GreaterThan, Number(1), Number(2)), Number(3))
+		)
+		assert(parse("1 >= 2 >= 3") ==
+			BinaryOperation(GreaterEquals, BinaryOperation(GreaterEquals, Number(1), Number(2)), Number(3))
+		)
+		assert(parse("1 @in 2 @in 3") ==
+			BinaryOperation(In, BinaryOperation(In, Number(1), Number(2)), Number(3))
+		)
+	}
+
 	it should "correctly parse addition & subtraction" in {
 		assert(parse("1 + 2 + 3") ==
 			BinaryOperation(Addition, BinaryOperation(Addition, Number(1), Number(2)), Number(3))
@@ -37,7 +63,7 @@ class ExpressionSpec extends BaseParserSpec {
 	it should "correctly parse unary expressions" in {
 		assert(parse("-(1)") == UnaryOperation(ArithmeticNegation, Number(1)))
 		assert(parse("---(1)") == UnaryOperation(ArithmeticNegation, UnaryOperation(ArithmeticNegation, UnaryOperation(ArithmeticNegation, Number(1)))))
-		assert(parse("---1") == UnaryOperation(ArithmeticNegation, UnaryOperation(ArithmeticNegation, UnaryOperation(ArithmeticNegation, Number(-1)))))
+		assert(parse("---1") == UnaryOperation(ArithmeticNegation, UnaryOperation(ArithmeticNegation, UnaryOperation(ArithmeticNegation, Number(1)))))
 		assert(parse("!true") == UnaryOperation(LogicalNegation, Boolean(true)))
 		assert(parse("!!!true") == UnaryOperation(LogicalNegation, UnaryOperation(LogicalNegation, UnaryOperation(LogicalNegation, Boolean(true)))))
 	}

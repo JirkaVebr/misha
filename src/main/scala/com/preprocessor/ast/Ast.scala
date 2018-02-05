@@ -95,7 +95,7 @@ object Ast {
 		case object Remainder extends NumericOperator
 
 		sealed trait Comparison extends BinaryOperator
-		case object EqualTo extends Comparison
+		case object IsEqualTo extends Comparison
 		case object In extends Comparison
 		case object LowerThan extends Comparison
 		case object LowerEquals extends Comparison

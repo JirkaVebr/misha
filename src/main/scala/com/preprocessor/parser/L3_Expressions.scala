@@ -65,16 +65,16 @@ trait L3_Expressions { this: org.parboiled2.Parser
 
 	private def equalityComparison: Rule1[Expression] = rule { // Left associative
 		otherComparison ~ zeroOrMore(
-			("==" ~ otherComparison ~> ((l: Expression, r: Expression) => BinaryOperation(EqualTo, l, r))) |
+			("==" ~ otherComparison ~> ((l: Expression, r: Expression) => BinaryOperation(IsEqualTo, l, r))) |
 			("!=" ~ otherComparison ~> ((l: Expression, r: Expression) =>
-				UnaryOperation(LogicalNegation, BinaryOperation(EqualTo, l, r))))
+				UnaryOperation(LogicalNegation, BinaryOperation(IsEqualTo, l, r))))
 		)
 	}
 
 	private def otherComparison: Rule1[Expression] = rule { // Left associative
 		addition ~ zeroOrMore(
 			("<=" ~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(LowerEquals, l, r))) |
-			("<" ~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(LowerEquals, l, r))) |
+			("<" ~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(LowerThan, l, r))) |
 			(">=" ~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(GreaterEquals, l, r))) |
 			(">" ~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(GreaterThan, l, r))) |
 			("@in" ~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(In, l, r)))
