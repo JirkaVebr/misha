@@ -2,8 +2,3 @@
 - Handling of !important
 - randomness
 - No tail recursion support
-
-
-
-
-func(,) is valid

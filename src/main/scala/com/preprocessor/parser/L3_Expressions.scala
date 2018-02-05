@@ -117,11 +117,16 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def delimitedList: Rule1[Term.List] = rule {
-		("[" ~ listBody ~ "]" | "(" ~ oneOrMore(Expression ~ ",") ~ ")") ~> Term.List
+		("[" ~ undelimitedListBody ~ "]" |
+			"[" ~ delimitedListBody ~ "]") ~> Term.List
 	}
 
-	private def listBody: Rule1[Seq[Expression]] = rule {
+	private def undelimitedListBody: Rule1[Seq[Expression]] = rule {
 		zeroOrMore(Expression).separatedBy(whitespace) ~ whitespace
+	}
+
+	private def delimitedListBody: Rule1[Seq[Expression]] = rule {
+		zeroOrMore(Expression).separatedBy(",") ~ optional(",") ~ whitespace
 	}
 
 	private def variableName: Rule1[java.lang.String] = rule {

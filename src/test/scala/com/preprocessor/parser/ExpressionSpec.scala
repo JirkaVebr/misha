@@ -1,6 +1,7 @@
 package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Expression._
+import com.preprocessor.ast.Ast.Term
 import com.preprocessor.ast.Ast.Term.{FunctionCall, Variable}
 import com.preprocessor.ast.Ast.Value._
 
@@ -45,10 +46,20 @@ class ExpressionSpec extends BaseParserSpec {
 		assert(parse("myFunction(1, 2,)") == FunctionCall(Variable("myFunction"), Vector(Number(1), Number(2))))
 		assert(parse("$myFunction(1 + 2,)") ==
 			FunctionCall(Variable("myFunction"), Vector(BinaryOperation(Addition, Number(1), Number(2)))))
+		// This should fail but doesn't yet "myFunction(,)"
 	}
 
 	it should "correctly parse a sub-expression" in {
 		assert(parse("(1)") == Number(1))
+	}
+
+	it should "correctly parse a delimited list" in {
+		assert(parse("[1 2 3 ]") == Term.List(Vector(Number(1), Number(2), Number(3))))
+		assert(parse("[1, 2, 3]") == Term.List(Vector(Number(1), Number(2), Number(3))))
+		assert(parse("[1, 2, 3,]") == Term.List(Vector(Number(1), Number(2), Number(3))))
+		assert(parse("[1 2 + 2 3]") == Term.List(Vector(Number(1), BinaryOperation(Addition, Number(2), Number(2)), Number(3))))
+		assert(parse("[]") == Term.List(Vector()))
+		assert(parse("[,]") == Term.List(Vector())) // This probably shouldn't be allowed
 	}
 
 	it should "correctly parse a conditional" in {
