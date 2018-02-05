@@ -16,7 +16,9 @@ object Ast {
 	case class Program(program: Expression.Expression) extends Node
 
 	object Value {
-		sealed abstract class Value extends Node
+		import Term._
+
+		sealed abstract class Value extends Node with Term
 
 		sealed trait Primitive extends Value
 		sealed trait Composite extends Value
@@ -81,19 +83,35 @@ object Ast {
 	object Expression {
 		sealed trait Expression extends Node
 
-		case class SubExpression(value: Expression) extends Expression
-
 		case class BinaryOperation(operator: BinaryOperator, left: Expression, right: Expression) extends Expression
 		sealed trait BinaryOperator
-		case object Addition extends BinaryOperator
-		case object Subtraction extends BinaryOperator
-		case object Multiplication extends BinaryOperator
-		case object Division extends BinaryOperator
-		case object Exponentiation extends BinaryOperator
+
+		sealed trait NumericOperator extends BinaryOperator
+		case object Addition extends NumericOperator
+		case object Subtraction extends NumericOperator
+		case object Multiplication extends NumericOperator
+		case object Division extends NumericOperator
+		case object Exponentiation extends NumericOperator
+		case object Remainder extends NumericOperator
+
+		sealed trait Comparison extends BinaryOperator
+		case object EqualTo extends Comparison
+		case object In extends Comparison
+		case object LowerThan extends Comparison
+		case object LowerEquals extends Comparison
+		case object GreaterThan extends Comparison
+		case object GreaterEquals extends Comparison
+
+		sealed trait LogicalOperator extends BinaryOperator
+		case object LogicalAnd extends LogicalOperator
+		case object LogicalOr extends LogicalOperator
+
+		sealed trait Assignment extends BinaryOperator
+		case object Equals extends Assignment
 
 		case class UnaryOperation(operator: UnaryOperator, value: Expression) extends Expression
 		sealed trait UnaryOperator
-		case object LogicNegation extends UnaryOperator
+		case object LogicalNegation extends UnaryOperator
 		case object ArithmeticNegation extends UnaryOperator
 
 		case class Conditional(condition: Expression, consequent: Expression, alternative: Option[Expression])
@@ -107,12 +125,8 @@ object Ast {
 
 		sealed trait Term extends Expression
 
-		case class Number(value: Double) extends Term
-		case class Boolean(value: scala.Boolean) extends Term
-		case class Color(r: Int, g: Int, b: Int, a: Int) extends Term
-		case class String(value: java.lang.String) extends Term
 		case class Variable(name: java.lang.String) extends Term
-		case class FunctionCall(function: Expression, arguments: Seq[Expression]) extends Term
+		case class FunctionCall(function: Expression, arguments: Seq[Expression] = scala.Vector.empty) extends Term
 		case class List(items: Seq[Expression]) extends Term
 		case class MemberAccess(`object`: Expression, name: Expression) extends Term
 	}
