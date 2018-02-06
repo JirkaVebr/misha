@@ -17,7 +17,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 
 
 	def Literal: Rule1[Primitive] = rule {
-		flag | boolean | number | quotedString | color | UnquotedString
+		flag | boolean | number | quotedString | color | unquotedString
 	}
 
 	private def flag: Rule1[Flag] = rule {
@@ -116,8 +116,12 @@ trait L1_Literals { this: org.parboiled2.Parser
 		capture((1 to 4).times(HexDigit)) ~> ((hexDigits: String) => java.lang.Integer.parseInt(hexDigits, 16))
 	}
 
-	def UnquotedString: Rule1[Value.String] = rule {
-		capture(oneOrMore(AlphaNumUnderscore) ~ zeroOrMore(AlphaNumDashUnderscore)) ~> Value.String
+	private def unquotedString: Rule1[Value.String] = rule {
+		Identifier ~> Value.String
+	}
+
+	def Identifier: Rule1[String] = rule {
+		capture(optional("--") ~ oneOrMore(AlphaNumUnderscore) ~ zeroOrMore(AlphaNumDashUnderscore)) ~ whitespace
 	}
 
 }

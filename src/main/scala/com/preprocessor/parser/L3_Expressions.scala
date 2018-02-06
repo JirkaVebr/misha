@@ -121,7 +121,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def variableName: Rule1[java.lang.String] = rule {
-		capture(oneOrMore(CharPredicate.AlphaNum)) ~ whitespace
+		Identifier
 	}
 
 	private def functionCall: Rule1[FunctionCall] = rule {
