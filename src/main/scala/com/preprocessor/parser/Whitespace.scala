@@ -18,7 +18,7 @@ trait Whitespace extends org.parboiled2.Parser {
 	}
 
 	def EndOfLine: Rule0 = rule {
-		StartOfLine ~ '\n'
+		zeroOrMore(SingleLineWhitespace) ~ End
 	}
 
 	implicit def whitespaceAfterString(stringToken: String): Rule0 = rule {
@@ -28,6 +28,7 @@ trait Whitespace extends org.parboiled2.Parser {
 }
 
 object Whitespace {
+	val End: CharPredicate = CharPredicate('\n') ++ org.parboiled2.EOI
 	val SingleLineWhitespace = CharPredicate(" \f\r\t")
 	val WhiteSpaceChar: CharPredicate = SingleLineWhitespace ++ '\n'
 }
