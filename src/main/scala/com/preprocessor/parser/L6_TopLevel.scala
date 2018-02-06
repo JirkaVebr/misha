@@ -9,7 +9,8 @@ trait L6_TopLevel { this: org.parboiled2.Parser
 	with L0_Basics
 	with L1_Literals
 	with L2_Types
-	with L3_Expressions =>
+	with L3_Expressions
+	with L4_Statements =>
 
 	def Program: Rule1[Ast.Program] = rule {
 		whitespace ~ Expression ~ whitespace ~ EOI ~> Ast.Program
