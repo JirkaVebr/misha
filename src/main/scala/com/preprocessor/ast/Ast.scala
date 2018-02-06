@@ -1,6 +1,5 @@
 package com.preprocessor.ast
 
-import com.preprocessor.ast.Ast.Value.Flag
 import com.preprocessor.ast.UnitOfMeasure.{Scalar, UnitOfMeasure}
 
 import scala.collection.immutable.{Map => SMap}
@@ -82,19 +81,21 @@ object Ast {
 	}
 
 	object Statement {
-		import Expression._
-		import Type._
+		import Expression.Expression
+		import Type.{Any, TypeAlias}
 
 		sealed trait Statement extends Node
 
 		case object NoOp extends Statement
 		case class Sequence(current: Statement, following: Statement) extends Statement
-		case class Property(name: String, value: Expression, flags: Set[Flag] = Set.empty) extends Statement
-		//case class Rule(selector: Expression)
-		case class Import(destination: Expression, parameters: Option[Expression]) extends Statement
-		case class TypeAlias(name: String, subType: Any) extends Statement
+		//case class Property(name: Expression, value: Expression, flags: Option[Expression]) extends Statement
+		//case class Import(destination: Expression, parameters: Option[Expression]) extends Statement
+		case class TypeAliasDeclaration(alias: TypeAlias, subType: Any) extends Statement
 		case class VariableDeclaration(name: String, typeAnnotation: Option[Any], value: Expression) extends Statement
 		case class FunctionDeclaration(name: String, typeAnnotation: Option[Any], value: Statement) extends Statement
+
+		//case class Rule(head: StringInterpolation, body: Statement) extends Statement
+		case class Rule(head: Value.String, body: Statement) extends Statement // TODO
 	}
 
 
