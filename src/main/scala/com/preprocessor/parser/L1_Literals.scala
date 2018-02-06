@@ -17,7 +17,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 
 
 	def Literal: Rule1[Primitive] = rule {
-		flag | boolean | number | quotedString | color | unquotedString
+		flag | boolean | number | QuotedString | color | unquotedString
 	}
 
 	private def flag: Rule1[Flag] = rule {
@@ -90,11 +90,11 @@ trait L1_Literals { this: org.parboiled2.Parser
 	/* STRINGS */
 	// The string parsing is heavily based on the parboiled2 example Json parser
 
-	private def quotedString: Rule1[Value.String] = rule {
+	def QuotedString: Rule1[Value.String] = rule {
 		quotedStringInner(quotedStringBody)
 	}
 
-	private val quotedStringBody = (charPredicate: CharPredicate) => rule {
+	private val quotedStringBody: CharPredicate => Rule1[String] = (charPredicate: CharPredicate) => rule {
 		clearSB() ~ zeroOrMore((!charPredicate ~ ANY ~ appendSB()) | '\\' ~ escapedChar) ~ push(sb.toString)
 	}
 
