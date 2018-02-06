@@ -115,7 +115,7 @@ class ExpressionSpec extends BaseParserSpec {
 	}
 
 	it should "correctly parse computed member access" in {
-		assert(parse("$a[1 + 1]") == MemberAccess(Variable("a"), BinaryOperation(Addition, Number(1), Number(2))))
+		assert(parse("$a[1 + 2]") == MemberAccess(Variable("a"), BinaryOperation(Addition, Number(1), Number(2))))
 	}
 
 	it should "correctly parse complicated arithmetic expressions" in {
