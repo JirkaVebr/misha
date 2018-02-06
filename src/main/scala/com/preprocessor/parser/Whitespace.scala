@@ -28,7 +28,7 @@ trait Whitespace extends org.parboiled2.Parser {
 }
 
 object Whitespace {
-	val End: CharPredicate = CharPredicate('\n') ++ org.parboiled2.EOI
+	val End: CharPredicate = CharPredicate('\n') ++ Characters.EOI
 	val SingleLineWhitespace = CharPredicate(" \f\r\t")
 	val WhiteSpaceChar: CharPredicate = SingleLineWhitespace ++ '\n'
 }
