@@ -1,9 +1,9 @@
 package com.preprocessor.parser
 
-import com.preprocessor.ast.Ast.Expression.{Addition, BinaryOperation}
+import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Statement._
-import com.preprocessor.ast.Ast.{Term, Type, Value}
 import com.preprocessor.ast.Ast.Value.Number
+import com.preprocessor.ast.Ast.{Term, Type, Value}
 
 
 class StatementsSpec extends BaseParserSpec {
