@@ -91,24 +91,17 @@ trait L1_Literals { this: org.parboiled2.Parser
 	// The string parsing is heavily based on the parboiled2 example Json parser
 
 	private def quotedString: Rule1[Value.String] = rule {
-		(('\'' ~ clearSB() ~ singleQuotedStrChars ~ '\'' ~ whitespace ~ push(sb.toString)) |
-		('"' ~ clearSB() ~ doubleQuotedStrChars ~ '"' ~ whitespace ~ push(sb.toString))) ~> Value.String
+		quotedStringInner(quotedStringBody)
 	}
 
-	private def singleQuotedStrChars: Rule0 = rule {
-		zeroOrMore(normalSingleQuotedStrChar | '\\' ~ escapedChar)
+	private val quotedStringBody = (charPredicate: CharPredicate) => rule {
+		clearSB() ~ zeroOrMore((!charPredicate ~ ANY ~ appendSB()) | '\\' ~ escapedChar) ~ push(sb.toString)
 	}
 
-	private def normalSingleQuotedStrChar: Rule0 = rule {
-		!SingleQuoteOrBackslash ~ ANY ~ appendSB()
-	}
-
-	private def doubleQuotedStrChars: Rule0 = rule {
-		zeroOrMore(normalDoubleQuotedStrChar | '\\' ~ escapedChar)
-	}
-
-	private def normalDoubleQuotedStrChar: Rule0 = rule {
-		!DoubleQuoteOrBackslash ~ ANY ~ appendSB()
+	private def quotedStringInner(body: (CharPredicate) => Rule1[String]): Rule1[Value.String] = rule {
+		(('\'' ~ body(SingleQuoteOrBackslash) ~ '\'') |
+			('"' ~ body(DoubleQuoteOrBackslash) ~ '"')
+		) ~ whitespace ~> Value.String
 	}
 
 	private def escapedChar: Rule0 = rule (
