@@ -112,6 +112,8 @@ class ExpressionSpec extends BaseParserSpec {
 	it should "correctly parse an undelimited list" in {
 		assert(parse("myFunction(1 2 3, 2)") ==
 			FunctionCall(Variable("myFunction"), Vector(Term.List(Vector(Number(1), Number(2), Number(3))), Number(2))))
+		assert(parse("myFunction(1 2 + 3 4, 2)") ==
+			FunctionCall(Variable("myFunction"), Vector(Term.List(Vector(Number(1), BinaryOperation(Addition, Number(2), Number(3)), Number(4))), Number(2))))
 	}
 
 	it should "correctly parse a conditional" in {
