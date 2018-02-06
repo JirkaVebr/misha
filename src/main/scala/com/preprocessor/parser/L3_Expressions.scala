@@ -108,12 +108,19 @@ trait L3_Expressions { this: org.parboiled2.Parser
 		// They need to be separate rules as both body-subrules must allow empty input, and so if we had
 		// "[" ~ (undelimitedListBody | delimitedListBody) ~ "]", things would always only work for one or the other
 		// depending on the order.
-		("[" ~ undelimitedListBody ~ "]" |
-			"[" ~ delimitedListBody ~ "]") ~> Term.List
+		"[" ~
+			(undelimitedListBody ~ "]" |
+			delimitedListBody ~ "]") ~> Term.List
+	}
+
+	private def undelimitedList: Rule1[Term.List] = rule {
+		undelimitedListBody ~> Term.List
 	}
 
 	private def undelimitedListBody: Rule1[Seq[Expression]] = rule {
-		zeroOrMore(Expression).separatedBy(AnyWhitespace) ~ AnyWhitespace
+		// We really need at least two items for it to be considered a list. Should one want to create a list of one item,
+		// they should surround it with square brackets.
+		(2 to Integer.MAX_VALUE).times(Expression).separatedBy(AnyWhitespace) ~ AnyWhitespace
 	}
 
 	private def delimitedListBody: Rule1[Seq[Expression]] = rule {
@@ -126,7 +133,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 
 	private def functionCall: Rule1[FunctionCall] = rule {
 		// The error is just IntelliJ being dumb.
-		(functionName ~ "(" ~ zeroOrMore(Expression).separatedBy(",") ~ optional(",") ~ ")") ~> (
+		(functionName ~ "(" ~ zeroOrMore(undelimitedList | Expression).separatedBy(",") ~ optional(",") ~ ")") ~> (
 			(function: Expression, arguments: Seq[Expression]) => FunctionCall(function, arguments)
 		)
 	}

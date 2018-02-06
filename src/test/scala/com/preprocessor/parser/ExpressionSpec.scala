@@ -109,6 +109,11 @@ class ExpressionSpec extends BaseParserSpec {
 		assert(parse("[,]") == Term.List(Vector())) // This probably shouldn't be allowed
 	}
 
+	it should "correctly parse an undelimited list" in {
+		assert(parse("myFunction(1 2 3, 2)") ==
+			FunctionCall(Variable("myFunction"), Vector(Term.List(Vector(Number(1), Number(2), Number(3))), Number(2))))
+	}
+
 	it should "correctly parse a conditional" in {
 		assert(parse("@if ($myVariable) 1 @else 2") ==
 			Conditional(Variable("myVariable"), Number(1), Some(Number(2))))
