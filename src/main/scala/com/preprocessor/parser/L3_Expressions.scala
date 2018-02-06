@@ -113,11 +113,11 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def undelimitedListBody: Rule1[Seq[Expression]] = rule {
-		zeroOrMore(Expression).separatedBy(whitespace) ~ whitespace
+		zeroOrMore(Expression).separatedBy(AnyWhitespace) ~ AnyWhitespace
 	}
 
 	private def delimitedListBody: Rule1[Seq[Expression]] = rule {
-		zeroOrMore(Expression).separatedBy(",") ~ optional(",") ~ whitespace
+		zeroOrMore(Expression).separatedBy(",") ~ optional(",") ~ AnyWhitespace
 	}
 
 	private def variableName: Rule1[java.lang.String] = rule {

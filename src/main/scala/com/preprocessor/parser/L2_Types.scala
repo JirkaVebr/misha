@@ -45,7 +45,7 @@ trait L2_Types { this: org.parboiled2.Parser
 			"Ratio" -> Ast.Type.Ratio,
 			"String" -> Ast.Type.String,
 			"Unit" -> Ast.Type.Unit
-		)) ~ whitespace
+		)) ~ AnyWhitespace
 	}
 
 	def TypeAlias: Rule1[Ast.Type.TypeAlias] = rule {

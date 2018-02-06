@@ -13,7 +13,7 @@ trait L6_TopLevel { this: org.parboiled2.Parser
 	with L4_Statements =>
 
 	def Program: Rule1[Ast.Program] = rule {
-		whitespace ~ Expression ~ whitespace ~ EOI ~> Ast.Program
+		AnyWhitespace ~ Expression ~ AnyWhitespace ~ EOI ~> Ast.Program
 	}
 
 }
