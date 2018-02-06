@@ -1,5 +1,6 @@
 package com.preprocessor.ast
 
+import com.preprocessor.ast.Ast.Value.Flag
 import com.preprocessor.ast.UnitOfMeasure.{Scalar, UnitOfMeasure}
 
 import scala.collection.immutable.{Map => SMap}
@@ -80,9 +81,27 @@ object Ast {
 		case object Ratio extends Rational
 	}
 
+	object Statement {
+		import Expression._
+		import Type._
+
+		sealed trait Statement extends Node
+
+		case object NoOp extends Statement
+		case class Sequence(current: Statement, following: Statement) extends Statement
+		case class Property(name: String, value: Expression, flags: Set[Flag] = Set.empty) extends Statement
+		//case class Rule(selector: Expression)
+		case class Import(destination: Expression, parameters: Option[Expression]) extends Statement
+		case class TypeAlias(name: String, subType: Any) extends Statement
+		case class VariableDeclaration(name: String, typeAnnotation: Option[Any], value: Expression) extends Statement
+		case class FunctionDeclaration(name: String, typeAnnotation: Option[Any], value: Statement) extends Statement
+	}
+
 
 	object Expression {
-		sealed trait Expression extends Node
+		import Statement._
+
+		sealed trait Expression extends Statement
 
 		case class BinaryOperation(operator: BinaryOperator, left: Expression, right: Expression) extends Expression
 		sealed trait BinaryOperator
@@ -117,8 +136,7 @@ object Ast {
 
 		case class Conditional(condition: Expression, consequent: Expression, alternative: Option[Expression])
 			extends Expression
-
-		//case class FunctionDeclaration
+		case class StringInterpolation(components: Seq[Either[String, Expression]]) extends Expression
 	}
 
 	object Term {
