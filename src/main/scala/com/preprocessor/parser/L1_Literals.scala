@@ -152,10 +152,7 @@ object L1_Literals {
 	private def convertHexToColor(hex: String): Rgba = {
 		val isShort = hex.length == 3 || hex.length == 4
 		val hasAlpha = hex.length == 4 || hex.length == 8
-		val h2d = (c1: Char, c2: Char) => {
-			println(s"#$c1##$c2")
-			java.lang.Integer.parseInt(s"$c1$c2", 16)
-		}
+		val h2d = (c1: Char, c2: Char) => java.lang.Integer.parseInt(s"$c1$c2", 16)
 		val norm: Vector[Int] =
 			if (isShort) hex.toVector.map((c: Char) => h2d(c, c))
 			else hex.toVector.grouped(2).map((pxs: Vector[Char]) => h2d(pxs(0), pxs(1))).toVector
