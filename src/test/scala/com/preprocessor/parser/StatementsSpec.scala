@@ -1,8 +1,9 @@
 package com.preprocessor.parser
 
+import com.preprocessor.ast.Ast.Expression.{Addition, BinaryOperation}
 import com.preprocessor.ast.Ast.Statement._
-import com.preprocessor.ast.Ast.Type
-import com.preprocessor.ast.Ast.Value
+import com.preprocessor.ast.Ast.{Term, Type, Value}
+import com.preprocessor.ast.Ast.Value.Number
 
 
 class StatementsSpec extends BaseParserSpec {
@@ -23,6 +24,13 @@ class StatementsSpec extends BaseParserSpec {
 	it should "correctly parse a type alias declaration" in {
 		assert(parse("@type IntOrString = Integer | String") ==
 			TypeAliasDeclaration(Type.TypeAlias("IntOrString"), Type.Union(Set(Type.Integer, Type.String))))
+	}
+
+	it should "correctly parse expressions as statements" in {
+		assert(parse("1 + 2 + 3") ==
+			BinaryOperation(Addition, BinaryOperation(Addition, Number(1), Number(2)), Number(3))
+		)
+		assert(parse("[1, 2, 3]") == Term.List(Vector(Number(1), Number(2), Number(3))))
 	}
 
 	//it should "correctly parse a function call" in {
