@@ -49,7 +49,9 @@ trait L2_Types { this: org.parboiled2.Parser
 	}
 
 	def TypeAlias: Rule1[Ast.Type.TypeAlias] = rule {
-		capture(CharPredicate.UpperAlpha ~ zeroOrMore(CharPredicate.AlphaNum)) ~ AnyWhitespace ~> Ast.Type.TypeAlias
+		capture(CharPredicate.UpperAlpha ~ zeroOrMore(CharPredicate.AlphaNum)) ~ AnyWhitespace ~> (
+			(alias: String) => Ast.Type.TypeAlias(alias)
+		)
 	}
 
 	private def literalType: Rule1[Ast.Type.Literal] = rule {

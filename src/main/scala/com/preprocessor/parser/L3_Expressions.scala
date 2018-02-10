@@ -101,7 +101,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 
 	private def variable: Rule1[Term.Variable] = rule {
 		// Deliberately using $ as a char and not a string as not to allow whitespace there
-		'$' ~ variableName ~> Term.Variable
+		'$' ~ variableName ~> ((name: String) => Term.Variable(name))
 	}
 
 	private def delimitedList: Rule1[Term.List] = rule {
@@ -139,7 +139,9 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def functionName: Rule1[Expression] = rule {
-		subExpression | variable | (variableName ~> Term.Variable)
+		subExpression | variable | (variableName ~> (
+			(name: String) => Term.Variable(name)
+		))
 	}
 
 	private def subExpression: Rule1[Expression] = rule {

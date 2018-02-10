@@ -1,6 +1,7 @@
 package com.preprocessor.ast
 
 import com.preprocessor.ast.UnitOfMeasure.{Scalar, UnitOfMeasure}
+import Symbol.{TypeSymbol, ValueSymbol}
 
 import scala.collection.immutable.{Map => SMap}
 
@@ -18,7 +19,7 @@ object Ast {
 	object Value {
 		import Term._
 
-		sealed abstract class Value extends Node with Term
+		sealed trait Value extends Term
 
 		sealed trait Primitive extends Value
 		sealed trait Composite extends Value
@@ -53,7 +54,7 @@ object Ast {
 		case object Boolean extends Primitive
 		case object String extends Primitive
 		case class Literal(value: Value.Primitive) extends Primitive
-		case class TypeAlias(name: String) extends Any
+		case class TypeAlias(name: TypeSymbol) extends Any
 
 		case class Union(subs: Set[Any]) extends Composite
 		case class Function(arguments: Seq[Any], output: Any) extends Composite
@@ -91,8 +92,8 @@ object Ast {
 		//case class Property(name: Expression, value: Expression, flags: Option[Expression]) extends Statement
 		//case class Import(destination: Expression, parameters: Option[Expression]) extends Statement
 		case class TypeAliasDeclaration(alias: TypeAlias, subType: Any) extends Statement
-		case class VariableDeclaration(name: String, typeAnnotation: Option[Any], value: Expression) extends Statement
-		case class FunctionDeclaration(name: String, typeAnnotation: Option[Any], value: Statement) extends Statement
+		case class VariableDeclaration(name: ValueSymbol, typeAnnotation: Option[Any], value: Expression) extends Statement
+		case class FunctionDeclaration(name: ValueSymbol, typeAnnotation: Option[Any], value: Statement) extends Statement
 
 		//case class Rule(head: StringInterpolation, body: Statement) extends Statement
 		case class Rule(head: Value.String, body: Statement) extends Statement // TODO
@@ -145,7 +146,7 @@ object Ast {
 
 		sealed trait Term extends Expression
 
-		case class Variable(name: java.lang.String) extends Term
+		case class Variable(name: ValueSymbol) extends Term
 		case class FunctionCall(function: Expression, arguments: Seq[Expression] = scala.Vector.empty) extends Term
 		case class List(items: Seq[Expression]) extends Term
 		case class MemberAccess(container: Expression, name: Expression) extends Term
