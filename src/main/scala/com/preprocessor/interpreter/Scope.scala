@@ -1,4 +1,4 @@
-package com.preprocessor.interpreter.scope
+package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Symbol
 import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}

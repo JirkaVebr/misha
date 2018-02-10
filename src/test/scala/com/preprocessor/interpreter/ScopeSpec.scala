@@ -1,9 +1,8 @@
-package com.preprocessor.interpreter.scope
+package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Type
 import com.preprocessor.ast.Ast.Type.Color
 import com.preprocessor.ast.Symbol.TypeSymbol
-import com.preprocessor.interpreter.BaseInterpreterSpec
 
 class ScopeSpec extends BaseInterpreterSpec {
 
