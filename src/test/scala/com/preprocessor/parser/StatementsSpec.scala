@@ -16,9 +16,11 @@ class StatementsSpec extends BaseParserSpec {
 
 	it should "correctly parse an empty rule" in { // TODO
 		assert(parse(
-			""""div a strong" {
+			""""div a strong"
+				|{
+				|
 				|}
-			""".stripMargin) == Rule(Value.String("div a strong"), sequence(NoOp)))
+				|""".stripMargin) == Rule(Value.String("div a strong"), sequence(NoOp)))
 	}
 
 	it should "correctly parse a type alias declaration" in {

@@ -29,7 +29,7 @@ trait L4_Statements { this: org.parboiled2.Parser
 		standalone(typeAliasDeclaration) | rule | standalone(expression) | noOp
 	}
 
-	private def rule: Rule1[Ast.Statement.Rule] = rule {
+	private def rule: Rule1[Ast.Statement.Rule] = rule { // TODO using quoted strings is temporary
 		(QuotedString ~ block) ~> Ast.Statement.Rule
 	}
 
@@ -38,7 +38,7 @@ trait L4_Statements { this: org.parboiled2.Parser
 	}
 
 	private def noOp: Rule1[Statement] = rule {
-		push(NoOp)
+		optional(EndOfLine) ~ push(NoOp)
 	}
 
 
