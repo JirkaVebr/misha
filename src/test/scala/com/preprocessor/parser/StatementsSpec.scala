@@ -35,6 +35,11 @@ class StatementsSpec extends BaseParserSpec {
 		assert(parse("[1, 2, 3]") == Term.List(Vector(Number(1), Number(2), Number(3))))
 	}
 
+	it should "correctly parse a variable declaration" in {
+		assert(parse("$myVar = 1") == VariableDeclaration("myVar", None, Number(1)))
+		assert(parse("$myVar: Number = 1") == VariableDeclaration("myVar", Some(Type.Number), Number(1)))
+	}
+
 	//it should "correctly parse a function call" in {
 	//	assert(parse("color red") == Rule(Value.String("div a strong"), sequence(NoOp)))
 	//}

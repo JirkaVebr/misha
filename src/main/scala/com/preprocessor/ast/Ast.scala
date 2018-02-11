@@ -13,8 +13,7 @@ object Ast {
 
 	sealed abstract class Node
 
-	// Temporary
-	case class Program(program: Expression.Expression) extends Node
+	case class Program(program: Statement.Statement) extends Node
 
 	object Value {
 		import Term._

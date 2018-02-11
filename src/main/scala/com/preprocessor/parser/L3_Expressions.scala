@@ -91,7 +91,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def factor: Rule1[Expression] = rule {
-		functionCall | conditional | delimitedList | unaryOperation | variable | subExpression | Literal
+		functionCall | conditional | delimitedList | unaryOperation | Variable | subExpression | Literal
 	}
 
 	private def unaryOperation: Rule1[UnaryOperation] = rule {
@@ -99,7 +99,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 		("!" ~ Expression ~> ((e: Expression) => UnaryOperation(LogicalNegation, e)))
 	}
 
-	private def variable: Rule1[Term.Variable] = rule {
+	def Variable: Rule1[Term.Variable] = rule {
 		// Deliberately using $ as a char and not a string as not to allow whitespace there
 		'$' ~ variableName ~> ((name: String) => Term.Variable(name))
 	}
@@ -139,7 +139,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def functionName: Rule1[Expression] = rule {
-		subExpression | variable | (variableName ~> (
+		subExpression | Variable | (variableName ~> (
 			(name: String) => Term.Variable(name)
 		))
 	}

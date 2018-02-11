@@ -3,6 +3,8 @@ package com.preprocessor.parser
 import com.preprocessor.ast.Ast
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Statement._
+import com.preprocessor.ast.Ast.Term.Variable
+import com.preprocessor.ast.Ast.Type
 import org.parboiled2._
 
 trait L4_Statements { this: org.parboiled2.Parser
@@ -26,7 +28,7 @@ trait L4_Statements { this: org.parboiled2.Parser
 	}
 
 	private def sequenceNode: Rule1[Statement] = rule {
-		standalone(typeAliasDeclaration) | rule | standalone(expression) | noOp
+		standalone(typeAliasDeclaration) | rule | standalone(variableDeclaration) | standalone(expression) | noOp
 	}
 
 	private def rule: Rule1[Ast.Statement.Rule] = rule { // TODO using quoted strings is temporary
@@ -46,6 +48,13 @@ trait L4_Statements { this: org.parboiled2.Parser
 
 	private val typeAliasDeclaration: () => Rule1[TypeAliasDeclaration] = () => rule {
 		("@type" ~ TypeAlias ~ "=" ~ Type) ~> TypeAliasDeclaration
+	}
+
+	private val variableDeclaration: () => Rule1[VariableDeclaration] = () => rule {
+		(Variable ~ optional(":" ~ Type) ~ "=" ~ Expression) ~> (
+			(variable: Variable, typeAnnotation: Option[Ast.Type.Any], value: Expression) =>
+				VariableDeclaration(variable.name, typeAnnotation, value)
+		)
 	}
 
 	private val expression: () => Rule1[Expression] = () => rule {
