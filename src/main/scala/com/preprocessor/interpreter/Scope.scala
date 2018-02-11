@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter
 
+import com.preprocessor._
 import com.preprocessor.ast.Symbol
-import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
 
 import scala.annotation.tailrec
 
@@ -32,11 +32,7 @@ class Scope[K <: Symbol.Symbol[V], V](val symbols: List[Map[K, V]] = List.empty)
 
 object Scope {
 
-	def createTypeScope(): Scope[TypeSymbol, TypeSymbol#Value] = {
-		new Scope[TypeSymbol, TypeSymbol#Value]()
-	}
+	def createTypeScope(): TypeScope = new TypeScope
 
-	def createValueScope(): Scope[ValueSymbol, ValueSymbol#Value] = {
-		new Scope[ValueSymbol, ValueSymbol#Value]()
-	}
+	def createValueScope(): ValueScope = new ValueScope
 }
