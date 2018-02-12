@@ -89,5 +89,8 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		assert(childEnvironment.lookup(testTypeSymbol).nonEmpty)
 		assert(childEnvironment.lookup(testTypeSymbol).get == testTypeChild)
 		assert(parentEnvironment.lookup(testTypeSymbol).get == testTypeParent)
+
+		val parentEnvironmentAgain = childEnvironment.popSubScope()
+		assert(parentEnvironmentAgain.get.lookup(testTypeSymbol).get == testTypeParent)
 	}
 }

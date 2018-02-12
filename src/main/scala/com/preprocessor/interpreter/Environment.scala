@@ -5,7 +5,8 @@ import com.preprocessor.ast.Symbol._
 
 class Environment private
 	(val parentEnvironment: Option[Environment],
-	 val symbolTable: Map[Symbol, Symbol#Value]
+	 val symbolTable: Map[Symbol, Symbol#Value],
+	 val subEnvironments: List[Environment]
 	) {
 
 	def this(parentEnvironment: Option[Environment] = None, context: Option[Context.Value] = None) = {
@@ -14,13 +15,22 @@ class Environment private
 				Context -> x
 			)
 			case None => Map[Symbol, Symbol#Value]()
-		})
+		}, List[Environment]())
 	}
 
 	def pushSubScope(context: Option[Context.Value] = None): Environment = new Environment(Some(this), context)
 
+	def popSubScope(): Option[Environment] = parentEnvironment match {
+		case Some(parent) => Some(new Environment(
+			parent.parentEnvironment,
+			parent.symbolTable,
+			this :: parent.subEnvironments
+		))
+		case None => None
+	}
+
 	def updated(name: Symbol)(value: name.Value): Environment =
-		new Environment(parentEnvironment, symbolTable.updated(name, value))
+		new Environment(parentEnvironment, symbolTable.updated(name, value), subEnvironments)
 
 
 	def lookup(name: Symbol): Option[Symbol#Value] = {
