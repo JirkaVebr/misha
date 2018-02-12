@@ -5,7 +5,7 @@ object Selector {
 	sealed trait Selector
 
 	case object Universal extends Selector
-	case class Element(name: String, namespace: Option[Namespace] = None) extends Selector
+	case class Element(name: String, namespace: Option[Namespace.Namespace] = None) extends Selector
 	case class Class(name: String) extends Selector
 	case class Id(name: String) extends Selector
 

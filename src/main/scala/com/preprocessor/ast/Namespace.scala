@@ -1,10 +1,12 @@
 package com.preprocessor.ast
 
-sealed abstract class Namespace
+object Namespace {
+	sealed trait Namespace
 
 
-case class NamedNamespace(name: String) extends Namespace
+	case class NamedNamespace(name: String) extends Namespace
 
-case object UniversalNamespace extends Namespace
+	case object UniversalNamespace extends Namespace
 
-case object NoNamespace extends Namespace
+	case object NoNamespace extends Namespace
+}
