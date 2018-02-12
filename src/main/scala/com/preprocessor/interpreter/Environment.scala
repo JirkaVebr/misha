@@ -8,16 +8,16 @@ class Environment private
 	 val symbolTable: Map[Symbol, Symbol#Value]
 	) {
 
-	def this(parentEnvironment: Option[Environment] = None, selector: Option[Selector.Value] = None) = {
-		this(parentEnvironment, selector match {
+	def this(parentEnvironment: Option[Environment] = None, context: Option[Context.Value] = None) = {
+		this(parentEnvironment, context match {
 			case Some(x) => Map[Symbol, Symbol#Value](
-				Selector -> x
+				Context -> x
 			)
 			case None => Map[Symbol, Symbol#Value]()
 		})
 	}
 
-	def pushSubScope(selector: Option[Selector.Value] = None): Environment = new Environment(Some(this), selector)
+	def pushSubScope(context: Option[Context.Value] = None): Environment = new Environment(Some(this), context)
 
 	def updated(name: Symbol)(value: name.Value): Environment =
 		new Environment(parentEnvironment, symbolTable.updated(name, value))

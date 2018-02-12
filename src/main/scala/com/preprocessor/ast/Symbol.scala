@@ -1,6 +1,6 @@
 package com.preprocessor.ast
 
-import com.preprocessor.ast.Selector.Selector
+import com.preprocessor.ast.RuleContext.RuleContext
 
 object Symbol {
 
@@ -16,8 +16,8 @@ object Symbol {
 		override type Value = Ast.Value.Value
 	}
 
-	case object Selector extends Symbol {
-		override type Value = Selector
+	case object Context extends Symbol {
+		override type Value = RuleContext
 	}
 
 }

@@ -2,8 +2,8 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.{Type, Value}
 import com.preprocessor.ast.Ast.Type.Color
-import com.preprocessor.ast.Selector.Universal
-import com.preprocessor.ast.Symbol.{Selector, TypeSymbol, ValueSymbol}
+import com.preprocessor.ast.RuleContext.Selector.Universal
+import com.preprocessor.ast.Symbol.{Context, TypeSymbol, ValueSymbol}
 
 class EnvironmentSpec extends BaseInterpreterSpec {
 
@@ -36,23 +36,23 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		val testType = Color
 		val testValueSymbol = ValueSymbol("test")
 		val testValue = Value.Number(1)
-		val testSelector = Universal
+		val testContext = Universal
 
 		assert(environment.lookup(testTypeSymbol).isEmpty)
 		assert(environment.lookup(testValueSymbol).isEmpty)
-		assert(environment.lookup(Selector).isEmpty)
+		assert(environment.lookup(Context).isEmpty)
 
 		environment = environment.updated(testTypeSymbol)(testType)
 		environment = environment.updated(testValueSymbol)(testValue)
-		environment = environment.updated(Selector)(testSelector)
+		environment = environment.updated(Context)(testContext)
 
 		assert(environment.lookup(testTypeSymbol).nonEmpty)
 		assert(environment.lookup(testValueSymbol).nonEmpty)
-		assert(environment.lookup(Selector).nonEmpty)
+		assert(environment.lookup(Context).nonEmpty)
 
 		assert(environment.lookup(testTypeSymbol).get == testType)
 		assert(environment.lookup(testValueSymbol).get == testValue)
-		assert(environment.lookup(Selector).get == testSelector)
+		assert(environment.lookup(Context).get == testContext)
 	}
 
 	it should "retrieve data from parent" in {
