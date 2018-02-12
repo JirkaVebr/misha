@@ -52,6 +52,7 @@ object Ast {
 		case object Unit extends Primitive
 		case object Boolean extends Primitive
 		case object String extends Primitive
+		case object Flag extends Primitive
 		case class Literal(value: Value.Primitive) extends Primitive
 		case class TypeAlias(name: TypeSymbol) extends Any
 
