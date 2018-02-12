@@ -19,6 +19,7 @@ object Ast {
 		import Term._
 
 		sealed trait Value extends Term
+		case object Unit extends Value
 
 		sealed trait Primitive extends Value
 		sealed trait Composite extends Value
