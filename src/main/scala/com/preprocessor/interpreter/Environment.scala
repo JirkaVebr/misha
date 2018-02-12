@@ -9,16 +9,16 @@ class Environment private
 	 val subEnvironments: List[Environment]
 	) {
 
-	def this(parentEnvironment: Option[Environment] = None, context: Option[Context.Value] = None) = {
-		this(parentEnvironment, context match {
+	def this(parentEnvironment: Option[Environment] = None) =
+		this(parentEnvironment, Map.empty, List[Environment]())
+
+	def pushSubScope(context: Option[Context.Value] = None): Environment =
+		new Environment(Some(this), context match {
 			case Some(x) => Map[Symbol, Symbol#Value](
 				Context -> x
 			)
 			case None => Map[Symbol, Symbol#Value]()
-		}, List[Environment]())
-	}
-
-	def pushSubScope(context: Option[Context.Value] = None): Environment = new Environment(Some(this), context)
+		}, subEnvironments)
 
 	def popSubScope(): Option[Environment] = parentEnvironment match {
 		case Some(parent) => Some(new Environment(
