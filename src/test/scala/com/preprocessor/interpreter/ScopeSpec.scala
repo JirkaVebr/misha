@@ -1,5 +1,6 @@
 package com.preprocessor.interpreter
 
+import com.preprocessor.TypeScope
 import com.preprocessor.ast.Ast.Type
 import com.preprocessor.ast.Ast.Type.Color
 import com.preprocessor.ast.Symbol.TypeSymbol
@@ -9,13 +10,13 @@ class ScopeSpec extends BaseInterpreterSpec {
 	behavior of "Scope"
 
 	it should "behave correctly when empty" in {
-		val typeScope = Scope.createTypeScope()
+		val typeScope = new TypeScope
 
 		assert(typeScope.lookup(TypeSymbol("AbsentType")).isEmpty)
 	}
 
 	it should "successfully put and retrieve data" in {
-		var typeScope = Scope.createTypeScope()
+		var typeScope = new TypeScope
 
 		val testTypeName = "TestTypeName"
 		val testType = Color
@@ -29,7 +30,7 @@ class ScopeSpec extends BaseInterpreterSpec {
 	}
 
 	it should "retrieve data from parent" in {
-		var parentTypeScope = Scope.createTypeScope()
+		var parentTypeScope = new TypeScope
 
 		val testTypeName = "TestTypeName"
 		val testType = Color
@@ -46,7 +47,7 @@ class ScopeSpec extends BaseInterpreterSpec {
 	}
 
 	it should "shadow data from parent" in {
-		var parentTypeScope = Scope.createTypeScope()
+		var parentTypeScope = new TypeScope
 
 		val testTypeName = "TestTypeName"
 		val testTypeParent = Color

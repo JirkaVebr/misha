@@ -1,38 +1,26 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor._
 import com.preprocessor.ast.Symbol
 
-import scala.annotation.tailrec
+class Scope[K <: Symbol.Symbol[V], V] private(val parentScope: Option[Scope[K, V]], val symbolTable: Map[K, V]) {
 
-class Scope[K <: Symbol.Symbol[V], V](val symbols: List[Map[K, V]] = List.empty) {
-
-
-	def pushSubScope(): Scope[K, V] = new Scope[K, V](Map[K, V]() :: symbols)
-
-	def updated(name: K, value: V): Scope[K, V] = new Scope(symbols match {
-		case Nil => List(Map(name -> value))
-		case head :: tail => head.updated(name, value) :: tail
-	})
-
-	def lookup(name: K): Option[V] = {
-		@tailrec
-		def search(stack: List[Map[K, V]]): Option[V] = stack match {
-			case Nil => None
-			case head :: tail => head.get(name) match {
-				case Some(value) => Some(value)
-				case None => search(tail)
-			}
-		}
-
-		search(symbols)
+	def this(parentScope: Option[Scope[K, V]] = None) = {
+		this(parentScope, Map.empty)
 	}
 
-}
+	def pushSubScope(): Scope[K, V] = new Scope[K, V](Some(this))
 
-object Scope {
+	def updated(name: K, value: V): Scope[K, V] = new Scope(parentScope, symbolTable.updated(name, value))
 
-	def createTypeScope(): TypeScope = new TypeScope
+	def lookup(name: K): Option[V] = {
+		val value = symbolTable.get(name)
+		value match {
+			case Some(_) => value
+			case None => parentScope match {
+				case Some(parent) => parent.lookup(name)
+				case None => None
+			}
+		}
+	}
 
-	def createValueScope(): ValueScope = new ValueScope
 }
