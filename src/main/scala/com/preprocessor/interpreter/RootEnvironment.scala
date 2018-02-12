@@ -1,17 +1,20 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.TypeScope
+import com.preprocessor.ast.Symbol.{Selector, TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.{Ast, Symbol}
 
-class RootTypeScope extends TypeScope {
+class RootEnvironment extends Environment {
 
 
-	override def lookup(name: Symbol.TypeSymbol): Option[Symbol.TypeSymbol#Value] =
-		RootTypeScope.preDefinedTypes.get(name)
+	override def lookup(name: Symbol.Symbol): Option[Symbol.Symbol#Value] = name match {
+		case TypeSymbol(typeName) => RootEnvironment.preDefinedTypes.get(typeName).asInstanceOf[Option[name.Value]]
+		case ValueSymbol(_) => None // TODO
+		case Selector => None
+	}
 
 }
 
-object RootTypeScope {
+object RootEnvironment {
 	val preDefinedTypes: Map[String, Symbol.TypeSymbol#Value] = Map(
 		"Any" -> Ast.Type.Any,
 		"Color" -> Ast.Type.Color,

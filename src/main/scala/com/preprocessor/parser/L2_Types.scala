@@ -1,7 +1,7 @@
 package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast
-import com.preprocessor.interpreter.RootTypeScope
+import com.preprocessor.interpreter.RootEnvironment
 import org.parboiled2._
 
 trait L2_Types { this: org.parboiled2.Parser
@@ -32,7 +32,7 @@ trait L2_Types { this: org.parboiled2.Parser
 	}
 
 	private def nonCompositeType: Rule1[Ast.Type.Any] = rule {
-		valueMap(RootTypeScope.preDefinedTypes) ~ AnyWhitespace
+		valueMap(RootEnvironment.preDefinedTypes) ~ AnyWhitespace
 	}
 
 	def TypeAlias: Rule1[Ast.Type.TypeAlias] = rule {
