@@ -17,7 +17,7 @@ trait L2_Types { this: org.parboiled2.Parser
 
 	private def subtractionType: Rule1[Ast.Type.Any] = rule {
 		unionType ~ optional(
-			"--" ~ unionType ~> Ast.Type.Subtraction
+			"--" ~!~ unionType ~> Ast.Type.Subtraction
 		)
 	}
 

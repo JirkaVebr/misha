@@ -36,7 +36,7 @@ trait L4_Statements { this: org.parboiled2.Parser
 	}
 
 	private def block: Rule1[Statement] = rule { // TODO replace '{' and '}' by INDENT and DEDENT respectively
-		'{' ~ EndOfLine ~ Statement ~ '}' ~ EndOfLine
+		'{' ~!~ EndOfLine ~!~ Statement ~!~ '}' ~!~ EndOfLine
 	}
 
 	private def noOp: Rule1[Statement] = rule {
@@ -47,11 +47,11 @@ trait L4_Statements { this: org.parboiled2.Parser
 	// Standalone statements
 
 	private val typeAliasDeclaration: () => Rule1[TypeAliasDeclaration] = () => rule {
-		("@type" ~ TypeAlias ~ "=" ~ Type) ~> TypeAliasDeclaration
+		("@type" ~!~ TypeAlias ~!~ "=" ~!~ Type) ~> TypeAliasDeclaration
 	}
 
 	private val variableDeclaration: () => Rule1[VariableDeclaration] = () => rule {
-		(Variable ~ optional(":" ~ Type) ~ "=" ~ Expression) ~> (
+		(Variable ~ optional(":" ~!~ Type) ~ "=" ~!~ Expression) ~> (
 			(variable: Variable, typeAnnotation: Option[Ast.Type.Any], value: Expression) =>
 				VariableDeclaration(variable.name, typeAnnotation, value)
 		)
