@@ -8,5 +8,7 @@ case class EvalState(environment: Environment, nodeType: Type.Any = Type.Any, va
 
 	@inline def ~>(typeValue: (Type.Any, Value.Value)): Try[EvalState] =
 		Success(EvalState(environment, typeValue._1, typeValue._2))
+
+	@inline def ~>(value: Value.Value): Try[EvalState] = ~>(value.valueType, value)
 }
 
