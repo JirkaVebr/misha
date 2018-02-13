@@ -33,8 +33,8 @@ class Environment private
 		new Environment(parentEnvironment, symbolTable.updated(name, value), subEnvironments)
 
 
-	def lookup(name: Symbol): Option[Symbol#Value] = {
-		val value = symbolTable.get(name)
+	def lookup(name: Symbol): Option[name.Value] = {
+		val value = symbolTable.get(name).asInstanceOf[Option[name.Value]]
 		value match {
 			case Some(_) => value
 			case None => parentEnvironment match {
