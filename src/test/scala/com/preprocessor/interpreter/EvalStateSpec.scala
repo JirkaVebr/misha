@@ -18,8 +18,8 @@ class EvalStateSpec extends BaseInterpreterSpec {
 		val numbervalue = Value.Number(123)
 		val newState = evalState ~> (numberType, numbervalue)
 
-		assert(newState.environment == environment)
-		assert(newState.nodeType == numberType)
-		assert(newState.value == numbervalue)
+		assert(newState.get.environment == environment)
+		assert(newState.get.nodeType == numberType)
+		assert(newState.get.value == numbervalue)
 	}
 }
