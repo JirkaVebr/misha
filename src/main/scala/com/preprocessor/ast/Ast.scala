@@ -18,27 +18,46 @@ object Ast {
 	object Value {
 		import Term._
 
-		sealed trait Value extends Term
-		case object Unit extends Value
+		sealed abstract class Value() extends Term {
+			def valueType: Type.Any
+		}
 
-		sealed trait Primitive extends Value
-		sealed trait Composite extends Value
+		case object Unit extends Value {
+			override def valueType: Type.Any = Type.Unit
+		}
 
-		case class Number(value: Double, unit: UnitOfMeasure = Scalar()) extends Primitive
-		case class Boolean(value: scala.Boolean) extends Primitive
-		case class String(value: java.lang.String) extends Primitive
+		sealed abstract class Primitive extends Value
+		sealed abstract class Composite extends Value
 
-		sealed trait Color extends Primitive
+		case class Number(value: Double, unit: UnitOfMeasure = Scalar()) extends Primitive {
+			override def valueType: Type.Any = Type.Number
+		}
+		case class Boolean(value: scala.Boolean) extends Primitive {
+			override def valueType: Type.Any = Type.Boolean
+		}
+		case class String(value: java.lang.String) extends Primitive {
+			override def valueType: Type.Any = Type.String
+		}
+
+		sealed abstract class Color extends Primitive {
+			override def valueType: Type.Any = Type.Color
+		}
 		case class Rgba(r: Int, g: Int, b: Int, a: Int = 0) extends Color
 		case object CurrentColor extends Color
 		case object Transparent extends Color
 
-		sealed trait Flag extends Primitive
+		sealed abstract class Flag extends Primitive {
+			override def valueType: Type.Any = Type.Flag
+		}
 		case object Important extends Flag
 
 		// Composite types
-		case class Tuple2Value(first: Value, second: Value) extends Composite
-		case class List(values: Seq[Value]) extends Composite
+		case class Tuple2Value(first: Value, second: Value) extends Composite {
+			override def valueType: Type.Any = Type.Tuple2(first.valueType, second.valueType)
+		}
+		case class List(values: Seq[Value]) extends Composite {
+			override def valueType: Type.Any = Type.Any // TODO
+		}
 		//case class FunctionValue(arguments: Option[Seq[]]) extends Composite
 	}
 
