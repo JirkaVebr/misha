@@ -2,7 +2,7 @@ package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Term
-import com.preprocessor.ast.Ast.Term.{FunctionCall, MemberAccess, Variable}
+import com.preprocessor.ast.Ast.Term.{FunctionCall, MemberAccess, ParentSelector, Variable}
 import com.preprocessor.ast.Ast.Value._
 
 class ExpressionSpec extends BaseParserSpec {
@@ -98,6 +98,11 @@ class ExpressionSpec extends BaseParserSpec {
 
 	it should "correctly parse a sub-expression" in {
 		assert(parse("(1)") == Number(1))
+	}
+
+	it should "correctly parse a magic symbol" in {
+		assert(parse("&") == ParentSelector)
+		assert(parse("&") == ParentSelector)
 	}
 
 	it should "correctly parse a delimited list" in {

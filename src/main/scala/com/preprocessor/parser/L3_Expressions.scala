@@ -91,7 +91,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def factor: Rule1[Expression] = rule {
-		functionCall | conditional | delimitedList | unaryOperation | Variable | subExpression | Literal
+		functionCall | conditional | delimitedList | unaryOperation | Variable | subExpression | magicSymbol | Literal
 	}
 
 	private def unaryOperation: Rule1[UnaryOperation] = rule {
@@ -156,4 +156,9 @@ trait L3_Expressions { this: org.parboiled2.Parser
 			)
 		)
 	}
+
+	private def magicSymbol: Rule1[MagicSymbol] = rule {
+		"&" ~ push(ParentSelector)
+	}
+
 }
