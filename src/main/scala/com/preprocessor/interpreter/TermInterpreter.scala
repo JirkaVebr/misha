@@ -50,7 +50,7 @@ object TermInterpreter {
 
 		variableValue match {
 			case Some(value) => state ~> value
-			case None => Failure(ProgramError(ProgramError.UndefinedVariable, variable))
+			case None => state.fail(ProgramError.UndefinedVariable, variable)
 		}
 	}
 
