@@ -3,8 +3,7 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Ast.Expression.Expression
 import com.preprocessor.ast.Ast.Term._
 import com.preprocessor.ast.Ast.Value._
-import com.preprocessor.ast.Ast.{Term, Type, Value}
-import com.preprocessor.ast.UnitOfMeasure.{GenericUnit, Percentage, Scalar}
+import com.preprocessor.ast.Ast.{Term, Value}
 import com.preprocessor.error.ProgramError
 
 import scala.util.{Failure, Success, Try}
@@ -37,8 +36,8 @@ object TermInterpreter {
 		val variableValue = state.environment.lookup(variable.name)
 
 		variableValue match {
-			case Some(value) => state ~> value
-			case None => state.fail(ProgramError.UndefinedVariable, variable)
+			case Some(value) => Success(EvalState(state.environment, value.value, value.recordType))
+			case None => state.fail(ProgramError.ReadingUndefinedVariable, variable)
 		}
 	}
 

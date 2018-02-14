@@ -23,5 +23,6 @@ object ProgramError {
 	case object IllTypedAssignment extends SimpleError("Type of assignment value does not conform to the declared variable type")
 	case object NegatingNonBoolean extends SimpleError("Logical negation of a non-boolean")
 	case object NegatingNonNumeric extends SimpleError("Arithmetic negation of a non-numeric")
-	case object UndefinedVariable extends SimpleError("Undefined variable")
+	case object ReadingUndefinedVariable extends SimpleError("Reading of an undefined variable")
+	case object WritingUninitializedVariable extends SimpleError("Writing to an uninitialized variable")
 }
