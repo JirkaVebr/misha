@@ -11,7 +11,7 @@ object UnitOfMeasure {
 		*/
 	final case class GenericUnit(subUnitProduct: Map[String, Int] = Map.empty) extends UnitOfMeasure
 
-	final case class Percentage() extends UnitOfMeasure
+	final case object Percentage extends UnitOfMeasure
 
-	final case class Scalar() extends UnitOfMeasure
+	final case object Scalar extends UnitOfMeasure
 }

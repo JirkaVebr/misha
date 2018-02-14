@@ -11,7 +11,7 @@ object StringOperations {
 		case primitive: Primitive => primitive match {
 			case String(string) => Some(Value.String(string))
 			case Number(number, unit) => unit match {
-				case Scalar() => Some(Value.String(number.toString))
+				case Scalar => Some(Value.String(number.toString))
 				case _ => None
 			}
 			case _ => None

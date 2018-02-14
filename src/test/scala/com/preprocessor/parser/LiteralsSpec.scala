@@ -59,10 +59,10 @@ class LiteralsSpec extends BaseParserSpec {
 	}
 
 	it should "parse a percentage" in {
-		assert(parse("+0%") == Value.Number(0, Percentage()))
-		assert(parse("0%") == Value.Number(0, Percentage()))
-		assert(parse("123%") == Value.Number(123, Percentage()))
-		assert(parse("11.22%") == Value.Number(11.22, Percentage()))
+		assert(parse("+0%") == Value.Number(0, Percentage))
+		assert(parse("0%") == Value.Number(0, Percentage))
+		assert(parse("123%") == Value.Number(123, Percentage))
+		assert(parse("11.22%") == Value.Number(11.22, Percentage))
 	}
 
 	it should "parse a hex color" in {

@@ -30,7 +30,7 @@ object Ast {
 		sealed abstract class Primitive extends Value
 		sealed abstract class Composite extends Value
 
-		case class Number(value: Double, unit: UnitOfMeasure = Scalar()) extends Primitive {
+		case class Number(value: Double, unit: UnitOfMeasure = Scalar) extends Primitive {
 			override def valueType: Type.Any = Type.Number
 		}
 		case class Boolean(value: scala.Boolean) extends Primitive {

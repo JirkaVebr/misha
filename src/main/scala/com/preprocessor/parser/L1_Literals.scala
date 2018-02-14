@@ -62,7 +62,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 	}
 
 	private def unitOfMeasure: Rule1[UnitOfMeasure] = rule {
-		('%' ~ AnyWhitespace ~> Percentage) |
+		('%' ~ AnyWhitespace ~ push(Percentage)) |
 		capture(oneOrMore(CharPredicate.Alpha)) ~> ((unitOfMeasure: String) => GenericUnit(Map(unitOfMeasure -> 1)))
 	}
 
@@ -151,7 +151,7 @@ object L1_Literals {
 		if (exponent.isEmpty) base else base * Math.pow(10, exponent.get)
 
 	private def createNumber(base: Double, exponent: Option[Double], unitOfMeasure: Option[UnitOfMeasure]): Value.Number =
-		Value.Number(getNumericValue(base, exponent), unitOfMeasure.getOrElse(Scalar()))
+		Value.Number(getNumericValue(base, exponent), unitOfMeasure.getOrElse(Scalar))
 
 	private def convertHexToColor(hex: String): Rgba = {
 		val isShort = hex.length == 3 || hex.length == 4
