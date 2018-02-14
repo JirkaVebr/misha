@@ -4,9 +4,9 @@ import com.preprocessor.ast.Ast.Expression.Expression
 import com.preprocessor.ast.Ast.Term._
 import com.preprocessor.ast.Ast.Value._
 import com.preprocessor.ast.Ast.{Term, Value}
-import com.preprocessor.error.ProgramError
+import com.preprocessor.error.ProgramError.ReadingUndefinedVariable
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Success, Try}
 
 object TermInterpreter {
 
@@ -36,8 +36,8 @@ object TermInterpreter {
 		val variableValue = state.environment.lookup(variable.name)
 
 		variableValue match {
-			case Some(value) => Success(EvalState(state.environment, value))
-			case None => state.fail(ProgramError.ReadingUndefinedVariable, variable)
+			case Some(value) => state ~> value.value
+			case None => state.fail(ReadingUndefinedVariable, variable)
 		}
 	}
 

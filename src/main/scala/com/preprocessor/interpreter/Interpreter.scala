@@ -1,8 +1,7 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.{Ast, ValueRecord}
 import com.preprocessor.ast.Ast.Program
-import com.preprocessor.ast.Ast.Value.Value
+import com.preprocessor.ast.{Ast, ValueRecord}
 
 import scala.util.{Failure, Success, Try}
 
