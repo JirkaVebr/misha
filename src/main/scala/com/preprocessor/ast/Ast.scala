@@ -66,6 +66,7 @@ object Ast {
 	object Type {
 		sealed trait Any extends Node {
 			def isSubtypeOf(otherType: Any): Boolean = Subtype.isSubtypeOf(this, otherType)
+			def isEquivalentTo(otherType: Any): Boolean = Subtype.isEquivalentTo(this, otherType)
 		}
 		case object Any extends Any
 
