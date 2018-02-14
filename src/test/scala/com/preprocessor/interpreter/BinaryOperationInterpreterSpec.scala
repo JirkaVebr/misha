@@ -1,13 +1,14 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.Expression.{BinaryOperation, Equals, Expression}
-import com.preprocessor.ast.Ast.{Term, Type}
+import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Value.Number
+import com.preprocessor.ast.Ast.{Term, Type, Value}
 import com.preprocessor.ast.Symbol.ValueSymbol
+import com.preprocessor.ast.UnitOfMeasure.Percentage
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 
@@ -31,6 +32,20 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 		val updatedState = run(BinaryOperation(Equals, variable, targetValue))(newState)
 		assert(updatedState.valueRecord.value == targetValue)
 		assert(updatedState.environment.lookup(symbol).get.value == targetValue)
+	}
+
+	it should "correctly perform comparison" in {
+		assert(run(BinaryOperation(IsEqualTo, Number(123), Number(123))).valueRecord.value == Value.Boolean(true))
+		assert(run(BinaryOperation(IsEqualTo, Number(123), Number(456))).valueRecord.value == Value.Boolean(false))
+		assert(run(BinaryOperation(IsEqualTo, Number(123), Value.Boolean(true))).valueRecord.value == Value.Boolean(false))
+		assert(run(BinaryOperation(LowerThan, Number(123), Number(456))).valueRecord.value == Value.Boolean(true))
+		assert(run(BinaryOperation(LowerEquals, Number(123), Number(456))).valueRecord.value == Value.Boolean(true))
+		assert(run(BinaryOperation(GreaterEquals, Number(456), Number(456))).valueRecord.value == Value.Boolean(true))
+	}
+
+	it should "reject illegal comparisons" in {
+		assertThrows[ProgramError](run(BinaryOperation(GreaterEquals, Number(456), Value.Boolean(true))))
+		assertThrows[ProgramError](run(BinaryOperation(GreaterEquals, Number(456), Number(456, Percentage))))
 	}
 
 

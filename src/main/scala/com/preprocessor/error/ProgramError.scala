@@ -19,6 +19,8 @@ object ProgramError {
 		new ProgramError(errorCode, evalState, nodes: _*)
 
 	case object AssigningToNonVariable extends SimpleError("Assignment to a non-variable")
+	case object ComparingIncompatibleNumerics extends SimpleError("Numerical comparison of incompatible numerical values")
+	case object ComparingNonNumber extends SimpleError("Numerical comparison of non-numerical values")
 	case object ConcatenatingIllegalOperand extends SimpleError("Concatenation of a value that is not convertible to a string")
 	case object IllTypedAssignment extends SimpleError("Type of assignment value does not conform to the declared variable type")
 	case object IllTypedConditionBranches extends SimpleError("Miss-matched types of branches of a conditional expression")

@@ -1,10 +1,11 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Term
+import com.preprocessor.ast.Ast.{Term, Value}
+import com.preprocessor.ast.UnitOfMeasure.{GenericUnit, Percentage, Scalar}
 import com.preprocessor.ast.ValueRecord
-import com.preprocessor.error.ProgramError.{AssigningToNonVariable, IllTypedAssignment, WritingUninitializedVariable}
-import com.preprocessor.error.{CompilerError, ProgramError}
+import com.preprocessor.error.CompilerError
+import com.preprocessor.error.ProgramError._
 
 import scala.util.{Failure, Success, Try}
 
@@ -19,7 +20,7 @@ object BinaryOperationInterpreter {
 				case Failure(exception) => Failure(exception)
 				case Success((left :: right :: Nil, newState)) => binaryOperation.operator match {
 					case _: NumericOperator => sys.error("todo") // TODO
-					case _: Comparison => sys.error("todo") // TODO
+					case operator: Comparison => runComparison(operator, left, right)(newState)
 					case _: LogicalOperator => sys.error("todo") // TODO
 					case _ => state.failFatally(CompilerError()) // TODO
 				}
@@ -49,6 +50,32 @@ object BinaryOperationInterpreter {
 				else newState.fail(WritingUninitializedVariable, left)
 		}
 		case _ => state.fail(AssigningToNonVariable, left)
+	}
+
+	private def runComparison(operator: Comparison, left: ValueRecord, right: ValueRecord)
+													 (implicit state: EvalState): Try[EvalState] = operator match {
+		case IsEqualTo =>
+			state evaluatedTo Value.Boolean(left.value == right.value)
+		case In =>
+			sys.error("todo") // TODO
+		case _ =>
+			// Unchecked because it's too stupid to realize that it already can't be IsEqualTo or In
+			val operation: (Double, Double) => Boolean = (operator: @unchecked) match {
+				case LowerThan => _<_
+				case LowerEquals => _<=_
+				case GreaterThan => _>_
+				case GreaterEquals => _>=_
+			}
+			(left.value, right.value) match {
+			case (Value.Number(valueLeft, unitLeft), Value.Number(valueRight, unitRight)) =>
+				(unitLeft, unitRight) match {
+					case (Percentage, Percentage) | (Scalar, Scalar) =>
+						state evaluatedTo Value.Boolean(operation(valueLeft, valueRight))
+					case (GenericUnit(_), GenericUnit(_)) => sys.error("todo") // TODO
+					case _ => state.fail(ComparingIncompatibleNumerics, left.value, right.value)
+				}
+			case _ => state.fail(ComparingNonNumber, left.value, right.value)
+		}
 	}
 
 }
