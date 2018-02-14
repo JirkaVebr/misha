@@ -32,6 +32,15 @@ class Environment private
 	def updated(name: Symbol)(value: name.Value): Environment =
 		new Environment(parentEnvironment, symbolTable.updated(name, value), subEnvironments)
 
+	def isInCurrentScope(name: Symbol): Boolean = symbolTable.get(name).nonEmpty
+
+	def isInScope(name: Symbol): Boolean = isInCurrentScope(name) || (parentEnvironment match {
+		case Some(parent) => parent.isInScope(name)
+		case None => false
+	})
+
+	def isWritable(name: ValueSymbol): Boolean = true // TODO
+
 
 	def lookup(name: Symbol): Option[name.Value] = {
 		val value = symbolTable.get(name).asInstanceOf[Option[name.Value]]

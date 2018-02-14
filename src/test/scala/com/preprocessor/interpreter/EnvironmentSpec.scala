@@ -11,8 +11,11 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 
 	it should "behave correctly when empty" in {
 		val environment = new Environment
+		val absentType = TypeSymbol("AbsentType")
 
-		assert(environment.lookup(TypeSymbol("AbsentType")).isEmpty)
+		assert(environment.lookup(absentType).isEmpty)
+		assert(!environment.isInCurrentScope(absentType))
+		assert(!environment.isInScope(absentType))
 	}
 
 	it should "successfully put and retrieve data" in {
@@ -21,12 +24,12 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		val testTypeSymbol = TypeSymbol("testTypeSymbol")
 		val testType = Color
 
-		assert(environment.lookup(testTypeSymbol).isEmpty)
-
 		environment = environment.updated(testTypeSymbol)(testType)
 
 		assert(environment.lookup(testTypeSymbol).nonEmpty)
 		assert(environment.lookup(testTypeSymbol).get == testType)
+		assert(environment.isInCurrentScope(testTypeSymbol))
+		assert(environment.isInScope(testTypeSymbol))
 	}
 
 	it should "handle symbols of various types" in {
@@ -89,6 +92,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		assert(childEnvironment.lookup(testTypeSymbol).nonEmpty)
 		assert(childEnvironment.lookup(testTypeSymbol).get == testTypeChild)
 		assert(parentEnvironment.lookup(testTypeSymbol).get == testTypeParent)
+		assert(childEnvironment.isInScope(testTypeSymbol))
 
 		val parentEnvironmentAgain = childEnvironment.popSubScope()
 		assert(parentEnvironmentAgain.get.lookup(testTypeSymbol).get == testTypeParent)
