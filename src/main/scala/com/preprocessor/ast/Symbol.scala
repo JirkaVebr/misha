@@ -13,7 +13,7 @@ object Symbol {
 	}
 
 	case class ValueSymbol(valueName: String) extends Symbol {
-		override type Value = Ast.Value.Value
+		override type Value = ValueRecord
 	}
 
 	case object Context extends Symbol {
