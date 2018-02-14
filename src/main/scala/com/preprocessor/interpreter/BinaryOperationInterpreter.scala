@@ -43,7 +43,7 @@ object BinaryOperationInterpreter {
 
 					if (newState.valueRecord.recordType isSubtypeOf valueRecord.recordType)
 						// TODO add readonly checks
-						newState ~> (newState.environment.updated(name)(valueRecord ~> newState.valueRecord.value), newState.valueRecord.value)
+						newState.withUpdatedValue(name, valueRecord ~> newState.valueRecord.value)
 					else newState.fail(IllTypedAssignment)
 				}
 				else newState.fail(WritingUninitializedVariable, left)

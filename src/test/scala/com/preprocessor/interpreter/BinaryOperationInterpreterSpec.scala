@@ -24,7 +24,7 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 		assertThrows[ProgramError](run(BinaryOperation(Equals, variable, targetValue))(state))
 
 		implicit val newState: EvalState =
-			(state ~> (testEnvironment.updated(symbol)(ValueRecord(initialValue, Type.Number)), initialValue)).get
+			state.withUpdatedValue(symbol, ValueRecord(initialValue, Type.Number)).get
 
 		assert(newState.environment.lookup(symbol).get.value == initialValue)
 

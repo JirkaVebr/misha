@@ -12,8 +12,8 @@ object TermInterpreter {
 
 	def run(term: Term)(implicit state: EvalState): Try[EvalState] = term match {
 		case value: Value => value match {
-			case Value.Unit => state ~> Value.Unit
-			case primitiveValue: Primitive => state ~> primitiveValue
+			case Value.Unit => state evaluatedTo Value.Unit
+			case primitiveValue: Primitive => state evaluatedTo primitiveValue
 			case compositeValue: Composite => compositeValue match {
 				case tuple: Tuple2Value => runTuple(tuple)
 				case list: Value.List => runListValue(list)

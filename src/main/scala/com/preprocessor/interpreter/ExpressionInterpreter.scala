@@ -27,11 +27,11 @@ object ExpressionInterpreter {
 			case Failure(_) => value
 			case Success(newState) => operator match {
 				case LogicalNegation => newState.valueRecord.value match {
-					case Value.Boolean(bool) => newState ~> Value.Boolean(!bool)
+					case Value.Boolean(bool) => newState evaluatedTo Value.Boolean(!bool)
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
 				case ArithmeticNegation => newState.valueRecord.value match {
-					case Value.Number(magnitude, unit) => newState ~> Value.Number(-magnitude, unit)
+					case Value.Number(magnitude, unit) => newState evaluatedTo Value.Number(-magnitude, unit)
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
 			}
@@ -56,13 +56,13 @@ object ExpressionInterpreter {
 												Subtype.getLowestCommonSupertype(
 													stateAfterConsequent.valueRecord.recordType, stateAfterAlternative.valueRecord.recordType
 												)
-											if (conditionValue) stateAfterConsequent withNewType superType
-											else stateAfterAlternative withNewType superType
+											if (conditionValue) stateAfterConsequent ~> superType
+											else stateAfterAlternative ~> superType
 										} else
 											stateAfterConsequent.fail(IllTypedConditionBranches)
 								}
 							case None =>
-								(if (conditionValue) stateAfterConsequent else stateAfterCondition) withNewType Type.Unit
+								(if (conditionValue) stateAfterConsequent else stateAfterCondition) ~> Type.Unit
 						}
 					}
 				case _ => stateAfterCondition.fail(NonBooleanCondition)
