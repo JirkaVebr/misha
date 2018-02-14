@@ -18,8 +18,10 @@ object ProgramError {
 	def apply(errorCode: ProgramError.ProgramErrorCode, evalState: EvalState, nodes: Ast.Node*): ProgramError =
 		new ProgramError(errorCode, evalState, nodes: _*)
 
-	case object UndefinedVariable extends SimpleError("Undefined variable")
-
+	case object AssigningToNonVariable extends SimpleError("Assignment to a non-variable")
+	case object ConcatenatingIllegalOperand extends SimpleError("Concatenation of a value that is not convertible to a string")
+	case object IllTypedAssignment extends SimpleError("Type of assignment value does not conform to the declared variable type")
 	case object NegatingNonBoolean extends SimpleError("Logical negation of a non-boolean")
 	case object NegatingNonNumeric extends SimpleError("Arithmetic negation of a non-numeric")
+	case object UndefinedVariable extends SimpleError("Undefined variable")
 }
