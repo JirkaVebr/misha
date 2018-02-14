@@ -172,7 +172,7 @@ object Ast {
 		sealed trait MagicSymbol extends Term
 		case object ParentSelector extends MagicSymbol
 
-		case class Variable(name: ValueSymbol, variableType: Type.Any = Type.Any) extends Term
+		case class Variable(name: ValueSymbol) extends Term
 		case class FunctionCall(function: Expression, arguments: Seq[Expression] = scala.Vector.empty) extends Term
 		case class List(items: Seq[Expression]) extends Term
 		case class MemberAccess(container: Expression, name: Expression) extends Term
