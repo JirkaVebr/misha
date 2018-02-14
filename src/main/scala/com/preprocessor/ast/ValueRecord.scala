@@ -15,7 +15,8 @@ import com.preprocessor.ast.Ast.{Type, Value}
 	*/
 case class ValueRecord(value: Value.Value, recordType: Type.Any) {
 
-	def ~>(newValue: Value.Value) = ValueRecord(newValue, recordType)
+	@inline def ~>(newValue: Value.Value) = ValueRecord(newValue, recordType)
+	@inline def ~>(newType: Type.Any) = ValueRecord(value, newType)
 }
 
 case object ValueRecord {
