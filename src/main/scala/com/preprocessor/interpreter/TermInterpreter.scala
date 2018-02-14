@@ -36,7 +36,7 @@ object TermInterpreter {
 		val variableValue = state.environment.lookup(variable.name)
 
 		variableValue match {
-			case Some(value) => Success(EvalState(state.environment, value.value, value.recordType))
+			case Some(value) => Success(EvalState(state.environment, value))
 			case None => state.fail(ProgramError.ReadingUndefinedVariable, variable)
 		}
 	}

@@ -41,9 +41,9 @@ object BinaryOperationInterpreter {
 				if (newState.environment.isInScope(name)) {
 					val valueRecord = newState.environment.lookup(name).get
 
-					if (newState.nodeType isSubtypeOf valueRecord.recordType)
+					if (newState.valueRecord.recordType isSubtypeOf valueRecord.recordType)
 						// TODO add readonly checks
-						newState ~> (newState.environment.updated(name)(valueRecord ~> newState.value), newState.value)
+						newState ~> (newState.environment.updated(name)(valueRecord ~> newState.valueRecord.value), newState.valueRecord.value)
 					else newState.fail(IllTypedAssignment)
 				}
 				else newState.fail(WritingUninitializedVariable, left)

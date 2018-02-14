@@ -12,12 +12,12 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 	behavior of "Expression interpreter"
 
 	it should "correctly negate booleans" in {
-		assert(run(UnaryOperation(LogicalNegation, Value.Boolean(true))).value == Value.Boolean(false))
+		assert(run(UnaryOperation(LogicalNegation, Value.Boolean(true))).valueRecord.value == Value.Boolean(false))
 		assertThrows[ProgramError](run(UnaryOperation(LogicalNegation, Value.String("I shall not be negated"))))
 	}
 
 	it should "correctly negate numbers" in {
-		assert(run(UnaryOperation(ArithmeticNegation, Value.Number(123))).value == Value.Number(-123))
+		assert(run(UnaryOperation(ArithmeticNegation, Value.Number(123))).valueRecord.value == Value.Number(-123))
 		assertThrows[ProgramError](run(UnaryOperation(LogicalNegation, Value.String("I shall not be negated"))))
 	}
 
@@ -25,9 +25,9 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 		val consequent = Value.Number(123)
 		val alternative = Value.Number(456)
 
-		assert(run(Conditional(Value.Boolean(true), consequent, None)).value == consequent)
-		assert(run(Conditional(Value.Boolean(true), consequent, Some(alternative))).value == consequent)
-		assert(run(Conditional(Value.Boolean(false), consequent, Some(alternative))).value == alternative)
+		assert(run(Conditional(Value.Boolean(true), consequent, None)).valueRecord.value == consequent)
+		assert(run(Conditional(Value.Boolean(true), consequent, Some(alternative))).valueRecord.value == consequent)
+		assert(run(Conditional(Value.Boolean(false), consequent, Some(alternative))).valueRecord.value == alternative)
 		assertThrows[ProgramError](run(Conditional(consequent, consequent, None)))
 		assertThrows[ProgramError](run(Conditional(Value.Boolean(true), consequent, Some(Value.Boolean(true)))))
 	}

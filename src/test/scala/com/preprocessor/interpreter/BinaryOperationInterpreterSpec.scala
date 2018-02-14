@@ -29,7 +29,7 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 		assert(newState.environment.lookup(symbol).get.value == initialValue)
 
 		val updatedState = run(BinaryOperation(Equals, variable, targetValue))(newState)
-		assert(updatedState.value == targetValue)
+		assert(updatedState.valueRecord.value == targetValue)
 		assert(updatedState.environment.lookup(symbol).get.value == targetValue)
 	}
 

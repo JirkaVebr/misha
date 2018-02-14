@@ -26,11 +26,11 @@ object ExpressionInterpreter {
 		value match {
 			case Failure(_) => value
 			case Success(newState) => operator match {
-				case LogicalNegation => newState.value match {
+				case LogicalNegation => newState.valueRecord.value match {
 					case Value.Boolean(bool) => newState ~> Value.Boolean(!bool)
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
-				case ArithmeticNegation => newState.value match {
+				case ArithmeticNegation => newState.valueRecord.value match {
 					case Value.Number(magnitude, unit) => newState ~> Value.Number(-magnitude, unit)
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
@@ -41,7 +41,7 @@ object ExpressionInterpreter {
 	private def runConditional(conditional: Conditional)(implicit state: EvalState): Try[EvalState] = {
 		run(conditional.condition) match {
 			case Failure(error) => Failure(error)
-			case Success(stateAfterCondition) => stateAfterCondition.value match {
+			case Success(stateAfterCondition) => stateAfterCondition.valueRecord.value match {
 				case Value.Boolean(conditionValue) =>
 					run(conditional.consequent)(stateAfterCondition) match {
 						case Failure(error) => Failure(error)
@@ -50,9 +50,12 @@ object ExpressionInterpreter {
 								run(alternative)(stateAfterCondition) match {
 									case Failure(error) => Failure(error)
 									case Success(stateAfterAlternative) =>
-										if (stateAfterConsequent.nodeType isEquivalentTo stateAfterAlternative.nodeType) {
+										if (stateAfterConsequent.valueRecord.recordType isEquivalentTo
+											stateAfterAlternative.valueRecord.recordType) {
 											val superType =
-												Subtype.getLowestCommonSupertype(stateAfterConsequent.nodeType, stateAfterAlternative.nodeType)
+												Subtype.getLowestCommonSupertype(
+													stateAfterConsequent.valueRecord.recordType, stateAfterAlternative.valueRecord.recordType
+												)
 											if (conditionValue) stateAfterConsequent withNewType superType
 											else stateAfterAlternative withNewType superType
 										} else

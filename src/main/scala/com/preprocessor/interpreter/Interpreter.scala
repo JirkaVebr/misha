@@ -22,19 +22,20 @@ object Interpreter {
 
 	// TODO this isn't tail recursive, and so for longer lists this will be a total nightmare
 	def chainRun[V <: Ast.Node](items: scala.List[V], state: EvalState, evaluate: (V, EvalState) => Try[EvalState]):
-		Try[(scala.List[Value], EvalState)] = items match {
-		case Nil => Success((scala.List[Value](), state))
-		case expression :: tail =>
-			val evaluationResult = evaluate(expression, state)
-			evaluationResult match {
-				case Failure(reason) => Failure(reason)
-				case Success(newEvalState) =>
-					val subsequent = chainRun(tail, newEvalState, evaluate)
-					subsequent match {
-						case Failure(exception) => Failure(exception)
-						case Success(value) => Success((newEvalState.value :: value._1, value._2))
-					}
-			}
-	}
+	Try[(scala.List[Value], EvalState)] =
+		items match {
+			case Nil => Success((scala.List[Value](), state))
+			case expression :: tail =>
+				val evaluationResult = evaluate(expression, state)
+				evaluationResult match {
+					case Failure(reason) => Failure(reason)
+					case Success(newEvalState) =>
+						val subsequent = chainRun(tail, newEvalState, evaluate)
+						subsequent match {
+							case Failure(exception) => Failure(exception)
+							case Success(value) => Success((newEvalState.valueRecord.value :: value._1, value._2))
+						}
+				}
+		}
 
 }
