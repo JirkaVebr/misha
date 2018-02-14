@@ -1,4 +1,4 @@
-package com.preprocessor.interpreter.`type`
+package com.preprocessor.interpreter.typing
 
 import com.preprocessor.ast.Ast.Type
 
