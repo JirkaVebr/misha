@@ -2,6 +2,7 @@ package com.preprocessor.ast
 
 import com.preprocessor.ast.UnitOfMeasure.{Scalar, UnitOfMeasure}
 import Symbol.{TypeSymbol, ValueSymbol}
+import com.preprocessor.interpreter.typing.Subtype
 
 import scala.collection.immutable.{Map => SMap}
 
@@ -63,7 +64,9 @@ object Ast {
 
 
 	object Type {
-		sealed trait Any extends Node
+		sealed trait Any extends Node {
+			def isSubtypeOf(otherType: Any): Boolean = Subtype.isSubtypeOf(this, otherType)
+		}
 		case object Any extends Any
 
 		sealed trait Primitive extends Any
