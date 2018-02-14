@@ -48,10 +48,11 @@ object TermInterpreter {
 	private def runListTerm(list: Term.List)(implicit state: EvalState): Try[EvalState] = {
 		val chainResult = Interpreter.chainRun[Expression](list.items.toList, state, ExpressionInterpreter.run(_)(_))
 
-		chainResult match {
+		sys.error("todo")
+		/*chainResult match {
 			case Failure(exception) => Failure(exception)
 			case Success((items, finalState)) => runListValue(Value.List(items))(finalState)
-		}
+		}*/
 	}
 
 }
