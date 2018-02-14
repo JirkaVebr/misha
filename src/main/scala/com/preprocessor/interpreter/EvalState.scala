@@ -9,10 +9,8 @@ import scala.util.{Failure, Success, Try}
 
 case class EvalState(environment: Environment, nodeType: Type.Any = Type.Any, value: Value.Value = Value.Unit) {
 
-	@inline def ~>(typeValue: (Type.Any, Value.Value)): Try[EvalState] =
-		Success(EvalState(environment, typeValue._1, typeValue._2))
-
-	@inline def ~>(value: Value.Value): Try[EvalState] = ~>(value.valueType, value)
+	@inline def ~>(value: Value.Value): Try[EvalState] =
+		Success(EvalState(environment, value.valueType, value))
 
 	def fail(errorCode: ProgramErrorCode, nodes: Ast.Node*): Failure[EvalState] =
 		Failure(ProgramError(errorCode, this, (if (nodes.isEmpty) List(value) else nodes): _*))

@@ -15,11 +15,11 @@ class EvalStateSpec extends BaseInterpreterSpec {
 		assert(evalState.value == Value.Unit)
 
 		val numberType = Type.Number
-		val numbervalue = Value.Number(123)
-		val newState = evalState ~> (numberType, numbervalue)
+		val numberValue = Value.Number(123)
+		val newState = evalState ~> numberValue
 
 		assert(newState.get.environment == environment)
 		assert(newState.get.nodeType == numberType)
-		assert(newState.get.value == numbervalue)
+		assert(newState.get.value == numberValue)
 	}
 }

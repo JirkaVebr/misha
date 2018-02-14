@@ -14,10 +14,7 @@ object TermInterpreter {
 	def run(term: Term)(implicit state: EvalState): Try[EvalState] = term match {
 		case value: Value => value match {
 			case Value.Unit => state ~> Value.Unit
-			case primitiveValue: Primitive => primitiveValue match {
-				case number: Number => runNumber(number)
-				case _ => state ~> primitiveValue
-			}
+			case primitiveValue: Primitive => state ~> primitiveValue
 			case compositeValue: Composite => compositeValue match {
 				case tuple: Tuple2Value => runTuple(tuple)
 				case list: Value.List => runListValue(list)
@@ -34,15 +31,6 @@ object TermInterpreter {
 
 	private def runTuple(tuple: Tuple2Value)(implicit state: EvalState): Try[EvalState] = {
 		sys.error("todo") // TODO
-	}
-
-	private def runNumber(number: Number)(implicit state: EvalState): Try[EvalState] = {
-		val unit = number.unit
-		unit match {
-			case GenericUnit(subUnitProduct) => sys.error("todo") // TODO check dimensions
-			case Percentage() => state ~> (Type.Percentage, number)
-			case Scalar() => state ~> (Type.Number, number) // TODO It's not necessarily Type.Number
-		}
 	}
 
 	private def runVariable(variable: Variable)(implicit state: EvalState): Try[EvalState] = {

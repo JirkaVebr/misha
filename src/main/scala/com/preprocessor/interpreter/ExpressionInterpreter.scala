@@ -30,7 +30,7 @@ object ExpressionInterpreter {
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
 				case ArithmeticNegation => newState.value match {
-					case Value.Number(magnitude, unit) => newState ~> (newState.nodeType, Value.Number(-magnitude, unit))
+					case Value.Number(magnitude, unit) => newState ~> Value.Number(-magnitude, unit)
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
 			}
