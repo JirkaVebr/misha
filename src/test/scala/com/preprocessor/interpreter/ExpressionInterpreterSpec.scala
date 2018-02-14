@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.Expression.{ArithmeticNegation, Expression, LogicalNegation, UnaryOperation}
+import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.error.ProgramError
 
