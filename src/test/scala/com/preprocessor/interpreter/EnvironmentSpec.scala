@@ -39,7 +39,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		val testTypeSymbol = TypeSymbol("test")
 		val testType = Color
 		val testValueSymbol = ValueSymbol("test")
-		val testValue = ValueRecord(Value.Number(1))()
+		val testValue = ValueRecord(Value.Number(1), Type.Number)
 		val testContext = Universal
 
 		assert(environment.lookup(testTypeSymbol).isEmpty)
