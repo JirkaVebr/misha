@@ -14,7 +14,7 @@ case class EvalState(environment: Environment, nodeType: Type.Any = Type.Any, va
 
 	@inline def ~>(value: Value.Value): Try[EvalState] = ~>(value.valueType, value)
 
-	def fail(errorCode: ProgramErrorCode, node: Ast.Node = this.value): Failure[EvalState] =
-		Failure(ProgramError(errorCode, node, this))
+	def fail(errorCode: ProgramErrorCode, nodes: Ast.Node*): Failure[EvalState] =
+		Failure(ProgramError(errorCode, this, (if (nodes.isEmpty) List(value) else nodes): _*))
 }
 
