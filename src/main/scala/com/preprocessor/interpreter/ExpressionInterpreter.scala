@@ -2,8 +2,7 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Term.Term
-import com.preprocessor.ast.Ast.Value.{Composite, Primitive, Unit}
-import com.preprocessor.ast.Ast.{Type, Value}
+import com.preprocessor.ast.Ast.Value
 import com.preprocessor.error.ProgramError
 
 import scala.util.{Failure, Success, Try}
@@ -11,7 +10,7 @@ import scala.util.{Failure, Success, Try}
 object ExpressionInterpreter {
 
 	def run(expression: Expression)(implicit state: EvalState): Try[EvalState] = expression match {
-		case BinaryOperation(operator, left, right) => sys.error("todo") // TODO
+		case binaryOperation: BinaryOperation => BinaryOperationInterpreter.run(binaryOperation)
 		case unaryOperation: UnaryOperation => runUnaryOperation(unaryOperation)
 		case Conditional(condition, consequent, alternative) => sys.error("todo") // TODO
 		case StringInterpolation(components) => sys.error("todo") // TODO
