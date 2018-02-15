@@ -24,6 +24,7 @@ object ProgramError {
 	case object ConcatenatingIllegalOperand extends SimpleError("Concatenation of a value that is not convertible to a string")
 	case object IllTypedAssignment extends SimpleError("Type of assignment value does not conform to the declared variable type")
 	case object IllTypedConditionBranches extends SimpleError("Miss-matched types of branches of a conditional expression")
+	case object LogicOnNonBooleans extends SimpleError("Attempting logical operations on non-boolean values")
 	case object NegatingNonBoolean extends SimpleError("Logical negation of a non-boolean")
 	case object NegatingNonNumeric extends SimpleError("Arithmetic negation of a non-numeric")
 	case object NonBooleanCondition extends SimpleError("Non-boolean condition value")

@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.{Term, Value}
+import com.preprocessor.ast.Ast.{Term, Type, Value}
 import com.preprocessor.ast.UnitOfMeasure.{GenericUnit, Percentage, Scalar}
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.CompilerError
@@ -13,6 +13,7 @@ object BinaryOperationInterpreter {
 
 	def run(binaryOperation: BinaryOperation)(implicit state: EvalState): Try[EvalState] = binaryOperation.operator match {
 		case _: Assignment => runAssignment(binaryOperation.left, binaryOperation.right)
+		case operator: LogicalOperator => runLogicalOperator(operator, binaryOperation.left, binaryOperation.right)
 		case _ =>
 			val chain = List(binaryOperation.left, binaryOperation.right)
 
@@ -21,7 +22,6 @@ object BinaryOperationInterpreter {
 				case Success((left :: right :: Nil, newState)) => binaryOperation.operator match {
 					case _: NumericOperator => sys.error("todo") // TODO
 					case operator: Comparison => runComparison(operator, left, right)(newState)
-					case _: LogicalOperator => sys.error("todo") // TODO
 					case _ => state.failFatally(CompilerError()) // TODO
 				}
 				case _ => state.failFatally(CompilerError()) // TODO
@@ -75,6 +75,27 @@ object BinaryOperationInterpreter {
 					case _ => state.fail(ComparingIncompatibleNumerics, left.value, right.value)
 				}
 			case _ => state.fail(ComparingNonNumber, left.value, right.value)
+		}
+	}
+
+	private def runLogicalOperator(operator: LogicalOperator, left: Expression, right: Expression)
+													 (implicit state: EvalState): Try[EvalState] = {
+		ExpressionInterpreter.run(left) match {
+			case Failure(exception) => Failure(exception)
+			case Success(stateAfterLeft) => ExpressionInterpreter.run(right)(stateAfterLeft) match {
+				case Failure(exception) => Failure(exception)
+				case Success(stateAfterRight) => (stateAfterLeft.valueRecord.value, stateAfterRight.valueRecord.value) match {
+					case (Value.Boolean(leftValue), Value.Boolean(rightValue)) => operator match {
+						case LogicalAnd =>
+							if (leftValue) stateAfterRight evaluatedTo Value.Boolean(rightValue)
+							else stateAfterLeft evaluatedTo Value.Boolean(leftValue)
+						case LogicalOr =>
+							if (leftValue) stateAfterLeft evaluatedTo Value.Boolean(leftValue)
+							else stateAfterRight evaluatedTo Value.Boolean(rightValue)
+					}
+					case (leftNode, rightNode) => stateAfterRight.fail(LogicOnNonBooleans, leftNode, rightNode)
+				}
+			}
 		}
 	}
 

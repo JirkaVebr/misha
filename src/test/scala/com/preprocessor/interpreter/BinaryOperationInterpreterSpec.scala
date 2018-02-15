@@ -24,7 +24,7 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 
 		assertThrows[ProgramError](run(BinaryOperation(Equals, variable, targetValue))(state))
 
-		implicit val newState: EvalState =
+		val newState: EvalState =
 			state.withUpdatedValue(symbol, ValueRecord(initialValue, Type.Number)).get
 
 		assert(newState.environment.lookup(symbol).get.value == initialValue)
@@ -46,6 +46,46 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 	it should "reject illegal comparisons" in {
 		assertThrows[ProgramError](run(BinaryOperation(GreaterEquals, Number(456), Value.Boolean(true))))
 		assertThrows[ProgramError](run(BinaryOperation(GreaterEquals, Number(456), Number(456, Percentage))))
+	}
+
+
+	private val t = Value.Boolean(true)
+	private val f = Value.Boolean(false)
+	private val and = LogicalAnd
+	private val or = LogicalOr
+
+	it should "correctly perform logical operations" in {
+		assert(run(BinaryOperation(and, t, t)).valueRecord.value == t)
+		assert(run(BinaryOperation(and, t, f)).valueRecord.value == f)
+		assert(run(BinaryOperation(and, f, t)).valueRecord.value == f)
+		assert(run(BinaryOperation(and, f, f)).valueRecord.value == f)
+		assert(run(BinaryOperation(or, t, t)).valueRecord.value == t)
+		assert(run(BinaryOperation(or, t, f)).valueRecord.value == t)
+		assert(run(BinaryOperation(or, f, t)).valueRecord.value == t)
+		assert(run(BinaryOperation(or, f, f)).valueRecord.value == f)
+	}
+
+	it should "reject illegal logical operation operands" in {
+		// It should check the numbers despite not technically having to evaluate them
+		assertThrows[ProgramError](run(BinaryOperation(and, f, Value.Number(123))).valueRecord.value == f)
+		assertThrows[ProgramError](run(BinaryOperation(or, t, Value.Number(123))).valueRecord.value == t)
+	}
+
+	it should "evaluate logical operations lazily" in {
+		val symbol = ValueSymbol("myVar")
+		val variable = Term.Variable(symbol)
+		val initialValue = t
+		val targetValue = f
+		val assignment = BinaryOperation(Equals, variable, targetValue)
+
+		val stateWithVar: EvalState =
+			state.withUpdatedValue(symbol, ValueRecord(initialValue, Type.Boolean)).get
+
+		val stateAfterAnd = run(BinaryOperation(and, f, assignment))(stateWithVar)
+		val stateAfterOr = run(BinaryOperation(or, t, assignment))(stateWithVar)
+
+		assert(TermInterpreter.run(variable)(stateAfterAnd).get.valueRecord.value == initialValue)
+		assert(TermInterpreter.run(variable)(stateAfterOr).get.valueRecord.value == initialValue)
 	}
 
 
