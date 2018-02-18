@@ -157,8 +157,9 @@ trait L3_Expressions { this: org.parboiled2.Parser
 		)
 	}
 
+	// This isn't a literal, because it would make literal types involving it too tricky and difficult to use
 	private def magicSymbol: Rule1[MagicSymbol] = rule {
-		"&" ~ push(ParentSelector)
+		'&' ~ push(ParentSelector)
 	}
 
 }
