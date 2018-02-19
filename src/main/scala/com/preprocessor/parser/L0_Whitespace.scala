@@ -18,7 +18,7 @@ trait L0_Whitespace extends org.parboiled2.Parser {
 	}
 
 	def MandatorySingleLineWhitespace: Rule0 = rule {
-		oneOrMore(SingleLineWhitespace)
+		oneOrMore(SingleLineWhitespaceChar)
 	}
 
 	def EndOfLine: Rule0 = rule {
