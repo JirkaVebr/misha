@@ -5,8 +5,7 @@ import org.parboiled2._
 
 trait L6_TopLevel { this: org.parboiled2.Parser
 	with StringBuilding
-	with Whitespace
-	with L0_Basics
+	with L0_Whitespace
 	with L1_Literals
 	with L2_Types
 	with L3_Expressions

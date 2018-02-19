@@ -2,8 +2,8 @@ package com.preprocessor.parser
 
 import org.parboiled2._
 
-trait Whitespace extends org.parboiled2.Parser {
-	import Whitespace._
+trait L0_Whitespace extends org.parboiled2.Parser {
+	import L0_Whitespace._
 
 	def AnyWhitespace: Rule0 = rule {
 		quiet(zeroOrMore(WhiteSpaceChar))
@@ -35,7 +35,7 @@ trait Whitespace extends org.parboiled2.Parser {
 
 }
 
-object Whitespace {
+object L0_Whitespace {
 	private val End: CharPredicate = CharPredicate('\n') ++ Characters.EOI
 	private val SingleLineWhitespaceChar = CharPredicate(" \f\r\t")
 	private val WhiteSpaceChar: CharPredicate = SingleLineWhitespaceChar ++ '\n'

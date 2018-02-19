@@ -9,8 +9,7 @@ import org.parboiled2._
 
 trait L1_Literals { this: org.parboiled2.Parser
 	with StringBuilding
-	with Whitespace
-	with L0_Basics =>
+	with L0_Whitespace =>
 
 	import CharPredicate.HexDigit
 	import L1_Literals._
