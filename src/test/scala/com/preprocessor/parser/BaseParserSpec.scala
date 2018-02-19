@@ -18,7 +18,7 @@ class BaseParserSpec extends BaseSpec {
 		parser.__run(rule(parser)) match {
 			case Success(result) => result
 			case Failure(failure: ParseError) =>
-				println(failure.traces)
+				println(failure.format(parser))
 				fail()
 			case a =>
 				println(a)

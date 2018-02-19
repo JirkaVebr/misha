@@ -32,11 +32,11 @@ trait L2_Types { this: org.parboiled2.Parser
 	}
 
 	private def nonCompositeType: Rule1[Ast.Type.Any] = rule {
-		valueMap(RootEnvironment.preDefinedTypes) ~ AnyWhitespace
+		valueMap(RootEnvironment.preDefinedTypes) ~ SingleLineWhitespace
 	}
 
 	def TypeAlias: Rule1[Ast.Type.TypeAlias] = rule {
-		capture(CharPredicate.UpperAlpha ~ zeroOrMore(CharPredicate.AlphaNum)) ~ AnyWhitespace ~> (
+		capture(CharPredicate.UpperAlpha ~ zeroOrMore(CharPredicate.AlphaNum)) ~ SingleLineWhitespace ~> (
 			(alias: String) => Ast.Type.TypeAlias(alias)
 		)
 	}

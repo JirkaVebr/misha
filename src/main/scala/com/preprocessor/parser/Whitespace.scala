@@ -13,12 +13,20 @@ trait Whitespace extends org.parboiled2.Parser {
 		oneOrMore(WhiteSpaceChar)
 	}
 
-	def StartOfLine: Rule0 = rule {
-		zeroOrMore(SingleLineWhitespace)
+	def SingleLineWhitespace: Rule0 = rule {
+		quiet(zeroOrMore(SingleLineWhitespaceChar))
+	}
+
+	def MandatorySingleLineWhitespace: Rule0 = rule {
+		oneOrMore(SingleLineWhitespace)
 	}
 
 	def EndOfLine: Rule0 = rule {
-		zeroOrMore(SingleLineWhitespace) ~ End
+		SingleLineWhitespace ~ End
+	}
+
+	def SingleLineString(stringToken: String): Rule0 = rule {
+		atomic(str(stringToken)) ~ SingleLineWhitespace
 	}
 
 	implicit def whitespaceAfterString(stringToken: String): Rule0 = rule {
@@ -28,7 +36,7 @@ trait Whitespace extends org.parboiled2.Parser {
 }
 
 object Whitespace {
-	val End: CharPredicate = CharPredicate('\n') ++ Characters.EOI
-	val SingleLineWhitespace = CharPredicate(" \f\r\t")
-	val WhiteSpaceChar: CharPredicate = SingleLineWhitespace ++ '\n'
+	private val End: CharPredicate = CharPredicate('\n') ++ Characters.EOI
+	private val SingleLineWhitespaceChar = CharPredicate(" \f\r\t")
+	private val WhiteSpaceChar: CharPredicate = SingleLineWhitespaceChar ++ '\n'
 }

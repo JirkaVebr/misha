@@ -2,6 +2,7 @@ package com.preprocessor.ast
 
 import com.preprocessor.ast.UnitOfMeasure.{Scalar, UnitOfMeasure}
 import Symbol.{TypeSymbol, ValueSymbol}
+import com.preprocessor.ast.Ast.Statement.Statement
 import com.preprocessor.interpreter.typing.Subtype
 
 import scala.collection.immutable.{Map => SMap}
@@ -117,7 +118,7 @@ object Ast {
 		//case class Import(destination: Expression, parameters: Option[Expression]) extends Statement
 		case class TypeAliasDeclaration(alias: TypeAlias, subType: Any) extends Statement
 		case class VariableDeclaration(name: ValueSymbol, typeAnnotation: Option[Any], value: Expression) extends Statement
-		case class FunctionDeclaration(name: ValueSymbol, typeAnnotation: Option[Any], value: Statement) extends Statement
+		case class FunctionDeclaration(name: ValueSymbol, typeAnnotation: Option[Any], value: Expression) extends Statement
 
 		//case class Rule(head: StringInterpolation, body: Statement) extends Statement
 		case class Rule(head: Value.String, body: Statement) extends Statement // TODO
@@ -160,9 +161,10 @@ object Ast {
 		case object LogicalNegation extends UnaryOperator
 		case object ArithmeticNegation extends UnaryOperator
 
+		case class StringInterpolation(components: Seq[Either[String, Expression]]) extends Expression
 		case class Conditional(condition: Expression, consequent: Expression, alternative: Option[Expression])
 			extends Expression
-		case class StringInterpolation(components: Seq[Either[String, Expression]]) extends Expression
+		case class Block(content: Statement) extends Expression
 	}
 
 	object Term {

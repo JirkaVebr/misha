@@ -1,6 +1,8 @@
 package com.preprocessor.parser
 
+import com.preprocessor.ast.Ast
 import com.preprocessor.ast.Ast.Expression._
+import com.preprocessor.ast.Ast.Statement._
 import com.preprocessor.ast.Ast.Term._
 import com.preprocessor.ast.Ast._
 import org.parboiled2._
@@ -91,7 +93,8 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def factor: Rule1[Expression] = rule {
-		functionCall | conditional | delimitedList | unaryOperation | Variable | subExpression | magicSymbol | Literal
+		functionCall | conditional | delimitedList | unaryOperation | Variable | subExpression | magicSymbol | Literal |
+		block
 	}
 
 	private def unaryOperation: Rule1[UnaryOperation] = rule {
@@ -160,6 +163,38 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	// This isn't a literal, because it would make literal types involving it too tricky and difficult to use
 	private def magicSymbol: Rule1[MagicSymbol] = rule {
 		'&' ~ push(ParentSelector)
+	}
+
+	private def block: Rule1[Expression] = rule { // TODO replace '{' and '}' by INDENT and DEDENT respectively
+		'{' ~!~ Statement ~ '}' ~!~ EndOfLine ~> Block
+	}
+
+
+	def Statement: Rule1[Statement] = rule {
+		sequence
+	}
+
+	private def sequence: Rule1[Statement] = rule {
+		sequenceNode ~ zeroOrMore(sequenceNode ~> Sequence)
+	}
+
+	private def sequenceNode: Rule1[Statement] = rule {
+		(typeAliasDeclaration | rule | variableDeclaration | Expression) ~ EndOfLine
+	}
+
+	private def rule: Rule1[Ast.Statement.Rule] = rule { // TODO using quoted strings is temporary
+		(QuotedString ~ EndOfLine ~ block) ~> Ast.Statement.Rule
+	}
+
+	private def typeAliasDeclaration: Rule1[TypeAliasDeclaration] = rule {
+		(SingleLineString("@type") ~ TypeAlias ~ SingleLineString("=") ~ Type) ~> TypeAliasDeclaration
+	}
+
+	private def variableDeclaration: Rule1[VariableDeclaration] = rule {
+		(Variable ~ optional(":" ~!~ Type) ~ "=" ~!~ Expression) ~> (
+			(variable: Variable, typeAnnotation: Option[Ast.Type.Any], value: Expression) =>
+				VariableDeclaration(variable.name, typeAnnotation, value)
+			)
 	}
 
 }
