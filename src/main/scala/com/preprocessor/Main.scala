@@ -1,6 +1,5 @@
 package com.preprocessor
 
-import com.preprocessor.interpreter.Evaluator
 import com.preprocessor.parser.{IndentDedentParserInput, Parser}
 import org.parboiled2.ParseError
 
