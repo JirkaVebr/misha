@@ -1,8 +1,7 @@
 package com.preprocessor.ast
 
+import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.UnitOfMeasure.{Scalar, UnitOfMeasure}
-import Symbol.{TypeSymbol, ValueSymbol}
-import com.preprocessor.ast.Ast.Statement.Statement
 import com.preprocessor.interpreter.typing.Subtype
 
 import scala.collection.immutable.{Map => SMap}
@@ -112,7 +111,6 @@ object Ast {
 
 		sealed trait Statement extends Node
 
-		case object NoOp extends Statement
 		case class Sequence(current: Statement, following: Statement) extends Statement
 		//case class Property(name: Expression, value: Expression, flags: Option[Expression]) extends Statement
 		//case class Import(destination: Expression, parameters: Option[Expression]) extends Statement
