@@ -30,14 +30,14 @@ class StatementsSpec extends BaseParserSpec {
 	}
 
 	it should "correctly parse a variable declaration" in {
-		assert(parse("$myVar = 1") == VariableDeclaration("myVar", None, Number(1)))
-		assert(parse("$myVar: Number = 1") == VariableDeclaration("myVar", Some(Type.Number), Number(1)))
+		assert(parse("@let $myVar = 1") == VariableDeclaration("myVar", None, Number(1)))
+		assert(parse("@let $myVar: Number = 1") == VariableDeclaration("myVar", Some(Type.Number), Number(1)))
 	}
 
 	it should "correctly parse a block" in { // TODO
 		assert(parse(
 			"""{123
-				|$myVar = 1
+				|@let $myVar = 1
 				|789
 				|}""".stripMargin) == Block(Sequence(Sequence(Number(123), VariableDeclaration("myVar", None, Number(1))), Number(789))))
 	}

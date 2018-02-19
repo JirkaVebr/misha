@@ -186,11 +186,11 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def typeAliasDeclaration: Rule1[TypeAliasDeclaration] = rule {
-		(SingleLineString("@type") ~ TypeAlias ~ SingleLineString("=") ~ Type) ~> TypeAliasDeclaration
+		(Token("@type") ~ MandatorySingleLineWhitespace ~ TypeAlias ~ SingleLineString("=") ~ Type) ~> TypeAliasDeclaration
 	}
 
 	private def variableDeclaration: Rule1[VariableDeclaration] = rule {
-		(Variable ~ optional(":" ~!~ Type) ~ "=" ~!~ Expression) ~> (
+		(Token("@let") ~ MandatorySingleLineWhitespace ~ Variable ~ optional(":" ~!~ Type) ~ "=" ~!~ Expression) ~> (
 			(variable: Variable, typeAnnotation: Option[Ast.Type.Any], value: Expression) =>
 				VariableDeclaration(variable.name, typeAnnotation, value)
 			)
