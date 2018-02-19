@@ -29,8 +29,12 @@ trait L0_Whitespace extends org.parboiled2.Parser {
 		atomic(str(stringToken)) ~ SingleLineWhitespace
 	}
 
+	def Token(stringToken: String): Rule0 = rule {
+		atomic(str(stringToken))
+	}
+
 	implicit def whitespaceAfterString(stringToken: String): Rule0 = rule {
-		atomic(str(stringToken)) ~ AnyWhitespace
+		Token(stringToken) ~ AnyWhitespace
 	}
 
 }
