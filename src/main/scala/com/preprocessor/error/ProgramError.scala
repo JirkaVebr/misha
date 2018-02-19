@@ -22,6 +22,7 @@ object ProgramError {
 	case object ComparingIncompatibleNumerics extends SimpleError("Numerical comparison of incompatible numerical values")
 	case object ComparingNonNumber extends SimpleError("Numerical comparison of non-numerical values")
 	case object ConcatenatingIllegalOperand extends SimpleError("Concatenation of a value that is not convertible to a string")
+	case object DuplicateVariableDeclaration extends SimpleError("Duplicate declaration of a variable within the same scope")
 	case object IllTypedAssignment extends SimpleError("Type of assignment value does not conform to the declared variable type")
 	case object IllTypedConditionBranches extends SimpleError("Miss-matched types of branches of a conditional expression")
 	case object LogicOnNonBooleans extends SimpleError("Attempting logical operations on non-boolean values")
@@ -29,5 +30,6 @@ object ProgramError {
 	case object NegatingNonNumeric extends SimpleError("Arithmetic negation of a non-numeric")
 	case object NonBooleanCondition extends SimpleError("Non-boolean condition value")
 	case object ReadingUndefinedVariable extends SimpleError("Reading of an undefined variable")
+	case object TypeAnnotationMismatch extends SimpleError("Assigned value doesn't match the declared type annotation")
 	case object WritingUninitializedVariable extends SimpleError("Writing to an uninitialized variable")
 }
