@@ -35,15 +35,13 @@ object StatementInterpreter {
 			case Success(stateAfterValue) => varDeclaration.typeAnnotation match {
 				case Some(annotatedType) =>
 					if (Subtype.isSubtypeOf(stateAfterValue.valueRecord.recordType, annotatedType))
-						stateAfterValue.withUpdatedValue(
-							varDeclaration.name,
+						stateAfterValue.withUpdatedSymbol(varDeclaration.name)(
 							ValueRecord(stateAfterValue.valueRecord.value, annotatedType)
 						)
 					else
 						stateAfterValue.fail(TypeAnnotationMismatch, varDeclaration)
 				case None =>
-					stateAfterValue.withUpdatedValue(
-						varDeclaration.name,
+					stateAfterValue.withUpdatedSymbol(varDeclaration.name)(
 						ValueRecord(stateAfterValue.valueRecord.value, Inference.inferTypeForValue(stateAfterValue.valueRecord.value))
 					)
 			}
