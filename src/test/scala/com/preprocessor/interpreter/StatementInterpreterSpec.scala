@@ -1,10 +1,11 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Statement.{Sequence, Statement, VariableDeclaration}
+import com.preprocessor.ast.Ast.Statement.{Sequence, Statement, TypeAliasDeclaration, VariableDeclaration}
 import com.preprocessor.ast.Ast.Term.Variable
+import com.preprocessor.ast.Ast.Type.TypeAlias
 import com.preprocessor.ast.Ast.{Type, Value}
-import com.preprocessor.ast.Symbol.ValueSymbol
+import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
 
@@ -58,6 +59,33 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 				Variable(symbol2)
 			)
 		).valueRecord.value == consequent)
+	}
+
+	it should "correctly create a type alias" in {
+		val symbol = TypeSymbol("MyType")
+		val newType = Type.Number
+		val newState = run(TypeAliasDeclaration(TypeAlias(symbol), newType))
+
+		assert(newState.environment.lookup(symbol).get == newType)
+	}
+
+	/*it should "allow narrowing type alias declarations" in {
+		val symbol = TypeSymbol("MyType")
+		val oldType = Type.Numeric
+		val stateWithOldType = state.withUpdatedSymbol(symbol)(oldType).get
+		val newType = Type.Number
+		val newState = run(TypeAliasDeclaration(TypeAlias(symbol), newType))(stateWithOldType)
+
+		assert(newState.environment.lookup(symbol).get == newType)
+	}*/
+
+	it should "reject non-narrowing type alias declarations" in {
+		val symbol = TypeSymbol("MyType")
+		val oldType = Type.Boolean
+		val newState = state.withUpdatedSymbol(symbol)(oldType).get
+		val newType = Type.Number
+
+		assertThrows[ProgramError](run(TypeAliasDeclaration(TypeAlias(symbol), newType))(newState))
 	}
 
 

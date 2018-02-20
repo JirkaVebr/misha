@@ -4,7 +4,7 @@ import com.preprocessor.ast.Ast.Expression.Expression
 import com.preprocessor.ast.Ast.Statement._
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.ValueRecord
-import com.preprocessor.error.ProgramError.{DuplicateVariableDeclaration, TypeAnnotationMismatch}
+import com.preprocessor.error.ProgramError.{DuplicateVariableDeclaration, NonNarrowingTypeAlias, TypeAnnotationMismatch}
 import com.preprocessor.interpreter.typing.{Inference, Subtype}
 
 import scala.util.{Failure, Success, Try}
@@ -13,7 +13,7 @@ object StatementInterpreter {
 
 	def run(statement: Statement)(implicit state: EvalState): Try[EvalState] = statement match {
 		case sequence: Sequence => runSequence(sequence)
-		case TypeAliasDeclaration(alias, subType) => sys.error("todo") // TODO
+		case typeAlias: TypeAliasDeclaration => runTypeAliasDeclaration(typeAlias)
 		case variableDeclaration: VariableDeclaration => runVariableDeclaration(variableDeclaration)
 		case FunctionDeclaration(name, typeAnnotation, value) => sys.error("todo") // TODO
 		case Rule(head, body) => sys.error("todo") // TODO
@@ -26,6 +26,16 @@ object StatementInterpreter {
 			case Failure(exception) => Failure(exception)
 			case Success((_, finalState)) => Success(finalState)
 		}
+
+	private def runTypeAliasDeclaration(typeAlias: TypeAliasDeclaration)(implicit state: EvalState): Try[EvalState] = {
+		val existingType = state.environment.lookup(typeAlias.alias.name)
+
+		if (existingType.nonEmpty && !Subtype.isSubtypeOf(typeAlias.subType, existingType.get)) {
+			state.fail(NonNarrowingTypeAlias, typeAlias)
+		} else {
+			state.withUpdatedSymbol(typeAlias.alias.name)(typeAlias.subType)
+		}
+	}
 
 	private def runVariableDeclaration(varDeclaration: VariableDeclaration)(implicit state: EvalState): Try[EvalState] = {
 		if (state.environment.isInCurrentScope(varDeclaration.name))

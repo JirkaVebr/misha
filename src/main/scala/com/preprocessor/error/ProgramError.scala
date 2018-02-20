@@ -29,6 +29,7 @@ object ProgramError {
 	case object NegatingNonBoolean extends SimpleError("Logical negation of a non-boolean")
 	case object NegatingNonNumeric extends SimpleError("Arithmetic negation of a non-numeric")
 	case object NonBooleanCondition extends SimpleError("Non-boolean condition value")
+	case object NonNarrowingTypeAlias extends SimpleError("New value for an existing type name is not a subtype of the existing value")
 	case object ReadingUndefinedVariable extends SimpleError("Reading of an undefined variable")
 	case object TypeAnnotationMismatch extends SimpleError("Assigned value doesn't match the declared type annotation")
 	case object WritingUninitializedVariable extends SimpleError("Writing to an uninitialized variable")

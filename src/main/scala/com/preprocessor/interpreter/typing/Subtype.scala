@@ -4,7 +4,8 @@ import com.preprocessor.ast.Ast.Type
 
 object Subtype {
 
-	def isSubtypeOf(left: Type.Any, right: Type.Any): Boolean = left == right // TODO
+	// TODO (when this is done, uncomment the test in StatementInterpreterSpec)
+	def isSubtypeOf(left: Type.Any, right: Type.Any): Boolean = left == right
 
 	def isEquivalentTo(left: Type.Any, right: Type.Any): Boolean = left == right // TODO
 
