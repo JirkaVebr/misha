@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.{Term, Type, Value}
+import com.preprocessor.ast.Ast.{Term, Value}
 import com.preprocessor.ast.UnitOfMeasure.{GenericUnit, Percentage, Scalar}
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.CompilerError
@@ -61,25 +61,25 @@ object BinaryOperationInterpreter {
 		case _ =>
 			// Unchecked because it's too stupid to realize that it already can't be IsEqualTo or In
 			val operation: (Double, Double) => Boolean = (operator: @unchecked) match {
-				case LowerThan => _<_
-				case LowerEquals => _<=_
-				case GreaterThan => _>_
-				case GreaterEquals => _>=_
+				case LowerThan => _ < _
+				case LowerEquals => _ <= _
+				case GreaterThan => _ > _
+				case GreaterEquals => _ >= _
 			}
 			(left.value, right.value) match {
-			case (Value.Number(valueLeft, unitLeft), Value.Number(valueRight, unitRight)) =>
-				(unitLeft, unitRight) match {
-					case (Percentage, Percentage) | (Scalar, Scalar) =>
-						state evaluatedTo Value.Boolean(operation(valueLeft, valueRight))
-					case (GenericUnit(_), GenericUnit(_)) => sys.error("todo") // TODO
-					case _ => state.fail(ComparingIncompatibleNumerics, left.value, right.value)
-				}
-			case _ => state.fail(ComparingNonNumber, left.value, right.value)
-		}
+				case (Value.Number(valueLeft, unitLeft), Value.Number(valueRight, unitRight)) =>
+					(unitLeft, unitRight) match {
+						case (Percentage, Percentage) | (Scalar, Scalar) =>
+							state evaluatedTo Value.Boolean(operation(valueLeft, valueRight))
+						case (GenericUnit(_), GenericUnit(_)) => sys.error("todo") // TODO
+						case _ => state.fail(ComparingIncompatibleNumerics, left.value, right.value)
+					}
+				case _ => state.fail(ComparingNonNumber, left.value, right.value)
+			}
 	}
 
 	private def runLogicalOperator(operator: LogicalOperator, left: Expression, right: Expression)
-													 (implicit state: EvalState): Try[EvalState] = {
+																(implicit state: EvalState): Try[EvalState] = {
 		ExpressionInterpreter.run(left) match {
 			case Failure(exception) => Failure(exception)
 			case Success(stateAfterLeft) => ExpressionInterpreter.run(right)(stateAfterLeft) match {
