@@ -2,7 +2,7 @@ package com.preprocessor.interpreter.ops
 
 import com.preprocessor.ast.Ast.Value.Rgba
 
-object ColorOperations {
+object ColorOps {
 
 	private def combineColors(x: Rgba, y: Rgba, combine: (Int, Int) => Int, normalize: (Int) => Int): Rgba =
 		Rgba(

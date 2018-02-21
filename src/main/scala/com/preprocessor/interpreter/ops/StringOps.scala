@@ -4,7 +4,7 @@ import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.Ast.Value.{Number, Primitive, String}
 import com.preprocessor.ast.UnitOfMeasure.Scalar
 
-object StringOperations {
+object StringOps {
 
 
 	def castToString(value: Value.Value): Option[Value.String] = value match {
