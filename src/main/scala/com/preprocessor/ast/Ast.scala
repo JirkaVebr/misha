@@ -85,7 +85,7 @@ object Ast {
 		case class Tuple2(first: Any, second: Any) extends Composite
 		case class Subtraction(minuend: Any, subtrahend: Any) extends Composite
 
-		case class List(elements: Any) extends Composite
+		case class List(of: Any) extends Composite
 		case class Map(key: Any, value: Any, mandatoryEntries: Option[SMap[Any, Any]]) extends Composite
 
 
