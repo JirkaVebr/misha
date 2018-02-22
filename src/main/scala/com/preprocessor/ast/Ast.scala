@@ -43,7 +43,7 @@ object Ast {
 		sealed abstract class Color extends Primitive {
 			override def valueType: Type.Any = Type.Color
 		}
-		case class Rgba(r: Int, g: Int, b: Int, a: Int = 0) extends Color
+		case class Rgba(r: Int, g: Int, b: Int, a: Int = 255) extends Color
 		case object CurrentColor extends Color
 		case object Transparent extends Color
 

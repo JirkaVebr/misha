@@ -160,6 +160,6 @@ object L1_Literals {
 			if (isShort) hex.toVector.map((c: Char) => h2d(c, c))
 			else hex.toVector.grouped(2).map((pxs: Vector[Char]) => h2d(pxs(0), pxs(1))).toVector
 
-		Rgba(norm(0), norm(1), norm(2), if (hasAlpha) norm(3) else 0)
+		Rgba(norm(0), norm(1), norm(2), if (hasAlpha) norm(3) else 255)
 	}
 }
