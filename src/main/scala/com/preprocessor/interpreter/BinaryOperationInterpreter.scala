@@ -1,6 +1,7 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
+import com.preprocessor.ast.Ast.Value.{Color, Composite, Flag, Number, Primitive, Rgba, String, Transparent, Tuple2Value, Unit}
 import com.preprocessor.ast.Ast.{Term, Value}
 import com.preprocessor.ast.UnitOfMeasure.{GenericUnit, Percentage, Scalar}
 import com.preprocessor.ast.ValueRecord
@@ -20,7 +21,7 @@ object BinaryOperationInterpreter {
 			Interpreter.chainRun[Expression](chain, state, ExpressionInterpreter.run(_)(_)) match {
 				case Failure(exception) => Failure(exception)
 				case Success((left :: right :: Nil, newState)) => binaryOperation.operator match {
-					case _: NumericOperator => sys.error("todo") // TODO
+					case operator: NumericOperator => runNumericOperator(operator, left, right)(newState)
 					case operator: Comparison => runComparison(operator, left, right)(newState)
 					case _ => state.failFatally(CompilerError()) // TODO
 				}
@@ -33,6 +34,32 @@ object BinaryOperationInterpreter {
 				case None => newState.fail(ProgramError.ConcatenatingIllegalOperand)
 			}
 		 */
+	}
+
+	private def runNumericOperator(operator: NumericOperator, left: ValueRecord, right: ValueRecord)
+																(implicit state: EvalState): Try[EvalState] = left.value match {
+		case Unit => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
+		case primitive: Primitive => primitive match {
+			case Number(value, unit) => sys.error("todo") // TODO
+			case String(value) => sys.error("todo") // TODO Plus string or multiply by non-negative integer scalar
+			case color: Color => color match {
+				case rgba: Rgba => operator match {
+					case Addition => sys.error("todo") // TODO rgba or percentage
+					case Subtraction => sys.error("todo")
+					case _ => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
+				}
+				case _ => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
+			}
+			case _: Flag | _: Value.Boolean => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
+		}
+		case composite: Composite => composite match {
+			case _: Tuple2Value => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
+			case Value.List(values) => operator match {
+				case Addition => sys.error("todo") // TODO New element of a correct type or a list
+				case Multiplication => sys.error("todo") // TODO Non-negative integer scalar
+				case _ => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
+			}
+		}
 	}
 
 	private def runAssignment(left: Expression, right: Expression)(implicit state: EvalState): Try[EvalState] = left match {

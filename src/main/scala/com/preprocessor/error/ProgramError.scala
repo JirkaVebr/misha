@@ -23,6 +23,7 @@ object ProgramError {
 	case object ComparingNonNumber extends SimpleError("Numerical comparison of non-numerical values")
 	case object ConcatenatingIllegalOperand extends SimpleError("Concatenation of a value that is not convertible to a string")
 	case object DuplicateVariableDeclaration extends SimpleError("Duplicate declaration of a variable within the same scope")
+	case object IllegalNumericOperatorOperand extends SimpleError("Applying a numeric operator to an illegal type")
 	case object IllTypedAssignment extends SimpleError("Type of assignment value does not conform to the declared variable type")
 	case object IllTypedConditionBranches extends SimpleError("Miss-matched types of branches of a conditional expression")
 	case object LogicOnNonBooleans extends SimpleError("Attempting logical operations on non-boolean values")
