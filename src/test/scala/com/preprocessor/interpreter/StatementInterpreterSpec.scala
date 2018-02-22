@@ -28,7 +28,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val symbol = ValueSymbol("myVar")
 		val varType = Type.Number
 		val varValue = Value.Scalar(123)
-		val newState = (state.withUpdatedSymbol(symbol)(ValueRecord(varValue, varType))).get
+		val newState = state.withUpdatedSymbol(symbol)(ValueRecord(varValue, varType)).get
 
 		assertThrows[ProgramError](run(VariableDeclaration(symbol, None, varValue))(newState))
 	}

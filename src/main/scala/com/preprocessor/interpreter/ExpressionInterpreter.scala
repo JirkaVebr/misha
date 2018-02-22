@@ -17,7 +17,7 @@ object ExpressionInterpreter {
 		case unaryOperation: UnaryOperation => runUnaryOperation(unaryOperation)
 		case conditional: Conditional => runConditional(conditional)
 		case StringInterpolation(components) => sys.error("todo") // TODO
-		case Block(content) => sys.error("todo") // TODO
+		case block: Block => runBlock(block)
 		case term: Term => TermInterpreter.run(term)
 	}
 
@@ -74,6 +74,14 @@ object ExpressionInterpreter {
 				case _ => stateAfterCondition.fail(NonBooleanCondition)
 			}
 		}
+	}
 
+	private def runBlock(block: Block)(implicit state: EvalState): Try[EvalState] = {
+		val newScope = state.environment.pushSubScope()
+		StatementInterpreter.run(block.content)(EvalState(newScope)) match {
+			case fail: Failure[EvalState] => fail
+			case Success(result) =>
+				Success(EvalState(result.environment.popSubScope().get, result.valueRecord))
+		}
 	}
 }
