@@ -15,7 +15,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 	it should "correctly read existing variables" in {
 		val symbol = ValueSymbol("myVar")
 		val varType = Type.Number
-		val varValue = Value.Number(123)
+		val varValue = Value.Scalar(123)
 		val variable = Variable(symbol)
 		val newState = (state.withUpdatedSymbol(symbol)(ValueRecord(varValue, varType))).get
 

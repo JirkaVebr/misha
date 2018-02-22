@@ -1,9 +1,8 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Value.{Color, Composite, Flag, Number, Primitive, Rgba, String, Transparent, Tuple2Value, Unit}
+import com.preprocessor.ast.Ast.Value.{Color, Composite, Dimensioned, Flag, Number, Percentage, Primitive, Rgba, Scalar, String, Tuple2Value, Unit}
 import com.preprocessor.ast.Ast.{Term, Value}
-import com.preprocessor.ast.UnitOfMeasure.{GenericUnit, Percentage, Scalar}
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError._
@@ -40,7 +39,11 @@ object BinaryOperationInterpreter {
 																(implicit state: EvalState): Try[EvalState] = left.value match {
 		case Unit => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
 		case primitive: Primitive => primitive match {
-			case Number(value, unit) => sys.error("todo") // TODO
+			case number: Number => number match {
+				case Dimensioned(value, unit) => sys.error("todo") // TODO
+				case Scalar(value) => sys.error("todo") // TODO
+				case Percentage(value) => sys.error("todo") // TODO
+			}
 			case String(value) => sys.error("todo") // TODO Plus string or multiply by non-negative integer scalar
 			case color: Color => color match {
 				case rgba: Rgba => operator match {
@@ -94,13 +97,13 @@ object BinaryOperationInterpreter {
 				case GreaterEquals => _ >= _
 			}
 			(left.value, right.value) match {
-				case (Value.Number(valueLeft, unitLeft), Value.Number(valueRight, unitRight)) =>
-					(unitLeft, unitRight) match {
-						case (Percentage, Percentage) | (Scalar, Scalar) =>
-							state evaluatedTo Value.Boolean(operation(valueLeft, valueRight))
-						case (GenericUnit(_), GenericUnit(_)) => sys.error("todo") // TODO
-						case _ => state.fail(ComparingIncompatibleNumerics, left.value, right.value)
-					}
+				case (leftNumeric: Number, rightNumeric: Number) => (leftNumeric, rightNumeric) match {
+					case (Scalar(_), Scalar(_)) |
+							 (Percentage(_), Percentage(_)) =>
+						state evaluatedTo Value.Boolean(operation(leftNumeric.value, rightNumeric.value))
+					case (Dimensioned(_, _), Dimensioned(_, _)) => sys.error("todo") // TODO
+					case _ => state.fail(ComparingIncompatibleNumerics, left.value, right.value)
+				}
 				case _ => state.fail(ComparingNonNumber, left.value, right.value)
 			}
 	}

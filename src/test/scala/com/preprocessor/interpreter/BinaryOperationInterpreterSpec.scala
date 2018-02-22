@@ -1,10 +1,9 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Value.Number
+import com.preprocessor.ast.Ast.Value.{Percentage, Scalar}
 import com.preprocessor.ast.Ast.{Term, Type, Value}
 import com.preprocessor.ast.Symbol.ValueSymbol
-import com.preprocessor.ast.UnitOfMeasure.Percentage
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
 
@@ -19,13 +18,13 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 	it should "correctly perform assignment" in {
 		val symbol = ValueSymbol("myVar")
 		val variable = Term.Variable(symbol)
-		val initialValue = Number(123)
-		val targetValue = Number(456)
+		val initialValue = Scalar(123)
+		val targetValue = Scalar(456)
 
 		assertThrows[ProgramError](run(BinaryOperation(Equals, variable, targetValue))(state))
 
 		val newState: EvalState =
-			state.withUpdatedSymbol(symbol)(ValueRecord(initialValue, Type.Number)).get
+			state.withUpdatedSymbol(symbol)(ValueRecord(initialValue, Type.Scalar)).get
 
 		assert(newState.environment.lookup(symbol).get.value == initialValue)
 
@@ -35,17 +34,17 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 	it should "correctly perform comparison" in {
-		assert(run(BinaryOperation(IsEqualTo, Number(123), Number(123))).valueRecord.value == Value.Boolean(true))
-		assert(run(BinaryOperation(IsEqualTo, Number(123), Number(456))).valueRecord.value == Value.Boolean(false))
-		assert(run(BinaryOperation(IsEqualTo, Number(123), Value.Boolean(true))).valueRecord.value == Value.Boolean(false))
-		assert(run(BinaryOperation(LowerThan, Number(123), Number(456))).valueRecord.value == Value.Boolean(true))
-		assert(run(BinaryOperation(LowerEquals, Number(123), Number(456))).valueRecord.value == Value.Boolean(true))
-		assert(run(BinaryOperation(GreaterEquals, Number(456), Number(456))).valueRecord.value == Value.Boolean(true))
+		assert(run(BinaryOperation(IsEqualTo, Scalar(123), Scalar(123))).valueRecord.value == Value.Boolean(true))
+		assert(run(BinaryOperation(IsEqualTo, Scalar(123), Scalar(456))).valueRecord.value == Value.Boolean(false))
+		assert(run(BinaryOperation(IsEqualTo, Scalar(123), Value.Boolean(true))).valueRecord.value == Value.Boolean(false))
+		assert(run(BinaryOperation(LowerThan, Scalar(123), Scalar(456))).valueRecord.value == Value.Boolean(true))
+		assert(run(BinaryOperation(LowerEquals, Scalar(123), Scalar(456))).valueRecord.value == Value.Boolean(true))
+		assert(run(BinaryOperation(GreaterEquals, Scalar(456), Scalar(456))).valueRecord.value == Value.Boolean(true))
 	}
 
 	it should "reject illegal comparisons" in {
-		assertThrows[ProgramError](run(BinaryOperation(GreaterEquals, Number(456), Value.Boolean(true))))
-		assertThrows[ProgramError](run(BinaryOperation(GreaterEquals, Number(456), Number(456, Percentage))))
+		assertThrows[ProgramError](run(BinaryOperation(GreaterEquals, Scalar(456), Value.Boolean(true))))
+		assertThrows[ProgramError](run(BinaryOperation(GreaterEquals, Scalar(456), Percentage(456))))
 	}
 
 
@@ -67,8 +66,8 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "reject illegal logical operation operands" in {
 		// It should check the numbers despite not technically having to evaluate them
-		assertThrows[ProgramError](run(BinaryOperation(and, f, Value.Number(123))).valueRecord.value == f)
-		assertThrows[ProgramError](run(BinaryOperation(or, t, Value.Number(123))).valueRecord.value == t)
+		assertThrows[ProgramError](run(BinaryOperation(and, f, Value.Scalar(123))).valueRecord.value == f)
+		assertThrows[ProgramError](run(BinaryOperation(or, t, Value.Scalar(123))).valueRecord.value == t)
 	}
 
 	it should "evaluate logical operations lazily" in {

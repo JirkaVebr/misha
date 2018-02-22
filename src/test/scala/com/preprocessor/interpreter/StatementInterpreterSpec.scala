@@ -17,7 +17,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "correctly declare variables" in {
 		val symbol = ValueSymbol("myVar")
-		val varValue = Value.Number(123)
+		val varValue = Value.Scalar(123)
 
 		val newState = run(VariableDeclaration(symbol, None, varValue))
 		assert(newState.environment.isInCurrentScope(symbol))
@@ -27,7 +27,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 	it should "reject declaration of existing variables" in {
 		val symbol = ValueSymbol("myVar")
 		val varType = Type.Number
-		val varValue = Value.Number(123)
+		val varValue = Value.Scalar(123)
 		val newState = (state.withUpdatedSymbol(symbol)(ValueRecord(varValue, varType))).get
 
 		assertThrows[ProgramError](run(VariableDeclaration(symbol, None, varValue))(newState))
@@ -35,7 +35,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "reject declarations with wrong type annotations" in {
 		val symbol = ValueSymbol("myVar")
-		val varValue = Value.Number(123)
+		val varValue = Value.Scalar(123)
 		val varType = Type.Boolean // Deliberately wrong type … that's the point here
 
 		assertThrows[ProgramError](run(VariableDeclaration(symbol, Some(varType), varValue)))
@@ -44,9 +44,9 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 	it should "correctly run a sequence" in {
 		val symbol1 = ValueSymbol("myVar1")
 		val symbol2 = ValueSymbol("myVar2")
-		val varValue1 = Value.Number(123)
-		val consequent = Value.Number(111)
-		val alternative = Value.Number(222)
+		val varValue1 = Value.Scalar(123)
+		val consequent = Value.Scalar(111)
+		val alternative = Value.Scalar(222)
 
 		assert(run(
 			Sequence(

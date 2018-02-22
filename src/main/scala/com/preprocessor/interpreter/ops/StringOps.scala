@@ -1,8 +1,7 @@
 package com.preprocessor.interpreter.ops
 
 import com.preprocessor.ast.Ast.Value
-import com.preprocessor.ast.Ast.Value.{Number, Primitive, String}
-import com.preprocessor.ast.UnitOfMeasure.Scalar
+import com.preprocessor.ast.Ast.Value.{Dimensioned, Number, Percentage, Primitive, Scalar, String}
 
 object StringOps {
 
@@ -10,9 +9,10 @@ object StringOps {
 	def castToString(value: Value.Value): Option[Value.String] = value match {
 		case primitive: Primitive => primitive match {
 			case String(string) => Some(Value.String(string))
-			case Number(number, unit) => unit match {
-				case Scalar => Some(Value.String(number.toString))
-				case _ => None
+			case number: Number => number match {
+				case Scalar(value) => Some(Value.String(value.toString))
+				case Percentage(value) => Some(Value.String(value.toString + '%'))
+				case Dimensioned(value, unit) => None
 			}
 			case _ => None
 		}

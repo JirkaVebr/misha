@@ -6,7 +6,7 @@ import com.preprocessor.ast.{Ast, Symbol}
 class RootEnvironment extends Environment {
 
 
-	override def lookup(name: Symbol.Symbol): Option[Symbol.Symbol#Value] = name match {
+	override def lookup(name: Symbol.Symbol): Option[name.Value] = name match {
 		case TypeSymbol(typeName) => RootEnvironment.preDefinedTypes.get(typeName).asInstanceOf[Option[name.Value]]
 		case ValueSymbol(_) => None // TODO
 		case Context => None
@@ -19,7 +19,6 @@ object RootEnvironment {
 		"Any" -> Ast.Type.Any,
 		"Color" -> Ast.Type.Color,
 		"Boolean" -> Ast.Type.Boolean,
-		"Dimensioned" -> Ast.Type.Dimensioned,
 		"Flag" -> Ast.Type.Flag,
 		"Formula" -> Ast.Type.Formula,
 		"Integer" -> Ast.Type.Integer,

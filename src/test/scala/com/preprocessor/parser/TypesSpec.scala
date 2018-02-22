@@ -10,7 +10,6 @@ class TypesSpec extends BaseParserSpec {
 		assert(parse("Any") == Type.Any)
 		assert(parse("Color") == Type.Color)
 		assert(parse("Boolean") == Type.Boolean)
-		assert(parse("Dimensioned") == Type.Dimensioned)
 		assert(parse("Formula") == Type.Formula)
 		assert(parse("Integer") == Type.Integer)
 		assert(parse("Number") == Type.Number)
@@ -58,23 +57,23 @@ class TypesSpec extends BaseParserSpec {
 	}
 
 	it should "parse a literal type" in {
-		assert(parse("123") == Type.Literal(Value.Number(123)))
+		assert(parse("123") == Type.Literal(Value.Scalar(123)))
 		assert(parse("true") == Type.Literal(Value.Boolean(true)))
 	}
 
 	it should "parse a literal type in a union" in {
-		assert(parse("Integer | 123") == Type.Union(Set(Type.Integer, Type.Literal(Value.Number(123)))))
+		assert(parse("Integer | 123") == Type.Union(Set(Type.Integer, Type.Literal(Value.Scalar(123)))))
 	}
 
 	it should "parse a basic subtraction type" in {
-		assert(parse("Integer -- 123") == Type.Subtraction(Type.Integer, Type.Literal(Value.Number(123))))
+		assert(parse("Integer -- 123") == Type.Subtraction(Type.Integer, Type.Literal(Value.Scalar(123))))
 	}
 
 	it should "parse a complex subtraction type" in {
 		assert(parse("Integer | String | Boolean -- 123 | true") ==
 			Type.Subtraction(
 				Type.Union(Set(Type.Integer, Type.String, Type.Boolean)),
-				Type.Union(Set(Type.Literal(Value.Number(123)), Type.Literal(Value.Boolean(true))))
+				Type.Union(Set(Type.Literal(Value.Scalar(123)), Type.Literal(Value.Boolean(true))))
 			)
 		)
 	}

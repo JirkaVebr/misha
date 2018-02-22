@@ -17,13 +17,13 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 	it should "correctly negate numbers" in {
-		assert(run(UnaryOperation(ArithmeticNegation, Value.Number(123))).valueRecord.value == Value.Number(-123))
+		assert(run(UnaryOperation(ArithmeticNegation, Value.Scalar(123))).valueRecord.value == Value.Scalar(-123))
 		assertThrows[ProgramError](run(UnaryOperation(LogicalNegation, Value.String("I shall not be negated"))))
 	}
 
 	it should "correctly execute conditional expressions" in {
-		val consequent = Value.Number(123)
-		val alternative = Value.Number(456)
+		val consequent = Value.Scalar(123)
+		val alternative = Value.Scalar(456)
 
 		assert(run(Conditional(Value.Boolean(true), consequent, None)).valueRecord.value == consequent)
 		assert(run(Conditional(Value.Boolean(true), consequent, Some(alternative))).valueRecord.value == consequent)

@@ -1,7 +1,7 @@
 package com.preprocessor.ast
 
 import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
-import com.preprocessor.ast.UnitOfMeasure.{Scalar, UnitOfMeasure}
+import com.preprocessor.ast.NumberUnit.{Unit, UnitOfMeasure}
 import com.preprocessor.interpreter.typing.Subtype
 
 import scala.collection.immutable.{Map => SMap}
@@ -30,9 +30,18 @@ object Ast {
 		sealed abstract class Primitive extends Value
 		sealed abstract class Composite extends Value
 
-		case class Number(value: Double, unit: UnitOfMeasure = Scalar) extends Primitive {
-			override def valueType: Type.Any = Type.Number
+		sealed abstract class Number(val value: Double) extends Primitive
+		case class Dimensioned(override val value: Double, unit: UnitOfMeasure) extends Number(value) {
+			override def valueType: Type.Any = Type.Numeric // TODO
 		}
+		case class Scalar(override val value: Double) extends Number(value) {
+			override def valueType: Type.Any = Type.Scalar
+		}
+		case class Percentage(override val value: Double) extends Number(value) {
+			override def valueType: Type.Any = Type.Percentage
+		}
+
+
 		case class Boolean(value: scala.Boolean) extends Primitive {
 			override def valueType: Type.Any = Type.Boolean
 		}
@@ -95,9 +104,10 @@ object Ast {
 		sealed trait Number extends Rational
 
 		case object Color extends Numeric
-		case object Dimensioned extends Formula
+		case class Dimensioned(typeName: TypeSymbol) extends Numeric
 		case object Formula extends Formula
 		case object Integer extends Number
+		case object Scalar extends Number
 		case object Number extends Number
 		case object Numeric extends Numeric
 		case object Percentage extends Rational

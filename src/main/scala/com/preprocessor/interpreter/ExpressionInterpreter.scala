@@ -2,6 +2,7 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Term.Term
+import com.preprocessor.ast.Ast.Value.{Dimensioned, Percentage, Scalar}
 import com.preprocessor.ast.Ast.{Type, Value}
 import com.preprocessor.error.ProgramError
 import com.preprocessor.error.ProgramError.{IllTypedConditionBranches, NonBooleanCondition}
@@ -32,7 +33,11 @@ object ExpressionInterpreter {
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
 				case ArithmeticNegation => newState.valueRecord.value match {
-					case Value.Number(magnitude, unit) => newState evaluatedTo Value.Number(-magnitude, unit)
+					case number: Value.Number =>  newState evaluatedTo (number match {
+						case Dimensioned(magnitude, unit) => Dimensioned(-magnitude, unit)
+						case Scalar(magnitude) => Scalar(-magnitude)
+						case Percentage(magnitude) => Percentage(-magnitude)
+					})
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
 			}

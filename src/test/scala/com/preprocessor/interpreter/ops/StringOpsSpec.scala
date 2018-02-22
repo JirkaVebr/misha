@@ -11,7 +11,7 @@ class StringOpsSpec extends BaseInterpreterSpec {
 		val alreadyString = Value.String("already string")
 		assert(StringOps.castToString(alreadyString).get == alreadyString)
 
-		val number = Value.Number(123.456)
+		val number = Value.Scalar(123.456)
 		assert(StringOps.castToString(number).get == Value.String("123.456"))
 
 		assert(StringOps.castToString(Value.Tuple2Value(alreadyString, number)).isEmpty)

@@ -1,8 +1,9 @@
 package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Value
-import com.preprocessor.ast.Ast.Value.{Color, Rgba, Flag, Important, Primitive}
-import com.preprocessor.ast.UnitOfMeasure.{GenericUnit, Percentage, Scalar, UnitOfMeasure}
+import com.preprocessor.ast.Ast.Value.{Color, Flag, Important, Primitive, Rgba}
+import com.preprocessor.ast.NumberUnit
+import com.preprocessor.ast.NumberUnit.UnitOfMeasure
 import com.preprocessor.spec.ColorKeywords
 import org.parboiled2._
 
@@ -60,9 +61,9 @@ trait L1_Literals { this: org.parboiled2.Parser
 		(Exponent ~ sign ~ digits) ~> ((sign: Int, digits: String) => sign * digits.toDouble)
 	}
 
-	private def unitOfMeasure: Rule1[UnitOfMeasure] = rule {
-		('%' ~ SingleLineWhitespace ~ push(Percentage)) |
-		capture(oneOrMore(CharPredicate.Alpha)) ~> ((unitOfMeasure: String) => GenericUnit(Map(unitOfMeasure -> 1)))
+	private def unitOfMeasure: Rule1[NumberUnit.Unit] = rule {
+		('%' ~ SingleLineWhitespace ~ push(NumberUnit.Percentage)) |
+		capture(oneOrMore(CharPredicate.Alpha)) ~> ((unitOfMeasure: String) => UnitOfMeasure(Map(unitOfMeasure -> 1)))
 	}
 
 
@@ -149,8 +150,16 @@ object L1_Literals {
 	private def getNumericValue(base: Double, exponent: Option[Double]) =
 		if (exponent.isEmpty) base else base * Math.pow(10, exponent.get)
 
-	private def createNumber(base: Double, exponent: Option[Double], unitOfMeasure: Option[UnitOfMeasure]): Value.Number =
-		Value.Number(getNumericValue(base, exponent), unitOfMeasure.getOrElse(Scalar))
+	private def createNumber(base: Double, exponent: Option[Double], unitOfMeasure: Option[NumberUnit.Unit]): Value.Number = {
+		val value = getNumericValue(base, exponent)
+		unitOfMeasure match {
+			case Some(unit) => unit match {
+				case unit: UnitOfMeasure => Value.Dimensioned(value, unit)
+				case NumberUnit.Percentage => Value.Percentage(value)
+			}
+			case None => Value.Scalar(value)
+		}
+	}
 
 	private def convertHexToColor(hex: String): Rgba = {
 		val isShort = hex.length == 3 || hex.length == 4
