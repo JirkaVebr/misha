@@ -70,7 +70,7 @@ object BinaryOperationInterpreter {
 					val valueRecord = newState.environment.lookup(name).get
 
 					if (newState.valueRecord.recordType isSubtypeOf valueRecord.recordType)
-						// TODO add readonly checks
+					// TODO add readonly checks
 						newState.withUpdatedSymbol(name)(valueRecord ~> newState.valueRecord.value)
 					else newState.fail(IllTypedAssignment)
 				}
