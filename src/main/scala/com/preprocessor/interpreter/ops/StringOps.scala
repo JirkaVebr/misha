@@ -10,9 +10,9 @@ object StringOps {
 		case primitive: Primitive => primitive match {
 			case String(string) => Some(Value.String(string))
 			case number: Number => number match {
-				case Scalar(value) => Some(Value.String(value.toString))
-				case Percentage(value) => Some(Value.String(value.toString + '%'))
-				case Dimensioned(value, unit) => None
+				case Scalar(magnitude) => Some(Value.String(magnitude.toString))
+				case Percentage(magnitude) => Some(Value.String(magnitude.toString + '%'))
+				case Dimensioned(_, _) => None // TODO?
 			}
 			case _ => None
 		}
