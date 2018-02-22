@@ -16,6 +16,7 @@ object ExpressionInterpreter {
 		case unaryOperation: UnaryOperation => runUnaryOperation(unaryOperation)
 		case conditional: Conditional => runConditional(conditional)
 		case StringInterpolation(components) => sys.error("todo") // TODO
+		case Block(content) => sys.error("todo") // TODO
 		case term: Term => TermInterpreter.run(term)
 	}
 
