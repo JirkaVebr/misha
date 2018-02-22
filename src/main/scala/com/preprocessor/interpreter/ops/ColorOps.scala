@@ -94,22 +94,26 @@ object ColorOps {
 			normalize(combine(x.a, y.a))
 		)
 
-
-	def addColors(x: Rgba, y: Rgba): Rgba = combineColors(x, y, _ + _, _ min 255)
-
-	def subtractColors(x: Rgba, y: Rgba): Rgba = combineColors(x, y, _ - _, _ max 0)
-
 	/**
 		* @param color  Input color
 		* @param amount It's really a percentage point
 		* @return
 		*/
-	def adjustColor(color: Rgba, amount: Percentage): Rgba = {
+	private def adjustLightness(color: Rgba, amount: Percentage, combine: (Double, Double) => Double): Rgba = {
 		val hsla = toHsla(color)
 
 		hslaToRgba(Hsla(
-			hsla.h, hsla.s, hsla.l + (amount.value / 100d), hsla.a
+			hsla.h, hsla.s, combine(hsla.l, amount.value / 100d), hsla.a
 		))
 	}
+
+
+	def addColors(x: Rgba, y: Rgba): Rgba = combineColors(x, y, _ + _, _ min 255)
+
+	def subtractColors(x: Rgba, y: Rgba): Rgba = combineColors(x, y, _ - _, _ max 0)
+
+	def lighten(color: Rgba, amount: Percentage): Rgba = adjustLightness(color, amount, _ + _)
+
+	def darken(color: Rgba, amount: Percentage): Rgba = adjustLightness(color, amount, _ - _)
 
 }
