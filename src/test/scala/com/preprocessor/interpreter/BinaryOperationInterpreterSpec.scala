@@ -1,11 +1,12 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Value.{Percentage, Scalar}
+import com.preprocessor.ast.Ast.Value.{Percentage, Rgba, Scalar}
 import com.preprocessor.ast.Ast.{Term, Type, Value}
 import com.preprocessor.ast.Symbol.ValueSymbol
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
+import com.preprocessor.interpreter.ops.ColorOps
 
 import scala.util.{Failure, Success}
 
@@ -85,6 +86,18 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 
 		assert(TermInterpreter.run(variable)(stateAfterAnd).get.valueRecord.value == initialValue)
 		assert(TermInterpreter.run(variable)(stateAfterOr).get.valueRecord.value == initialValue)
+	}
+
+	it should "evaluate Color ± Percentage" in {
+		val (l, r) = (Rgba(240, 70, 21), Percentage(25))
+		run(BinaryOperation(Addition, l, r)).valueRecord.value == ColorOps.lighten(l, r)
+		run(BinaryOperation(Subtraction, l, r)).valueRecord.value == ColorOps.darken(l, r)
+	}
+
+	it should "evaluate Color ± Color" in {
+		val (l, r) = (Rgba(1, 2, 3, 4), Rgba(4, 3, 2, 1))
+		run(BinaryOperation(Addition, l, r)).valueRecord.value == ColorOps.addColors(l, r)
+		run(BinaryOperation(Subtraction, l, r)).valueRecord.value == ColorOps.subtractColors(l, r)
 	}
 
 

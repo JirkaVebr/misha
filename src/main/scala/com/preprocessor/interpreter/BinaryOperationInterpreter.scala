@@ -6,6 +6,7 @@ import com.preprocessor.ast.Ast.{Term, Value}
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError._
+import com.preprocessor.interpreter.ops.ColorOps
 
 import scala.util.{Failure, Success, Try}
 
@@ -45,14 +46,7 @@ object BinaryOperationInterpreter {
 				case Percentage(value) => sys.error("todo") // TODO
 			}
 			case String(value) => sys.error("todo") // TODO Plus string or multiply by non-negative integer scalar
-			case color: Color => color match {
-				case rgba: Rgba => operator match {
-					case Addition => sys.error("todo") // TODO rgba or percentage
-					case Subtraction => sys.error("todo")
-					case _ => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
-				}
-				case _ => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
-			}
+			case color: Color => runNumericOperatorOnColor(operator, color, right)
 			case _: Flag | _: Value.Boolean => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
 		}
 		case composite: Composite => composite match {
@@ -63,6 +57,24 @@ object BinaryOperationInterpreter {
 				case _ => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
 			}
 		}
+	}
+
+	private def runNumericOperatorOnColor(operator: NumericOperator, left: Color, right: ValueRecord)
+																(implicit state: EvalState): Try[EvalState] = left match {
+		case leftRgba: Rgba => operator match {
+			case Addition => right.value match {
+				case percentage: Percentage => state evaluatedTo ColorOps.lighten(leftRgba, percentage)
+				case rightRgba: Rgba => state evaluatedTo ColorOps.addColors(leftRgba, rightRgba)
+				case _ => state.fail(IllegalNumericOperatorOperand, left, right.value)
+			}
+			case Subtraction => right.value match {
+				case percentage: Percentage => state evaluatedTo ColorOps.darken(leftRgba, percentage)
+				case rightRgba: Rgba => state evaluatedTo ColorOps.subtractColors(leftRgba, rightRgba)
+				case _ => state.fail(IllegalNumericOperatorOperand, left, right.value)
+			}
+			case _ => state.fail(IllegalNumericOperatorOperand, left, right.value)
+		}
+		case _ => state.fail(IllegalNumericOperatorOperand, left, right.value)
 	}
 
 	private def runAssignment(left: Expression, right: Expression)(implicit state: EvalState): Try[EvalState] = left match {
