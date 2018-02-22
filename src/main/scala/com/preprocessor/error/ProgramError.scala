@@ -34,4 +34,8 @@ object ProgramError {
 	case object ReadingUndefinedVariable extends SimpleError("Reading of an undefined variable")
 	case object TypeAnnotationMismatch extends SimpleError("Assigned value doesn't match the declared type annotation")
 	case object WritingUninitializedVariable extends SimpleError("Writing to an uninitialized variable")
+
+	case class UnexpectedType(expected: Ast.Type.Any, actual: Ast.Type.Any) extends ProgramErrorCode {
+		override def message(nodes: Ast.Node*): String = ???
+	}
 }
