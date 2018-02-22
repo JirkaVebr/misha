@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter.ops
 
-import com.preprocessor.ast.Ast.Value.Rgba
+import com.preprocessor.ast.Ast.Value.{Percentage, Rgba}
 import com.preprocessor.interpreter.BaseInterpreterSpec
 
 class ColorOpsSpec extends BaseInterpreterSpec{
@@ -15,6 +15,12 @@ class ColorOpsSpec extends BaseInterpreterSpec{
 	it should "correctly subtract rgba colors" in {
 		assert(ColorOps.subtractColors(Rgba(100, 100, 100, 100), Rgba(200, 200, 200, 200)) == Rgba(0, 0, 0, 0))
 		assert(ColorOps.subtractColors(Rgba(5, 4, 3, 2), Rgba(4, 3, 2, 1)) == Rgba(1, 1, 1, 1))
+	}
+
+	it should "correctly lighten/darken rgba colors" in {
+		assert(ColorOps.adjustColor(Rgba(255, 255, 255), Percentage(-10)) == Rgba(230, 230, 230))
+		assert(ColorOps.adjustColor(Rgba(180, 212, 85), Percentage(-15)) == Rgba(143, 176, 45))
+		assert(ColorOps.adjustColor(Rgba(240, 70, 21), Percentage(25)) == Rgba(248, 165, 141))
 	}
 
 }
