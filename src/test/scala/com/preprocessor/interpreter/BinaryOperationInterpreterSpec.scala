@@ -6,7 +6,7 @@ import com.preprocessor.ast.Ast.{Term, Type, Value}
 import com.preprocessor.ast.Symbol.ValueSymbol
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
-import com.preprocessor.interpreter.ops.ColorOps
+import com.preprocessor.interpreter.ops.{ColorOps, StringOps}
 
 import scala.util.{Failure, Success}
 
@@ -90,14 +90,26 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "evaluate Color ± Percentage" in {
 		val (l, r) = (Rgba(240, 70, 21), Percentage(25))
-		run(BinaryOperation(Addition, l, r)).valueRecord.value == ColorOps.lighten(l, r)
-		run(BinaryOperation(Subtraction, l, r)).valueRecord.value == ColorOps.darken(l, r)
+		assert(run(BinaryOperation(Addition, l, r)).valueRecord.value == ColorOps.lighten(l, r))
+		assert(run(BinaryOperation(Subtraction, l, r)).valueRecord.value == ColorOps.darken(l, r))
 	}
 
 	it should "evaluate Color ± Color" in {
 		val (l, r) = (Rgba(1, 2, 3, 4), Rgba(4, 3, 2, 1))
-		run(BinaryOperation(Addition, l, r)).valueRecord.value == ColorOps.addColors(l, r)
-		run(BinaryOperation(Subtraction, l, r)).valueRecord.value == ColorOps.subtractColors(l, r)
+		assert(run(BinaryOperation(Addition, l, r)).valueRecord.value == ColorOps.addColors(l, r))
+		assert(run(BinaryOperation(Subtraction, l, r)).valueRecord.value == ColorOps.subtractColors(l, r))
+	}
+
+	it should "evaluate String + String" in {
+		val (l, r) = (Value.String("foo"), Value.String("fighters"))
+		assert(run(BinaryOperation(Addition, l, r)).valueRecord.value == StringOps.concatenate(l, r))
+		//assert(run(BinaryOperation(Addition, l, Value.Tuple2Value(Scalar(123), Scalar(456)))).valueRecord.value == Value.String(""))
+	}
+
+	it should "evaluate String * Scalar" in {
+		val (l, r) = (Value.String("a"), Scalar(3))
+		assert(run(BinaryOperation(Multiplication, l, r)).valueRecord.value == StringOps.multiply(l, r))
+		assertThrows[ProgramError](run(BinaryOperation(Multiplication, l, Scalar(123.456))))
 	}
 
 

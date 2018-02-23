@@ -6,7 +6,8 @@ import com.preprocessor.ast.Ast.{Term, Value}
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError._
-import com.preprocessor.interpreter.ops.ColorOps
+import com.preprocessor.interpreter.ops.{ColorOps, StringOps}
+import com.preprocessor.interpreter.validators.NumberValidator
 
 import scala.util.{Failure, Success, Try}
 
@@ -27,13 +28,6 @@ object BinaryOperationInterpreter {
 				}
 				case _ => state.failFatally(CompilerError()) // TODO
 			}
-
-		/*
-			StringOperations.castToString(right) match {
-				case Some(string) => newState ~> string
-				case None => newState.fail(ProgramError.ConcatenatingIllegalOperand)
-			}
-		 */
 	}
 
 	private def runNumericOperator(operator: NumericOperator, left: ValueRecord, right: ValueRecord)
@@ -45,7 +39,7 @@ object BinaryOperationInterpreter {
 				case Scalar(value) => sys.error("todo") // TODO
 				case Percentage(value) => sys.error("todo") // TODO
 			}
-			case String(value) => sys.error("todo") // TODO Plus string or multiply by non-negative integer scalar
+			case string: String => runNumericOperatorOnString(operator, string, right)
 			case color: Color => runNumericOperatorOnColor(operator, color, right)
 			case _: Flag | _: Value.Boolean => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
 		}
@@ -59,8 +53,24 @@ object BinaryOperationInterpreter {
 		}
 	}
 
+	private def runNumericOperatorOnString(operator: NumericOperator, left: String, right: ValueRecord)
+																				(implicit state: EvalState): Try[EvalState] = operator match {
+		case Addition => StringOps.castToString(right.value) match {
+			case Some(string) => state evaluatedTo StringOps.concatenate(left, string)
+			case None => state.fail(ConcatenatingIllegalOperand, left, right.value)
+		}
+		case Multiplication => right.value match {
+			case scalar: Scalar =>
+				if (NumberValidator.isInteger(scalar))
+					state evaluatedTo StringOps.multiply(left, scalar)
+				else state.fail(MultiplyingStringByNonInt, left, right.value)
+			case _ => state.fail(MultiplyingStringByNonScalar, left, right.value)
+		}
+		case _ => state.fail(IllegalNumericOperatorOperand, left, right.value)
+	}
+
 	private def runNumericOperatorOnColor(operator: NumericOperator, left: Color, right: ValueRecord)
-																(implicit state: EvalState): Try[EvalState] = left match {
+																			 (implicit state: EvalState): Try[EvalState] = left match {
 		case leftRgba: Rgba => operator match {
 			case Addition => right.value match {
 				case percentage: Percentage => state evaluatedTo ColorOps.lighten(leftRgba, percentage)
