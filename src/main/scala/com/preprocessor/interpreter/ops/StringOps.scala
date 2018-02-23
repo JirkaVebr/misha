@@ -1,14 +1,14 @@
 package com.preprocessor.interpreter.ops
 
 import com.preprocessor.ast.Ast.Value
-import com.preprocessor.ast.Ast.Value.{Dimensioned, Number, Percentage, Primitive, Scalar, String}
+import com.preprocessor.ast.Ast.Value.{Dimensioned, Number, Percentage, Primitive, Scalar}
 
 object StringOps {
 
 
 	def castToString(value: Value.Value): Option[Value.String] = value match {
 		case primitive: Primitive => primitive match {
-			case String(string) => Some(Value.String(string))
+			case Value.String(string) => Some(Value.String(string))
 			case number: Number => number match {
 				case Scalar(magnitude) => Some(Value.String(magnitude.toString))
 				case Percentage(magnitude) => Some(Value.String(magnitude.toString + '%'))
@@ -21,5 +21,12 @@ object StringOps {
 
 	def concatenate(first: Value.String, second: Value.String): Value.String =
 		Value.String(first.value + second.value)
+
+	/**
+		* Be sure to check NumberValidator.isInteger(factor) beforehand.
+		*/
+	def multiply(string: Value.String, factor: Scalar): Value.String =
+		Value.String(string.value * factor.value.toInt)
+
 
 }

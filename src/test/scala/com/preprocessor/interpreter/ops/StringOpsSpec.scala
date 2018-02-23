@@ -1,6 +1,7 @@
 package com.preprocessor.interpreter.ops
 
 import com.preprocessor.ast.Ast.Value
+import com.preprocessor.ast.Ast.Value.Scalar
 import com.preprocessor.interpreter.BaseInterpreterSpec
 
 class StringOpsSpec extends BaseInterpreterSpec {
@@ -22,5 +23,11 @@ class StringOpsSpec extends BaseInterpreterSpec {
 		val second = Value.String("second")
 
 		assert(StringOps.concatenate(first, second) == Value.String("firstsecond"))
+	}
+
+	it should "correctly multiply strings" in {
+		assert(StringOps.multiply(Value.String("a"), Scalar(4)) == Value.String("aaaa"))
+		assert(StringOps.multiply(Value.String("a"), Scalar(0)) == Value.String(""))
+		assert(StringOps.multiply(Value.String("a"), Scalar(-123)) == Value.String(""))
 	}
 }
