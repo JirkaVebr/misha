@@ -1,7 +1,8 @@
 package com.preprocessor.ast
 
+import com.preprocessor.ast.Ast.Expression.Expression
+import com.preprocessor.ast.NumberUnit.UnitOfMeasure
 import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
-import com.preprocessor.ast.NumberUnit.{Unit, UnitOfMeasure}
 import com.preprocessor.interpreter.typing.Subtype
 
 import scala.collection.immutable.{Map => SMap}
@@ -15,6 +16,8 @@ object Ast {
 	sealed abstract class Node
 
 	case class Program(program: Statement.Statement) extends Node
+
+	case class ValueSymbolDeclaration[D](name: ValueSymbol, typeAnnotation: Option[Type.Any], value: D)
 
 	object Value {
 		import Term._
@@ -125,8 +128,7 @@ object Ast {
 		//case class Property(name: Expression, value: Expression, flags: Option[Expression]) extends Statement
 		//case class Import(destination: Expression, parameters: Option[Expression]) extends Statement
 		case class TypeAliasDeclaration(alias: TypeAlias, subType: Any) extends Statement
-		case class VariableDeclaration(name: ValueSymbol, typeAnnotation: Option[Any], value: Expression) extends Statement
-		case class FunctionDeclaration(name: ValueSymbol, typeAnnotation: Option[Any], value: Expression) extends Statement
+		case class VariableDeclaration(declaration: ValueSymbolDeclaration[Expression]) extends Statement
 
 		//case class Rule(head: StringInterpolation, body: Statement) extends Statement
 		case class Rule(head: Value.String, body: Statement) extends Statement // TODO

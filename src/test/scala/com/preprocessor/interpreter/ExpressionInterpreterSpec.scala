@@ -3,7 +3,7 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Statement.VariableDeclaration
 import com.preprocessor.ast.Ast.Value.Scalar
-import com.preprocessor.ast.Ast.{Term, Type, Value}
+import com.preprocessor.ast.Ast.{Term, Type, Value, ValueSymbolDeclaration}
 import com.preprocessor.ast.Symbol.ValueSymbol
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
@@ -59,7 +59,7 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 		val newState: EvalState =
 			state.withUpdatedSymbol(symbol)(ValueRecord(outerValue, Type.Scalar)).get
 
-		val updatedState = run(Block(VariableDeclaration(symbol, None, innerValue)))(newState)
+		val updatedState = run(Block(VariableDeclaration(ValueSymbolDeclaration(symbol, None, innerValue))))(newState)
 
 		assert(updatedState.valueRecord.value == innerValue)
 		assert(updatedState.environment.lookup(symbol).get.value == outerValue)

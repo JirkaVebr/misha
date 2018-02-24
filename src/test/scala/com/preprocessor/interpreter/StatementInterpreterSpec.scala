@@ -4,7 +4,7 @@ import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Statement.{Sequence, Statement, TypeAliasDeclaration, VariableDeclaration}
 import com.preprocessor.ast.Ast.Term.Variable
 import com.preprocessor.ast.Ast.Type.TypeAlias
-import com.preprocessor.ast.Ast.{Type, Value}
+import com.preprocessor.ast.Ast.{Type, Value, ValueSymbolDeclaration}
 import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
@@ -19,7 +19,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val symbol = ValueSymbol("myVar")
 		val varValue = Value.Scalar(123)
 
-		val newState = run(VariableDeclaration(symbol, None, varValue))
+		val newState = run(VariableDeclaration(ValueSymbolDeclaration(symbol, None, varValue)))
 		assert(newState.environment.isInCurrentScope(symbol))
 		assert(newState.environment.lookup(symbol).get.value == varValue)
 	}
@@ -30,7 +30,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val varValue = Value.Scalar(123)
 		val newState = state.withUpdatedSymbol(symbol)(ValueRecord(varValue, varType)).get
 
-		assertThrows[ProgramError](run(VariableDeclaration(symbol, None, varValue))(newState))
+		assertThrows[ProgramError](run(VariableDeclaration(ValueSymbolDeclaration(symbol, None, varValue)))(newState))
 	}
 
 	it should "reject declarations with wrong type annotations" in {
@@ -38,7 +38,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val varValue = Value.Scalar(123)
 		val varType = Type.Boolean // Deliberately wrong type … that's the point here
 
-		assertThrows[ProgramError](run(VariableDeclaration(symbol, Some(varType), varValue)))
+		assertThrows[ProgramError](run(VariableDeclaration(ValueSymbolDeclaration(symbol, Some(varType), varValue))))
 	}
 
 	it should "correctly run a sequence" in {
@@ -51,10 +51,10 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		assert(run(
 			Sequence(
 				Sequence(
-					VariableDeclaration(symbol1, None, varValue1),
-					VariableDeclaration(symbol2, None,
+					VariableDeclaration(ValueSymbolDeclaration(symbol1, None, varValue1)),
+					VariableDeclaration(ValueSymbolDeclaration(symbol2, None,
 						Conditional(BinaryOperation(IsEqualTo, Variable(symbol1), varValue1), consequent, Some(alternative))
-					)
+					))
 				),
 				Variable(symbol2)
 			)

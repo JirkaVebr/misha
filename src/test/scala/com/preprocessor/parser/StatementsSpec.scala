@@ -3,7 +3,7 @@ package com.preprocessor.parser
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Statement._
 import com.preprocessor.ast.Ast.Value.Scalar
-import com.preprocessor.ast.Ast.{Term, Type, Value}
+import com.preprocessor.ast.Ast.{Term, Type, Value, ValueSymbolDeclaration}
 
 
 class StatementsSpec extends BaseParserSpec {
@@ -30,8 +30,8 @@ class StatementsSpec extends BaseParserSpec {
 	}
 
 	it should "correctly parse a variable declaration" in {
-		assert(parse("@let $myVar = 1") == VariableDeclaration("myVar", None, Scalar(1)))
-		assert(parse("@let $myVar: Number = 1") == VariableDeclaration("myVar", Some(Type.Number), Scalar(1)))
+		assert(parse("@let $myVar = 1") == VariableDeclaration(ValueSymbolDeclaration("myVar", None, Scalar(1))))
+		assert(parse("@let $myVar: Number = 1") == VariableDeclaration(ValueSymbolDeclaration("myVar", Some(Type.Number), Scalar(1))))
 	}
 
 	it should "correctly parse a block" in { // TODO
@@ -39,7 +39,7 @@ class StatementsSpec extends BaseParserSpec {
 			"""{123
 				|@let $myVar = 1
 				|789
-				|}""".stripMargin) == Block(Sequence(Sequence(Scalar(123), VariableDeclaration("myVar", None, Scalar(1))), Scalar(789))))
+				|}""".stripMargin) == Block(Sequence(Sequence(Scalar(123), VariableDeclaration(ValueSymbolDeclaration("myVar", None, Scalar(1)))), Scalar(789))))
 	}
 
 	//it should "correctly parse a function call" in {

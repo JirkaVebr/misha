@@ -15,7 +15,6 @@ object StatementInterpreter {
 		case sequence: Sequence => runSequence(sequence)
 		case typeAlias: TypeAliasDeclaration => runTypeAliasDeclaration(typeAlias)
 		case variableDeclaration: VariableDeclaration => runVariableDeclaration(variableDeclaration)
-		case FunctionDeclaration(name, typeAnnotation, value) => sys.error("todo") // TODO
 		case Rule(head, body) => sys.error("todo") // TODO
 
 		case expression: Expression => ExpressionInterpreter.run(expression)
@@ -38,20 +37,21 @@ object StatementInterpreter {
 	}
 
 	private def runVariableDeclaration(varDeclaration: VariableDeclaration)(implicit state: EvalState): Try[EvalState] = {
-		if (state.environment.isInCurrentScope(varDeclaration.name))
+		val declaration = varDeclaration.declaration
+		if (state.environment.isInCurrentScope(declaration.name))
 			state.fail(DuplicateVariableDeclaration, varDeclaration)
-		else ExpressionInterpreter.run(varDeclaration.value) match {
+		else ExpressionInterpreter.run(declaration.value) match {
 			case Failure(exception) => Failure(exception)
-			case Success(stateAfterValue) => varDeclaration.typeAnnotation match {
+			case Success(stateAfterValue) => declaration.typeAnnotation match {
 				case Some(annotatedType) =>
 					if (Subtype.isSubtypeOf(stateAfterValue.valueRecord.recordType, annotatedType))
-						stateAfterValue.withUpdatedSymbol(varDeclaration.name)(
+						stateAfterValue.withUpdatedSymbol(declaration.name)(
 							ValueRecord(stateAfterValue.valueRecord.value, annotatedType)
 						)
 					else
 						stateAfterValue.fail(TypeAnnotationMismatch, varDeclaration)
 				case None =>
-					stateAfterValue.withUpdatedSymbol(varDeclaration.name)(
+					stateAfterValue.withUpdatedSymbol(declaration.name)(
 						ValueRecord(stateAfterValue.valueRecord.value, Inference.inferTypeForValue(stateAfterValue.valueRecord.value))
 					)
 			}
