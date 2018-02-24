@@ -5,6 +5,7 @@ import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Statement._
 import com.preprocessor.ast.Ast.Term._
 import com.preprocessor.ast.Ast._
+import com.preprocessor.ast.Symbol.ValueSymbol
 import org.parboiled2._
 
 trait Expr
@@ -109,7 +110,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 
 	def Variable: Rule1[Term.Variable] = rule {
 		// Deliberately using $ as a char and not a string as not to allow whitespace there
-		'$' ~!~ variableName ~> ((name: String) => Term.Variable(name))
+		'$' ~!~ variableName ~> ((name: ValueSymbol) => Term.Variable(name))
 	}
 
 	private def delimitedList: Rule1[Term.List] = rule {
@@ -135,8 +136,8 @@ trait L3_Expressions { this: org.parboiled2.Parser
 		zeroOrMore(Expression).separatedBy(",") ~ optional(",") ~ AnyWhitespace
 	}
 
-	private def variableName: Rule1[java.lang.String] = rule {
-		Identifier
+	private def variableName: Rule1[ValueSymbol] = rule {
+		Identifier ~> ValueSymbol
 	}
 
 	private def functionCall: Rule1[FunctionCall] = rule {
@@ -148,7 +149,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 
 	private def functionName: Rule1[Expression] = rule {
 		subExpression | Variable | (variableName ~> (
-			(name: String) => Term.Variable(name)
+			(name: ValueSymbol) => Term.Variable(name)
 		))
 	}
 
