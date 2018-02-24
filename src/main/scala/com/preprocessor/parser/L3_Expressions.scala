@@ -99,8 +99,8 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def factor: Rule1[Expression] = rule {
-		functionCall | conditional | delimitedList | unaryOperation | Variable | subExpression | magicSymbol | Literal |
-		block
+		functionCall | conditional | delimitedList | unaryOperation | Variable | anonymousFunction |
+		subExpression | magicSymbol | Literal | block
 	}
 
 	private def unaryOperation: Rule1[UnaryOperation] = rule {
@@ -173,6 +173,15 @@ trait L3_Expressions { this: org.parboiled2.Parser
 
 	private def block: Rule1[Block] = rule { // TODO replace '{' and '}' by INDENT and DEDENT respectively
 		'{' ~!~ Statement ~ '}' ~!~ EndOfLine ~> Block
+	}
+
+	private def anonymousFunction: Rule1[Expression] = rule {
+		"(" ~ zeroOrMore(
+			('$' ~ variableName ~ TypeAnnotation ~ optional("=" ~!~ Expression)) ~> (
+				(name: ValueSymbol, typeAnnotation: Option[Ast.Type.Any], value: Option[Expression]) =>
+					ValueSymbolDeclaration(name, typeAnnotation, value)
+			)
+		).separatedBy(",") ~ optional(",") ~ ")" ~ TypeAnnotation ~ Token("=>") ~ AnyWhitespace ~ Expression ~> Value.Function
 	}
 
 

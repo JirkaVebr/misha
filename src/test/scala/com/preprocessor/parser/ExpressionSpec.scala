@@ -1,7 +1,7 @@
 package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Term
+import com.preprocessor.ast.Ast.{Term, Type, ValueSymbolDeclaration}
 import com.preprocessor.ast.Ast.Term.{FunctionCall, MemberAccess, ParentSelector, Variable}
 import com.preprocessor.ast.Ast.Value._
 
@@ -136,6 +136,17 @@ class ExpressionSpec extends BaseParserSpec {
 		assert(parse("123.456.foo") == MemberAccess(Scalar(123.456), String("foo")))
 		assert(parse("1.2e3.bar") == MemberAccess(Scalar(1200), String("bar")))
 		// TODO fix precedence //assert(parse("1.2e3.bar()") == FunctionCall(MemberAccess(Scalar(1200), String("barr"))))
+	}
+
+	it should "correctly parse anonymous functions" in {
+		assert(parse("() => 123") == Function(scala.List(), None, Scalar(123)))
+		assert(parse("(): Unit => 123") == Function(scala.List(), Some(Type.Unit), Scalar(123)))
+		assert(parse("($a): Unit => 123") ==
+			Function(scala.List(ValueSymbolDeclaration("a", None, None)), Some(Type.Unit), Scalar(123)))
+		assert(parse("($a: Number): Unit => 123") ==
+			Function(scala.List(ValueSymbolDeclaration("a", Some(Type.Number), None)), Some(Type.Unit), Scalar(123)))
+		assert(parse("($a: Number = 1): Unit => 123") ==
+			Function(scala.List(ValueSymbolDeclaration("a", Some(Type.Number), Some(Scalar(1)))), Some(Type.Unit), Scalar(123)))
 	}
 
 	it should "correctly parse complicated arithmetic expressions" in {

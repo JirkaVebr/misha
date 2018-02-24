@@ -71,7 +71,10 @@ object Ast {
 		case class List(values: Seq[Value]) extends Composite {
 			override def valueType: Type.Any = Type.Any // TODO
 		}
-		//case class FunctionValue(arguments: Option[Seq[]]) extends Composite
+		case class Function(arguments: Seq[ValueSymbolDeclaration[Option[Expression]]], returnType: Option[Type.Any], body: Expression)
+			extends Composite {
+			override def valueType: Type.Any = Type.Any // TODO
+		}
 	}
 
 
