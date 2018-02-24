@@ -9,6 +9,9 @@ trait L2_Types { this: org.parboiled2.Parser
 	with L0_Whitespace
 	with L1_Literals =>
 
+	def TypeAnnotation: Rule1[Option[Ast.Type.Any]] = rule {
+		optional(":" ~!~ Type)
+	}
 
 	def Type: Rule1[Ast.Type.Any] = rule {
 		/* intersectionType | */ subtractionType

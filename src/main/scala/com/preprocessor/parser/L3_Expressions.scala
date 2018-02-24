@@ -196,7 +196,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def variableDeclaration: Rule1[VariableDeclaration] = rule {
-		(Token("@let") ~ MandatorySingleLineWhitespace ~ Variable ~ optional(":" ~!~ Type) ~ "=" ~!~ Expression) ~> (
+		(Token("@let") ~ MandatorySingleLineWhitespace ~ Variable ~ TypeAnnotation ~ "=" ~!~ Expression) ~> (
 			(variable: Variable, typeAnnotation: Option[Ast.Type.Any], value: Expression) =>
 				VariableDeclaration(variable.name, typeAnnotation, value)
 			)
