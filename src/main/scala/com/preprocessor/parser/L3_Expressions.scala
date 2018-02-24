@@ -171,7 +171,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 		'&' ~ push(ParentSelector)
 	}
 
-	private def block: Rule1[Expression] = rule { // TODO replace '{' and '}' by INDENT and DEDENT respectively
+	private def block: Rule1[Block] = rule { // TODO replace '{' and '}' by INDENT and DEDENT respectively
 		'{' ~!~ Statement ~ '}' ~!~ EndOfLine ~> Block
 	}
 
