@@ -88,7 +88,13 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def computedMemberAccess: Rule1[Expression] = rule {
-		factor ~ zeroOrMore("[" ~ Expression ~ "]" ~> MemberAccess)
+		memberAccess ~ zeroOrMore("[" ~ Expression ~ "]" ~> MemberAccess)
+	}
+
+	private def memberAccess: Rule1[Expression] = rule {
+		factor ~ zeroOrMore("." ~ Identifier ~> (
+			(expression: Expression, identifier: String) => MemberAccess(expression, Value.String(identifier))
+		))
 	}
 
 	private def factor: Rule1[Expression] = rule {

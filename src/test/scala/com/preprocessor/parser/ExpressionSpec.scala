@@ -130,6 +130,14 @@ class ExpressionSpec extends BaseParserSpec {
 		assert(parse("$a[1 + 2]") == MemberAccess(Variable("a"), BinaryOperation(Addition, Scalar(1), Scalar(2))))
 	}
 
+	it should "correctly parse member access" in {
+		assert(parse("$a.someMember") == MemberAccess(Variable("a"), String("someMember")))
+		assert(parse("''.length") == MemberAccess(String(""), String("length")))
+		assert(parse("123.456.foo") == MemberAccess(Scalar(123.456), String("foo")))
+		assert(parse("1.2e3.bar") == MemberAccess(Scalar(1200), String("bar")))
+		// TODO fix precedence //assert(parse("1.2e3.bar()") == FunctionCall(MemberAccess(Scalar(1200), String("barr"))))
+	}
+
 	it should "correctly parse complicated arithmetic expressions" in {
 		assert(parse("2 * 3 ^ 4") == BinaryOperation(Multiplication, Scalar(2), BinaryOperation(Exponentiation, Scalar(3), Scalar(4))))
 		assert(parse("(1 + 2) / 3") == BinaryOperation(Division, BinaryOperation(Addition, Scalar(1), Scalar(2)), Scalar(3)))
