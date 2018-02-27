@@ -18,8 +18,8 @@ class StatementsSpec extends BaseParserSpec {
 	}
 
 	it should "correctly parse a type alias declaration" in {
-		assert(parse("@type IntOrString = Integer | String") ==
-			TypeAliasDeclaration(Type.TypeAlias("IntOrString"), Type.Union(Set(Type.Integer, Type.String))))
+		assert(parse("@type NumOrString = Numeric | String") ==
+			TypeAliasDeclaration(Type.TypeAlias("NumOrString"), Type.Union(Set(Type.Numeric, Type.String))))
 	}
 
 	it should "correctly parse expressions as statements" in {

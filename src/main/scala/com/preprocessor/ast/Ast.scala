@@ -3,7 +3,7 @@ package com.preprocessor.ast
 import com.preprocessor.ast.Ast.Expression.Expression
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
 import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
-import com.preprocessor.interpreter.typing.Subtype
+import com.preprocessor.interpreter.typing.{Subtype, Typing}
 
 import scala.collection.immutable.{Map => SMap}
 
@@ -23,58 +23,36 @@ object Ast {
 		import Term._
 
 		sealed abstract class Value() extends Term {
-			def valueType: Type.Any
+			def valueType: Type.Any = Typing.getType(this)
 		}
 
-		case object Unit extends Value {
-			override def valueType: Type.Any = Type.Unit
-		}
+		case object Unit extends Value
 
 		sealed abstract class Primitive extends Value
 		sealed abstract class Composite extends Value
 
 		sealed abstract class Number(val value: Double) extends Primitive
-		case class Dimensioned(override val value: Double, unit: UnitOfMeasure) extends Number(value) {
-			override def valueType: Type.Any = Type.Numeric // TODO
-		}
-		case class Scalar(override val value: Double) extends Number(value) {
-			override def valueType: Type.Any = Type.Scalar
-		}
-		case class Percentage(override val value: Double) extends Number(value) {
-			override def valueType: Type.Any = Type.Percentage
-		}
+		case class Dimensioned(override val value: Double, unit: UnitOfMeasure) extends Number(value)
+		case class Scalar(override val value: Double) extends Number(value)
+		case class Percentage(override val value: Double) extends Number(value)
 
 
-		case class Boolean(value: scala.Boolean) extends Primitive {
-			override def valueType: Type.Any = Type.Boolean
-		}
-		case class String(value: java.lang.String) extends Primitive {
-			override def valueType: Type.Any = Type.String
-		}
+		case class Boolean(value: scala.Boolean) extends Primitive
+		case class String(value: java.lang.String) extends Primitive
 
-		sealed abstract class Color extends Primitive {
-			override def valueType: Type.Any = Type.Color
-		}
+		sealed abstract class Color extends Primitive
 		case class Rgba(r: Int, g: Int, b: Int, a: Int = 255) extends Color
 		case object CurrentColor extends Color
 		case object Transparent extends Color
 
-		sealed abstract class Flag extends Primitive {
-			override def valueType: Type.Any = Type.Flag
-		}
+		sealed abstract class Flag extends Primitive
 		case object Important extends Flag
 
 		// Composite types
-		case class Tuple2Value(first: Value, second: Value) extends Composite {
-			override def valueType: Type.Any = Type.Tuple2(first.valueType, second.valueType)
-		}
-		case class List(values: Seq[Value]) extends Composite {
-			override def valueType: Type.Any = Type.Any // TODO
-		}
+		case class Tuple2Value(first: Value, second: Value) extends Composite
+		case class List(values: Seq[Value]) extends Composite
 		case class Function(arguments: Seq[ValueSymbolDeclaration[Option[Expression]]], returnType: Option[Type.Any], body: Expression)
-			extends Composite {
-			override def valueType: Type.Any = Type.Any // TODO
-		}
+			extends Composite
 	}
 
 
@@ -104,21 +82,14 @@ object Ast {
 		case class Map(key: Any, value: Any, mandatoryEntries: Option[SMap[Any, Any]]) extends Composite
 
 
-		sealed trait Numeric extends Primitive
-		sealed trait Formula extends Numeric
-		sealed trait Rational extends Formula
-		sealed trait Number extends Rational
+		case object Formula extends Primitive // e.g. 100% - 10px
+		case object Numeric extends Primitive // e.g. #ddd or 123vh, that is values that define arithmetic operations
+		case object Color extends Primitive
 
-		case object Color extends Numeric
-		case class Dimensioned(typeName: TypeSymbol) extends Numeric
-		case object Formula extends Formula
-		case object Integer extends Number
-		case object Scalar extends Number
-		case object Number extends Number
-		case object Numeric extends Numeric
-		case object Percentage extends Rational
-		case object Rational extends Rational
-		case object Ratio extends Rational
+		case object Number extends Primitive // A concrete number, e.g. 123.456
+		case object Scalar extends Primitive // A unitless number
+		case class Dimensioned(typeName: TypeSymbol) extends Primitive // A number with a unit
+		case object Percentage extends Primitive
 	}
 
 	object Statement {

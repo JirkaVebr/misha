@@ -21,12 +21,10 @@ object RootEnvironment {
 		"Boolean" -> Ast.Type.Boolean,
 		"Flag" -> Ast.Type.Flag,
 		"Formula" -> Ast.Type.Formula,
-		"Integer" -> Ast.Type.Integer,
 		"Number" -> Ast.Type.Number,
 		"Numeric" -> Ast.Type.Numeric,
 		"Percentage" -> Ast.Type.Numeric,
-		"Rational" -> Ast.Type.Rational,
-		"Ratio" -> Ast.Type.Ratio,
+		"Scalar" -> Ast.Type.Scalar,
 		"String" -> Ast.Type.String,
 		"Unit" -> Ast.Type.Unit
 	)
