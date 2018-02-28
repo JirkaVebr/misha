@@ -22,6 +22,9 @@ case class EvalState(environment: Environment, valueRecord: ValueRecord = ValueR
 	@inline def withUpdatedSymbol(symbol: Symbol)(value: symbol.Value): Success[EvalState] =
 		Success(EvalState(environment.updated(symbol)(value), valueRecord))
 
+	@inline def withNewSymbol(symbol: Symbol)(value: symbol.Value): Success[EvalState] =
+		Success(EvalState(environment.putNew(symbol)(value), valueRecord))
+
 	def fail(errorCode: ProgramErrorCode, nodes: Ast.Node*): Failure[EvalState] =
 		Failure(ProgramError(errorCode, this, (if (nodes.isEmpty) List(valueRecord.value) else nodes): _*))
 

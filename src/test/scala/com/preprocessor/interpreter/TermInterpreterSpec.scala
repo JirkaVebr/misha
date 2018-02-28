@@ -17,7 +17,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		val varType = Type.Number
 		val varValue = Value.Scalar(123)
 		val variable = Variable(symbol)
-		val newState = (state.withUpdatedSymbol(symbol)(ValueRecord(varValue, varType))).get
+		val newState = state.withNewSymbol(symbol)(ValueRecord(varValue, varType)).get
 
 		assert(run(variable)(newState).valueRecord.value == varValue)
 	}

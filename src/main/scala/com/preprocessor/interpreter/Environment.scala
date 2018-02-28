@@ -28,6 +28,14 @@ class Environment private
 	}
 
 	def updated(name: Symbol)(value: name.Value): Environment =
+		if (isInCurrentScope(name))
+			putNew(name)(value)
+		else parentEnvironment match {
+			case Some(parent) => cloneWithNewParent(parent.updated(name)(value))
+			case None => putNew(name)(value) // If this method is used correctly, this won't ever be executed
+		}
+
+	def putNew(name: Symbol)(value: name.Value): Environment =
 		new Environment(parentEnvironment, symbolTable.updated(name, value), subEnvironments)
 
 	def isInCurrentScope(name: Symbol): Boolean = symbolTable.get(name).nonEmpty
@@ -38,6 +46,9 @@ class Environment private
 	})
 
 	def isWritable(name: ValueSymbol): Boolean = true // TODO
+
+	def cloneWithNewParent(newParent: Environment): Environment =
+		new Environment(Some(newParent), symbolTable, subEnvironments)
 
 
 	def lookup(name: Symbol): Option[name.Value] = {

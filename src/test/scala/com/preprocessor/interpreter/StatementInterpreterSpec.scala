@@ -28,7 +28,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val symbol = ValueSymbol("myVar")
 		val varType = Type.Number
 		val varValue = Value.Scalar(123)
-		val newState = state.withUpdatedSymbol(symbol)(ValueRecord(varValue, varType)).get
+		val newState = state.withNewSymbol(symbol)(ValueRecord(varValue, varType)).get
 
 		assertThrows[ProgramError](run(VariableDeclaration(ValueSymbolDeclaration(symbol, None, varValue)))(newState))
 	}
@@ -82,7 +82,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 	it should "reject non-narrowing type alias declarations" in {
 		val symbol = TypeSymbol("MyType")
 		val oldType = Type.Boolean
-		val newState = state.withUpdatedSymbol(symbol)(oldType).get
+		val newState = state.withNewSymbol(symbol)(oldType).get
 		val newType = Type.Number
 
 		assertThrows[ProgramError](run(TypeAliasDeclaration(TypeAlias(symbol), newType))(newState))

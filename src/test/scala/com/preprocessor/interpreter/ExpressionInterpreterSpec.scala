@@ -43,12 +43,12 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 		val innerValue = Scalar(456)
 
 		val newState: EvalState =
-			state.withUpdatedSymbol(symbol)(ValueRecord(outerValue, Type.Scalar)).get
+			state.withNewSymbol(symbol)(ValueRecord(outerValue, Type.Scalar)).get
 
 		val updatedState = run(Block(BinaryOperation(Equals, variable, innerValue)))(newState)
 
 		assert(updatedState.valueRecord.value == innerValue)
-		assert(updatedState.environment.lookup(symbol).get.value == outerValue)
+		assert(updatedState.environment.lookup(symbol).get.value == innerValue)
 	}
 
 	it should "correctly execute declarations within blocks" in {
@@ -57,7 +57,7 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 		val innerValue = Scalar(456)
 
 		val newState: EvalState =
-			state.withUpdatedSymbol(symbol)(ValueRecord(outerValue, Type.Scalar)).get
+			state.withNewSymbol(symbol)(ValueRecord(outerValue, Type.Scalar)).get
 
 		val updatedState = run(Block(VariableDeclaration(ValueSymbolDeclaration(symbol, None, innerValue))))(newState)
 

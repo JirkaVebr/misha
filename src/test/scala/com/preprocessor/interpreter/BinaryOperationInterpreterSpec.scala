@@ -25,7 +25,7 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 		assertThrows[ProgramError](run(BinaryOperation(Equals, variable, targetValue))(state))
 
 		val newState: EvalState =
-			state.withUpdatedSymbol(symbol)(ValueRecord(initialValue, Type.Scalar)).get
+			state.withNewSymbol(symbol)(ValueRecord(initialValue, Type.Scalar)).get
 
 		assert(newState.environment.lookup(symbol).get.value == initialValue)
 
@@ -79,7 +79,7 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 		val assignment = BinaryOperation(Equals, variable, targetValue)
 
 		val stateWithVar: EvalState =
-			state.withUpdatedSymbol(symbol)(ValueRecord(initialValue, Type.Boolean)).get
+			state.withNewSymbol(symbol)(ValueRecord(initialValue, Type.Boolean)).get
 
 		val stateAfterAnd = run(BinaryOperation(and, f, assignment))(stateWithVar)
 		val stateAfterOr = run(BinaryOperation(or, t, assignment))(stateWithVar)

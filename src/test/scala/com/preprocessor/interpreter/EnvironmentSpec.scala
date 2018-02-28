@@ -25,7 +25,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		val testTypeSymbol = TypeSymbol("testTypeSymbol")
 		val testType = Color
 
-		environment = environment.updated(testTypeSymbol)(testType)
+		environment = environment.putNew(testTypeSymbol)(testType)
 
 		assert(environment.lookup(testTypeSymbol).nonEmpty)
 		assert(environment.lookup(testTypeSymbol).get == testType)
@@ -46,9 +46,9 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		assert(environment.lookup(testValueSymbol).isEmpty)
 		assert(environment.lookup(Context).isEmpty)
 
-		environment = environment.updated(testTypeSymbol)(testType)
-		environment = environment.updated(testValueSymbol)(testValue)
-		environment = environment.updated(Context)(testContext)
+		environment = environment.putNew(testTypeSymbol)(testType)
+		environment = environment.putNew(testValueSymbol)(testValue)
+		environment = environment.putNew(Context)(testContext)
 
 		assert(environment.lookup(testTypeSymbol).nonEmpty)
 		assert(environment.lookup(testValueSymbol).nonEmpty)
@@ -67,7 +67,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 
 		assert(parentEnvironment.lookup(testTypeSymbol).isEmpty)
 
-		parentEnvironment = parentEnvironment.updated(testTypeSymbol)(testType)
+		parentEnvironment = parentEnvironment.putNew(testTypeSymbol)(testType)
 
 		val childEnvironment = parentEnvironment.pushSubScope()
 
@@ -85,10 +85,10 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 
 		assert(parentEnvironment.lookup(testTypeSymbol).isEmpty)
 
-		parentEnvironment = parentEnvironment.updated(testTypeSymbol)(testTypeParent)
+		parentEnvironment = parentEnvironment.putNew(testTypeSymbol)(testTypeParent)
 
 		var childEnvironment = parentEnvironment.pushSubScope()
-		childEnvironment = childEnvironment.updated(testTypeSymbol)(testTypeChild)
+		childEnvironment = childEnvironment.putNew(testTypeSymbol)(testTypeChild)
 
 		assert(childEnvironment.lookup(testTypeSymbol).nonEmpty)
 		assert(childEnvironment.lookup(testTypeSymbol).get == testTypeChild)

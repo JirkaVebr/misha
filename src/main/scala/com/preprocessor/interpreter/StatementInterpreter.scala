@@ -32,7 +32,7 @@ object StatementInterpreter {
 		if (existingType.nonEmpty && !Subtype.isSubtypeOf(typeAlias.subType, existingType.get)) {
 			state.fail(NonNarrowingTypeAlias, typeAlias)
 		} else {
-			state.withUpdatedSymbol(typeAlias.alias.name)(typeAlias.subType)
+			state.withNewSymbol(typeAlias.alias.name)(typeAlias.subType)
 		}
 	}
 
@@ -45,13 +45,13 @@ object StatementInterpreter {
 			case Success(stateAfterValue) => declaration.typeAnnotation match {
 				case Some(annotatedType) =>
 					if (Subtype.isSubtypeOf(stateAfterValue.valueRecord.recordType, annotatedType))
-						stateAfterValue.withUpdatedSymbol(declaration.name)(
+						stateAfterValue.withNewSymbol(declaration.name)(
 							ValueRecord(stateAfterValue.valueRecord.value, annotatedType)
 						)
 					else
 						stateAfterValue.fail(TypeAnnotationMismatch, varDeclaration)
 				case None =>
-					stateAfterValue.withUpdatedSymbol(declaration.name)(
+					stateAfterValue.withNewSymbol(declaration.name)(
 						ValueRecord(stateAfterValue.valueRecord.value, Inference.inferTypeForValue(stateAfterValue.valueRecord.value))
 					)
 			}
