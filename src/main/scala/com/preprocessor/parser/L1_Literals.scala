@@ -17,10 +17,10 @@ trait L1_Literals { this: org.parboiled2.Parser
 
 
 	def Literal: Rule1[Primitive] = rule {
-		flag | boolean | number | QuotedString | color | unquotedString
+		Flag | boolean | number | QuotedString | color | unquotedString
 	}
 
-	private def flag: Rule1[Flag] = rule {
+	def Flag: Rule1[Flag] = rule {
 		atomic("!important") ~> (() => Important)
 	}
 

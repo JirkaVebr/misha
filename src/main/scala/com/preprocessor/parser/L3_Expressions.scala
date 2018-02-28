@@ -4,6 +4,7 @@ import com.preprocessor.ast.Ast
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Statement._
 import com.preprocessor.ast.Ast.Term._
+import com.preprocessor.ast.Ast.Type.Flag
 import com.preprocessor.ast.Ast._
 import com.preprocessor.ast.Symbol.ValueSymbol
 import org.parboiled2._
@@ -105,7 +106,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 
 	private def unaryOperation: Rule1[UnaryOperation] = rule {
 		("-" ~ Expression ~> ((e: Expression) => UnaryOperation(ArithmeticNegation, e))) |
-		("!" ~ Expression ~> ((e: Expression) => UnaryOperation(LogicalNegation, e)))
+		(!Flag ~ "!" ~ Expression ~> ((e: Expression) => UnaryOperation(LogicalNegation, e)))
 	}
 
 	def Variable: Rule1[Term.Variable] = rule {
