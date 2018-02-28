@@ -195,7 +195,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def sequenceNode: Rule1[Statement] = rule {
-		(typeAliasDeclaration | rule | variableDeclaration | Expression) ~ EndOfLine
+		(typeAliasDeclaration | variableDeclaration | property | rule | Expression) ~ EndOfLine
 	}
 
 	private def rule: Rule1[Ast.Statement.Rule] = rule { // TODO using quoted strings is temporary
@@ -211,6 +211,10 @@ trait L3_Expressions { this: org.parboiled2.Parser
 			(variable: Variable, typeAnnotation: Option[Ast.Type.Any], value: Expression) =>
 				VariableDeclaration(ValueSymbolDeclaration(variable.name, typeAnnotation, value))
 			)
+	}
+
+	private def property: Rule1[Property] = rule {
+		(Token("@property") ~ "(" ~ Expression ~ "," ~ Expression ~ optional("," ~ Expression) ~ optional(",") ~ ")") ~> Property
 	}
 
 }

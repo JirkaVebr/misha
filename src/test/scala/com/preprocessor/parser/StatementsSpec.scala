@@ -2,8 +2,9 @@ package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Statement._
-import com.preprocessor.ast.Ast.Value.Scalar
+import com.preprocessor.ast.Ast.Value.{Important, Scalar}
 import com.preprocessor.ast.Ast.{Term, Type, Value, ValueSymbolDeclaration}
+import com.preprocessor.spec.ColorKeywords
 
 
 class StatementsSpec extends BaseParserSpec {
@@ -40,6 +41,12 @@ class StatementsSpec extends BaseParserSpec {
 				|@let $myVar = 1
 				|789
 				|}""".stripMargin) == Block(Sequence(Sequence(Scalar(123), VariableDeclaration(ValueSymbolDeclaration("myVar", None, Scalar(1)))), Scalar(789))))
+	}
+
+	it should "correctly parse a property" in {
+		assert(parse("@property(\"color\", blue)") == Property(Value.String("color"), ColorKeywords.map("blue"), None))
+		assert(parse("@property(\"color\", blue, !important)") ==
+			Property(Value.String("color"), ColorKeywords.map("blue"), Some(Important)))
 	}
 
 	//it should "correctly parse a function call" in {
