@@ -19,6 +19,11 @@ class TypesSpec extends BaseParserSpec {
 		assert(parse("Unit") == Type.Unit)
 	}
 
+	it should "parse a facultative type" in {
+		assert(parse("Scalar?") == Type.Union(Set(Type.Scalar, Type.Unit)))
+		assert(parse("() => Scalar?") == Type.Function(List(), Type.Union(Set(Type.Scalar, Type.Unit))))
+	}
+
 	it should "parse type aliases" in {
 		assert(parse("MyCustomType") == Type.TypeAlias("MyCustomType"))
 	}

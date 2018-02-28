@@ -24,8 +24,14 @@ trait L2_Types { this: org.parboiled2.Parser
 	}
 
 	private def unionType: Rule1[Ast.Type.Any] = rule {
-		oneOrMore(nonCompoundType).separatedBy("|") ~> (
+		oneOrMore(facultativeType).separatedBy("|") ~> (
 			(subtypes: Seq[Ast.Type.Any]) => if (subtypes.lengthCompare(1) == 0) subtypes.head else Ast.Type.Union(subtypes.toSet)
+		)
+	}
+
+	private def facultativeType: Rule1[Ast.Type.Any] = rule {
+		nonCompoundType ~ optional(Token("?") ~> (
+			(nonCompoundType: Ast.Type.Any) => Ast.Type.Union(Set[Ast.Type.Any](Ast.Type.Unit) + nonCompoundType))
 		)
 	}
 
