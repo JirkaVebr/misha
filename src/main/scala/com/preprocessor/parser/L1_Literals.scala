@@ -21,7 +21,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 	}
 
 	def Flag: Rule1[Flag] = rule {
-		atomic("!important") ~> (() => Important)
+		atomic("!important") ~ push(Important)
 	}
 
 	private def boolean: Rule1[Value.Boolean] = rule {
