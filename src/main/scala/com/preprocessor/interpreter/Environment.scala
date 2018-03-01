@@ -19,11 +19,15 @@ class Environment private
 		new Environment(Some(this), Map(RuleContextSymbol -> context), subEnvironments)
 
 	def popSubScope(): Option[Environment] = parentEnvironment match {
-		case Some(parent) => Some(new Environment(
-			parent.parentEnvironment,
-			parent.symbolTable,
-			this :: parent.subEnvironments
-		))
+		case Some(parent) => Some(
+			if (lookupCurrent(PropertySymbol).nonEmpty || subEnvironments.nonEmpty)
+				new Environment(
+					parent.parentEnvironment,
+					parent.symbolTable,
+					this :: parent.subEnvironments
+				)
+			else parent
+		)
 		case None => None
 	}
 
