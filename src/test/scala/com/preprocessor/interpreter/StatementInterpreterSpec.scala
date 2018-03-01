@@ -5,8 +5,8 @@ import com.preprocessor.ast.Ast.Statement._
 import com.preprocessor.ast.Ast.Term.Variable
 import com.preprocessor.ast.Ast.Type.TypeAlias
 import com.preprocessor.ast.Ast.{Type, Value, ValueSymbolDeclaration}
-import com.preprocessor.ast.Symbol.{PropertySymbol, TypeSymbol, ValueSymbol}
-import com.preprocessor.ast.{PropertyRecord, ValueRecord}
+import com.preprocessor.ast.Symbol.{Context, PropertySymbol, TypeSymbol, ValueSymbol}
+import com.preprocessor.ast.{PropertyRecord, RuleContext, ValueRecord}
 import com.preprocessor.error.ProgramError
 
 import scala.util.{Failure, Success}
@@ -110,6 +110,20 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		assertThrows[ProgramError](run(
 			Property(Value.String("width"), Value.Tuple2(Value.Percentage(80), Value.Percentage(80))))
 		)
+	}
+
+	it should "correctly interpret rules" in {
+		val newState = run(Rule(Value.String(".class"), Block(Sequence(
+			Property(Value.String("line-height"), Value.Scalar(1.6)),
+			Property(Value.String("width"), Value.Percentage(80))
+		))))
+		val ruleEnvironment = newState.environment.subEnvironments.head
+
+		assert(ruleEnvironment.lookupCurrent(Context).get == RuleContext.RawRuleHead(List(Left(".class"))))
+		assert(ruleEnvironment.lookupCurrent(PropertySymbol).get == List(
+			PropertyRecord("width", "80%"),
+			PropertyRecord("line-height", "1.6")
+		))
 	}
 
 

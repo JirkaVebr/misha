@@ -1,6 +1,6 @@
 package com.preprocessor.ast
 
-import com.preprocessor.ast.Ast.Expression.Expression
+import com.preprocessor.ast.Ast.Expression.{Block, Expression}
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
 import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
 import com.preprocessor.interpreter.typing.{Subtype, Typing}
@@ -106,7 +106,7 @@ object Ast {
 		case class VariableDeclaration(declaration: ValueSymbolDeclaration[Expression]) extends Statement
 
 		//case class Rule(head: StringInterpolation, body: Statement) extends Statement
-		case class Rule(head: Value.String, body: Statement) extends Statement // TODO
+		case class Rule(head: Value.String, body: Block) extends Statement // TODO
 	}
 
 

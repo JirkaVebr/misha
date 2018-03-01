@@ -3,6 +3,7 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Ast.Expression.Expression
 import com.preprocessor.ast.Ast.Statement._
 import com.preprocessor.ast.Ast.{Statement, Value}
+import com.preprocessor.ast.RuleContext.RawRuleHead
 import com.preprocessor.ast.Symbol.PropertySymbol
 import com.preprocessor.ast.{PropertyRecord, ValueRecord}
 import com.preprocessor.error.ProgramError._
@@ -17,7 +18,7 @@ object StatementInterpreter {
 		case sequence: Sequence => runSequence(sequence)
 		case typeAlias: TypeAliasDeclaration => runTypeAliasDeclaration(typeAlias)
 		case variableDeclaration: VariableDeclaration => runVariableDeclaration(variableDeclaration)
-		case Rule(head, body) => sys.error("todo") // TODO
+		case rule: Rule => runRule(rule)
 		case property: Statement.Property => runProperty(property)
 
 		case expression: Expression => ExpressionInterpreter.run(expression)
@@ -58,6 +59,17 @@ object StatementInterpreter {
 						ValueRecord(stateAfterValue.valueRecord.value, Inference.inferTypeForValue(stateAfterValue.valueRecord.value))
 					)
 			}
+		}
+	}
+
+	private def runRule(rule: Rule)(implicit state: EvalState): Try[EvalState] = {
+		val ruleHead = RawRuleHead(List(Left(rule.head.value))) // TODO
+		val newScope = state.environment.pushSubScope(ruleHead)
+
+		StatementInterpreter.run(rule.body.content)(EvalState(newScope)) match {
+			case fail: Failure[EvalState] => fail
+			case Success(result) =>
+				Success(EvalState(result.environment.popSubScope().get, result.valueRecord))
 		}
 	}
 
