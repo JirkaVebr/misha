@@ -1,12 +1,12 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Statement.{Sequence, Statement, TypeAliasDeclaration, VariableDeclaration}
+import com.preprocessor.ast.Ast.Statement._
 import com.preprocessor.ast.Ast.Term.Variable
 import com.preprocessor.ast.Ast.Type.TypeAlias
 import com.preprocessor.ast.Ast.{Type, Value, ValueSymbolDeclaration}
-import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
-import com.preprocessor.ast.ValueRecord
+import com.preprocessor.ast.Symbol.{PropertySymbol, TypeSymbol, ValueSymbol}
+import com.preprocessor.ast.{PropertyRecord, ValueRecord}
 import com.preprocessor.error.ProgramError
 
 import scala.util.{Failure, Success}
@@ -86,6 +86,30 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val newType = Type.Number
 
 		assertThrows[ProgramError](run(TypeAliasDeclaration(TypeAlias(symbol), newType))(newState))
+	}
+
+	it should "correctly add properties" in {
+		val newState = run(
+			Sequence(
+				Sequence(
+					Property(Value.String("line-height"), Value.Scalar(1.6)),
+					Property(Value.String("width"), Value.Percentage(80))
+				),
+				Property(Value.String("position"), Value.String("absolute"))
+			)
+		)
+		assert(newState.environment.lookupCurrent(PropertySymbol).get == List(
+			PropertyRecord("position", "absolute"),
+			PropertyRecord("width", "80%"),
+			PropertyRecord("line-height", "1.6")
+		))
+	}
+
+	it should "reject properties illegal in terms of types" in {
+		assertThrows[ProgramError](run(Property(Value.Scalar(123), Value.Scalar(1.6))))
+		assertThrows[ProgramError](run(
+			Property(Value.String("width"), Value.Tuple2Value(Value.Percentage(80), Value.Percentage(80))))
+		)
 	}
 
 

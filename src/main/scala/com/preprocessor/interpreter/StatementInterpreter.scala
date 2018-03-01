@@ -2,9 +2,11 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression.Expression
 import com.preprocessor.ast.Ast.Statement._
-import com.preprocessor.ast.Ast.Value
-import com.preprocessor.ast.ValueRecord
-import com.preprocessor.error.ProgramError.{DuplicateVariableDeclaration, NonNarrowingTypeAlias, TypeAnnotationMismatch}
+import com.preprocessor.ast.Ast.{Statement, Value}
+import com.preprocessor.ast.Symbol.PropertySymbol
+import com.preprocessor.ast.{PropertyRecord, ValueRecord}
+import com.preprocessor.error.ProgramError._
+import com.preprocessor.interpreter.ops.StringOps
 import com.preprocessor.interpreter.typing.{Inference, Subtype}
 
 import scala.util.{Failure, Success, Try}
@@ -16,6 +18,7 @@ object StatementInterpreter {
 		case typeAlias: TypeAliasDeclaration => runTypeAliasDeclaration(typeAlias)
 		case variableDeclaration: VariableDeclaration => runVariableDeclaration(variableDeclaration)
 		case Rule(head, body) => sys.error("todo") // TODO
+		case property: Statement.Property => runProperty(property)
 
 		case expression: Expression => ExpressionInterpreter.run(expression)
 	}
@@ -57,4 +60,28 @@ object StatementInterpreter {
 			}
 		}
 	}
+
+	private def runProperty(property: Statement.Property)(implicit state: EvalState): Try[EvalState] =
+		ExpressionInterpreter.run(property.name) match {
+			case Failure(reason) => Failure(reason)
+			case Success(stateAfterName) => stateAfterName.valueRecord.value match {
+				case Value.String(name) => ExpressionInterpreter.run(property.value)(stateAfterName) match {
+					case Failure(reason) => Failure(reason)
+					case Success(stateAfterValue) => StringOps.castToString(stateAfterValue.valueRecord.value) match {
+						case Some(valueString) =>
+							val property = PropertyRecord(name, valueString.value, Set.empty) // TODO actually use flags
+
+							stateAfterValue.withNewSymbol(PropertySymbol)(
+								property :: (stateAfterValue.environment.lookupCurrent(PropertySymbol) match {
+									case Some(properties) => properties
+									case None => List.empty
+								})
+							)
+						case None => stateAfterName.fail(IllegalPropertyValue, property.name)
+					}
+				}
+				case _ => stateAfterName.fail(NonStringPropertyName, property.name)
+			}
+		}
+
 }
