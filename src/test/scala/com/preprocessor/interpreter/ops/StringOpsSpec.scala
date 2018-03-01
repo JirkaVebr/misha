@@ -14,6 +14,7 @@ class StringOpsSpec extends BaseInterpreterSpec {
 
 		val number = Value.Scalar(123.456)
 		assert(StringOps.castToString(number).get == Value.String("123.456"))
+		assert(StringOps.castToString(Value.Percentage(50)).get == Value.String("50%"))
 
 		assert(StringOps.castToString(Value.Tuple2Value(alreadyString, number)).isEmpty)
 	}
