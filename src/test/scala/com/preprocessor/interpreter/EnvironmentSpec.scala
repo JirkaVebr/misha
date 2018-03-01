@@ -3,7 +3,7 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Ast.{Type, Value}
 import com.preprocessor.ast.Ast.Type.Color
 import com.preprocessor.ast.RuleContext.Selector.Universal
-import com.preprocessor.ast.Symbol.{Context, TypeSymbol, ValueSymbol}
+import com.preprocessor.ast.Symbol.{RuleContextSymbol, TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.ValueRecord
 
 class EnvironmentSpec extends BaseInterpreterSpec {
@@ -44,19 +44,19 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 
 		assert(environment.lookup(testTypeSymbol).isEmpty)
 		assert(environment.lookup(testValueSymbol).isEmpty)
-		assert(environment.lookup(Context).isEmpty)
+		assert(environment.lookup(RuleContextSymbol).isEmpty)
 
 		environment = environment.putNew(testTypeSymbol)(testType)
 		environment = environment.putNew(testValueSymbol)(testValue)
-		environment = environment.putNew(Context)(testContext)
+		environment = environment.putNew(RuleContextSymbol)(testContext)
 
 		assert(environment.lookup(testTypeSymbol).nonEmpty)
 		assert(environment.lookup(testValueSymbol).nonEmpty)
-		assert(environment.lookup(Context).nonEmpty)
+		assert(environment.lookup(RuleContextSymbol).nonEmpty)
 
 		assert(environment.lookup(testTypeSymbol).get == testType)
 		assert(environment.lookup(testValueSymbol).get == testValue)
-		assert(environment.lookup(Context).get == testContext)
+		assert(environment.lookup(RuleContextSymbol).get == testContext)
 	}
 
 	it should "retrieve data from parent" in {

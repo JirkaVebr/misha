@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Symbol.{Context, TypeSymbol, ValueSymbol}
+import com.preprocessor.ast.Symbol.{RuleContextSymbol, TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.{Ast, Symbol}
 
 class RootEnvironment extends Environment {
@@ -9,7 +9,7 @@ class RootEnvironment extends Environment {
 	override def lookup(name: Symbol.Symbol): Option[name.Value] = name match {
 		case TypeSymbol(typeName) => RootEnvironment.preDefinedTypes.get(typeName).asInstanceOf[Option[name.Value]]
 		case ValueSymbol(_) => None // TODO
-		case Context => None
+		case RuleContextSymbol => None
 	}
 
 }

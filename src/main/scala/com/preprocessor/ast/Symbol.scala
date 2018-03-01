@@ -20,7 +20,7 @@ object Symbol {
 		override type Value = List[PropertyRecord]
 	}
 
-	case object Context extends Symbol {
+	case object RuleContextSymbol extends Symbol {
 		override type Value = RuleContext
 	}
 

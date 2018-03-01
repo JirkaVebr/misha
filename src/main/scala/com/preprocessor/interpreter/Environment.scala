@@ -15,8 +15,8 @@ class Environment private
 	def pushSubScope(): Environment =
 		new Environment(Some(this), Map[Symbol, Symbol#Value](), subEnvironments)
 
-	def pushSubScope(context: Context.Value): Environment =
-		new Environment(Some(this), Map(Context -> context), subEnvironments)
+	def pushSubScope(context: RuleContextSymbol.Value): Environment =
+		new Environment(Some(this), Map(RuleContextSymbol -> context), subEnvironments)
 
 	def popSubScope(): Option[Environment] = parentEnvironment match {
 		case Some(parent) => Some(new Environment(

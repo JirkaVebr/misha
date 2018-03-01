@@ -48,11 +48,11 @@ object RuleContext {
 	object Keyframes {
 		case class Keyframes(identifier: ValueSymbol) extends RuleContext
 
-		sealed trait Selector extends RuleContext
+		sealed trait Keyframe extends RuleContext
 
-		case object From extends Selector
-		case object To extends Selector
-		case class Percentage(value: Value.Percentage) extends Selector
+		case object From extends Keyframe
+		case object To extends Keyframe
+		case class Percentage(value: Value.Percentage) extends Keyframe
 	}
 
 }

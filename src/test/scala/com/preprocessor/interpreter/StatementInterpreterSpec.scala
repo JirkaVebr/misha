@@ -5,7 +5,7 @@ import com.preprocessor.ast.Ast.Statement._
 import com.preprocessor.ast.Ast.Term.Variable
 import com.preprocessor.ast.Ast.Type.TypeAlias
 import com.preprocessor.ast.Ast.{Type, Value, ValueSymbolDeclaration}
-import com.preprocessor.ast.Symbol.{Context, PropertySymbol, TypeSymbol, ValueSymbol}
+import com.preprocessor.ast.Symbol.{RuleContextSymbol, PropertySymbol, TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.{PropertyRecord, RuleContext, ValueRecord}
 import com.preprocessor.error.ProgramError
 
@@ -119,7 +119,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		))))
 		val ruleEnvironment = newState.environment.subEnvironments.head
 
-		assert(ruleEnvironment.lookupCurrent(Context).get == RuleContext.RawRuleHead(List(Left(".class"))))
+		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get == RuleContext.RawRuleHead(List(Left(".class"))))
 		assert(ruleEnvironment.lookupCurrent(PropertySymbol).get == List(
 			PropertyRecord("width", "80%"),
 			PropertyRecord("line-height", "1.6")
