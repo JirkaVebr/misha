@@ -8,7 +8,7 @@ object RuleContext {
 
 	sealed trait RuleContext
 
-	case class RawRuleHead(components: List[Either[String, MagicSymbol]]) extends RuleContext
+	case class RawRuleHead(components: List[Either[MagicSymbol, String]]) extends RuleContext
 
 	object Selector {
 		sealed trait Selector extends RuleContext

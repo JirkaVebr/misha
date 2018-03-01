@@ -63,7 +63,7 @@ object StatementInterpreter {
 	}
 
 	private def runRule(rule: Rule)(implicit state: EvalState): Try[EvalState] = {
-		val ruleHead = RawRuleHead(List(Left(rule.head.value))) // TODO
+		val ruleHead = RawRuleHead(List(Right(rule.head.value))) // TODO
 		val newScope = state.environment.pushSubScope(ruleHead)
 
 		StatementInterpreter.run(rule.body.content)(EvalState(newScope)) match {

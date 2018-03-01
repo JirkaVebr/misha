@@ -119,7 +119,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		))))
 		val ruleEnvironment = newState.environment.subEnvironments.head
 
-		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get == RuleContext.RawRuleHead(List(Left(".class"))))
+		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get == RuleContext.RawRuleHead(List(Right(".class"))))
 		assert(ruleEnvironment.lookupCurrent(PropertySymbol).get == List(
 			PropertyRecord("width", "80%"),
 			PropertyRecord("line-height", "1.6")
