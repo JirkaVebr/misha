@@ -94,7 +94,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def memberAccess: Rule1[Expression] = rule {
-		factor ~ zeroOrMore("." ~ Identifier ~> (
+		factor ~ zeroOrMore("." ~ Identifier ~ AnyWhitespace ~> (
 			(expression: Expression, identifier: String) => MemberAccess(expression, Value.String(identifier))
 		))
 	}
@@ -138,7 +138,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def variableName: Rule1[ValueSymbol] = rule {
-		Identifier ~> ValueSymbol
+		Identifier ~ AnyWhitespace ~> ValueSymbol
 	}
 
 	private def functionCall: Rule1[FunctionCall] = rule {

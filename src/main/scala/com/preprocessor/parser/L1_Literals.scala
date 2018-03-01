@@ -118,11 +118,11 @@ trait L1_Literals { this: org.parboiled2.Parser
 	}
 
 	private def unquotedString: Rule1[Value.String] = rule {
-		Identifier ~> Value.String
+		Identifier ~ AnyWhitespace ~> Value.String
 	}
 
 	def Identifier: Rule1[String] = rule {
-		capture(optional("--") ~ oneOrMore(AlphaNumUnderscore) ~ zeroOrMore(AlphaNumDashUnderscore)) ~ AnyWhitespace
+		capture(optional("--") ~ oneOrMore(AlphaNumUnderscore) ~ zeroOrMore(AlphaNumDashUnderscore))
 	}
 
 }
