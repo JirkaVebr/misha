@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter.typing
 
-import com.preprocessor.ast.Ast.Value.{Boolean, Color, Composite, Dimensioned, Flag, Function, Number, Percentage, Primitive, Scalar, String, Tuple2Value, Unit}
+import com.preprocessor.ast.Ast.Value.{Boolean, Color, Composite, Dimensioned, Flag, Function, Number, Percentage, Primitive, Scalar, String, Tuple2, Unit}
 import com.preprocessor.ast.Ast.{Type, Value}
 import com.preprocessor.interpreter.Environment
 
@@ -20,7 +20,7 @@ object Typing {
 			case _: Flag => Type.Flag
 		}
 		case composite: Composite => composite match {
-			case Tuple2Value(first, second) => Type.Tuple2(getType(first), getType(second))
+			case Tuple2(first, second) => Type.Tuple2(getType(first), getType(second))
 			case Value.List(values) =>  sys.error("todo") // TODO
 			case Function(arguments, returnType, body) =>  sys.error("todo") // TODO
 		}

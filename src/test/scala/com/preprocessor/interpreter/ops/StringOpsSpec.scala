@@ -16,7 +16,7 @@ class StringOpsSpec extends BaseInterpreterSpec {
 		assert(StringOps.castToString(number).get == Value.String("123.456"))
 		assert(StringOps.castToString(Value.Percentage(50)).get == Value.String("50%"))
 
-		assert(StringOps.castToString(Value.Tuple2Value(alreadyString, number)).isEmpty)
+		assert(StringOps.castToString(Value.Tuple2(alreadyString, number)).isEmpty)
 	}
 
 	it should "correctly concatenate strings" in {

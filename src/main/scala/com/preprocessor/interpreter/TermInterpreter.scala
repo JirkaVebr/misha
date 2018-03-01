@@ -4,9 +4,10 @@ import com.preprocessor.ast.Ast.Expression.Expression
 import com.preprocessor.ast.Ast.Term._
 import com.preprocessor.ast.Ast.Value._
 import com.preprocessor.ast.Ast.{Term, Value}
+import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError.ReadingUndefinedVariable
 
-import scala.util.{Success, Try}
+import scala.util.{Failure, Success, Try}
 
 object TermInterpreter {
 
@@ -15,7 +16,7 @@ object TermInterpreter {
 			case Value.Unit => state evaluatedTo Value.Unit
 			case primitiveValue: Primitive => state evaluatedTo primitiveValue
 			case compositeValue: Composite => compositeValue match {
-				case tuple: Tuple2Value => runTuple(tuple)
+				case tuple: Value.Tuple2 => runTupleValue(tuple)
 				case list: Value.List => runListValue(list)
 			}
 		}
@@ -24,12 +25,21 @@ object TermInterpreter {
 		}
 		case variable: Variable => runVariable(variable)
 		case FunctionCall(function, arguments) => sys.error("todo") // TODO
+		case tuple: Term.Tuple2 => runTupleTerm(tuple)
 		case list: Term.List => runListTerm(list)
 		case MemberAccess(container, name) => sys.error("todo") // TODO
 	}
 
-	private def runTuple(tuple: Tuple2Value)(implicit state: EvalState): Try[EvalState] = {
-		sys.error("todo") // TODO
+	private def runTupleValue(tuple: Value.Tuple2)(implicit state: EvalState): Try[EvalState] =
+		state evaluatedTo tuple
+
+	private def runTupleTerm(tuple: Term.Tuple2)(implicit state: EvalState): Try[EvalState] = {
+		Interpreter.chainRun[Expression](scala.List(tuple.first, tuple.second), state, ExpressionInterpreter.run(_)(_)) match {
+			case Failure(reason) => Failure(reason)
+			case Success((first :: second :: Nil, finalState)) =>
+				finalState ~> Value.Tuple2(first.value, second.value)
+			case _ => state.failFatally(CompilerError()) // TODO
+		}
 	}
 
 	private def runVariable(variable: Variable)(implicit state: EvalState): Try[EvalState] = {

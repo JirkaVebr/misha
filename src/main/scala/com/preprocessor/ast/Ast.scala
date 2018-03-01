@@ -50,7 +50,7 @@ object Ast {
 		case object Duplicate extends Flag
 
 		// Composite types
-		case class Tuple2Value(first: Value, second: Value) extends Composite
+		case class Tuple2(first: Value, second: Value) extends Composite
 		case class List(values: Seq[Value]) extends Composite
 		case class Function(arguments: Seq[ValueSymbolDeclaration[Option[Expression]]], returnType: Option[Type.Any], body: Expression)
 			extends Composite
@@ -162,6 +162,7 @@ object Ast {
 
 		case class Variable(name: ValueSymbol) extends Term
 		case class FunctionCall(function: Expression, arguments: Seq[Expression] = scala.Vector.empty) extends Term
+		case class Tuple2(first: Expression, second: Expression) extends Term
 		case class List(items: Seq[Expression]) extends Term
 		case class MemberAccess(container: Expression, name: Expression) extends Term
 	}

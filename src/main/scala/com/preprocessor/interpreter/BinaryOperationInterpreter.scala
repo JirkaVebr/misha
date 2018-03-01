@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Value.{Color, Composite, Dimensioned, Flag, Number, Percentage, Primitive, Rgba, Scalar, String, Tuple2Value, Unit}
+import com.preprocessor.ast.Ast.Value.{Color, Composite, Dimensioned, Flag, Number, Percentage, Primitive, Rgba, Scalar, String, Tuple2, Unit}
 import com.preprocessor.ast.Ast.{Term, Value}
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.CompilerError
@@ -44,7 +44,7 @@ object BinaryOperationInterpreter {
 			case _: Flag | _: Value.Boolean => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
 		}
 		case composite: Composite => composite match {
-			case _: Tuple2Value => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
+			case _: Tuple2 => state.fail(IllegalNumericOperatorOperand, left.value, right.value)
 			case Value.List(values) => operator match {
 				case Addition => sys.error("todo") // TODO New element of a correct type or a list
 				case Multiplication => sys.error("todo") // TODO Non-negative integer scalar

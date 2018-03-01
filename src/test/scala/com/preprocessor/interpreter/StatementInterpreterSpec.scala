@@ -108,7 +108,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 	it should "reject properties illegal in terms of types" in {
 		assertThrows[ProgramError](run(Property(Value.Scalar(123), Value.Scalar(1.6))))
 		assertThrows[ProgramError](run(
-			Property(Value.String("width"), Value.Tuple2Value(Value.Percentage(80), Value.Percentage(80))))
+			Property(Value.String("width"), Value.Tuple2(Value.Percentage(80), Value.Percentage(80))))
 		)
 	}
 
