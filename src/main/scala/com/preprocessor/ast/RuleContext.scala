@@ -52,7 +52,7 @@ object RuleContext {
 
 		case object From extends Selector
 		case object To extends Selector
-		case class Percentage(value: Value.Number) extends Selector
+		case class Percentage(value: Value.Percentage) extends Selector
 	}
 
 }
