@@ -1,7 +1,7 @@
 package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Value
-import com.preprocessor.ast.Ast.Value.{Color, Flag, Important, Primitive, Rgba}
+import com.preprocessor.ast.Ast.Value.{Color, Duplicate, Flag, Important, Primitive, Rgba}
 import com.preprocessor.ast.NumberUnit
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
 import com.preprocessor.spec.ColorKeywords
@@ -21,7 +21,8 @@ trait L1_Literals { this: org.parboiled2.Parser
 	}
 
 	def Flag: Rule1[Flag] = rule {
-		atomic("!important") ~ push(Important)
+		'!' ~ ((Token("important") ~ push(Important)) |
+			(Token("duplicate") ~ push(Duplicate)))
 	}
 
 	private def boolean: Rule1[Value.Boolean] = rule {

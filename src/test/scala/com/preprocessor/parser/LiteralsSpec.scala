@@ -1,8 +1,8 @@
 package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Value
-import com.preprocessor.ast.Ast.Value.{CurrentColor, Important, Rgba, Transparent}
-import com.preprocessor.ast.NumberUnit.{UnitOfMeasure, Percentage}
+import com.preprocessor.ast.Ast.Value.{CurrentColor, Duplicate, Important, Rgba, Transparent}
+import com.preprocessor.ast.NumberUnit.UnitOfMeasure
 
 class LiteralsSpec extends BaseParserSpec {
 
@@ -10,6 +10,7 @@ class LiteralsSpec extends BaseParserSpec {
 
 	it should "parse a flag keyword" in {
 		assert(parse("!important") == Important)
+		assert(parse("!duplicate") == Duplicate)
 	}
 
 	it should "parse a boolean literal" in {

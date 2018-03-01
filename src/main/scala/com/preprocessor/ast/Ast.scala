@@ -47,6 +47,7 @@ object Ast {
 
 		sealed abstract class Flag extends Primitive
 		case object Important extends Flag
+		case object Duplicate extends Flag
 
 		// Composite types
 		case class Tuple2Value(first: Value, second: Value) extends Composite
