@@ -50,9 +50,11 @@ class Environment private
 	def cloneWithNewParent(newParent: Environment): Environment =
 		new Environment(Some(newParent), symbolTable, subEnvironments)
 
+	def lookupCurrent(name: Symbol): Option[name.Value] =
+		symbolTable.get(name).asInstanceOf[Option[name.Value]]
 
 	def lookup(name: Symbol): Option[name.Value] = {
-		val value = symbolTable.get(name).asInstanceOf[Option[name.Value]]
+		val value = lookupCurrent(name)
 		value match {
 			case Some(_) => value
 			case None => parentEnvironment match {
