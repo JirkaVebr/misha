@@ -1,5 +1,6 @@
 package com.preprocessor.ast
 
+import com.preprocessor.ast.Ast.Term.MagicSymbol
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.Symbol.ValueSymbol
 
@@ -7,6 +8,7 @@ object RuleContext {
 
 	sealed trait RuleContext
 
+	case class RawRuleHead(components: List[Either[String, MagicSymbol]]) extends RuleContext
 
 	object Selector {
 		sealed trait Selector extends RuleContext
