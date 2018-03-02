@@ -28,64 +28,64 @@ trait L3_Expressions { this: org.parboiled2.Parser
 
 	private def assignment: Rule1[Expression] = rule { // Right associative
 		logicalOr ~ zeroOrMore(
-			"="  ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, r)) |
-			"+=" ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Addition, l, r))) |
-			"-=" ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Subtraction, l, r))) |
-			"*=" ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Multiplication, l, r))) |
-			"/=" ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Division, l, r))) |
-			"^=" ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Exponentiation, l, r))) |
-			"%=" ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Remainder, l, r)))
+			WhitespaceAround("=")  ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, r)) |
+			WhitespaceAround("+=") ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Addition, l, r))) |
+			WhitespaceAround("-=") ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Subtraction, l, r))) |
+			WhitespaceAround("*=") ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Multiplication, l, r))) |
+			WhitespaceAround("/=") ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Division, l, r))) |
+			WhitespaceAround("^=") ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Exponentiation, l, r))) |
+			WhitespaceAround("%=") ~!~ assignment ~> ((l: Expression, r: Expression) => BinaryOperation(Equals, l, BinaryOperation(Remainder, l, r)))
 		)
 	}
 
 	private def logicalOr: Rule1[Expression] = rule { // Left associative
 		logicalAnd ~ zeroOrMore(
-			"||" ~!~ logicalAnd ~> ((l: Expression, r: Expression) => BinaryOperation(LogicalOr, l, r))
+			WhitespaceAround("||") ~!~ logicalAnd ~> ((l: Expression, r: Expression) => BinaryOperation(LogicalOr, l, r))
 		)
 	}
 
 	private def logicalAnd: Rule1[Expression] = rule { // Left associative
 		equalityComparison ~ zeroOrMore(
-			"&&" ~!~ equalityComparison ~> ((l: Expression, r: Expression) => BinaryOperation(LogicalAnd, l, r))
+			WhitespaceAround("&&") ~!~ equalityComparison ~> ((l: Expression, r: Expression) => BinaryOperation(LogicalAnd, l, r))
 		)
 	}
 
 	private def equalityComparison: Rule1[Expression] = rule { // Left associative
 		otherComparison ~ zeroOrMore(
-			("==" ~!~ otherComparison ~> ((l: Expression, r: Expression) => BinaryOperation(IsEqualTo, l, r))) |
-			("!=" ~!~ otherComparison ~> ((l: Expression, r: Expression) =>
+			(WhitespaceAround("==") ~!~ otherComparison ~> ((l: Expression, r: Expression) => BinaryOperation(IsEqualTo, l, r))) |
+			(WhitespaceAround("!=") ~!~ otherComparison ~> ((l: Expression, r: Expression) =>
 				UnaryOperation(LogicalNegation, BinaryOperation(IsEqualTo, l, r))))
 		)
 	}
 
 	private def otherComparison: Rule1[Expression] = rule { // Left associative
 		addition ~ zeroOrMore(
-			("<=" ~!~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(LowerEquals, l, r))) |
-			("<" ~!~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(LowerThan, l, r))) |
-			(">=" ~!~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(GreaterEquals, l, r))) |
-			(">" ~!~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(GreaterThan, l, r))) |
-			("@in" ~!~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(In, l, r)))
+			(WhitespaceAround("<=")  ~!~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(LowerEquals, l, r))) |
+			(WhitespaceAround("<")   ~!~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(LowerThan, l, r))) |
+			(WhitespaceAround(">=")  ~!~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(GreaterEquals, l, r))) |
+			(WhitespaceAround(">")   ~!~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(GreaterThan, l, r))) |
+			(WhitespaceAround("@in") ~!~ addition ~> ((l: Expression, r: Expression) => BinaryOperation(In, l, r)))
 		)
 	}
 
 	private def addition: Rule1[Expression] = rule { // Left associative
 		multiplication ~ zeroOrMore(
-			("+" ~!~ multiplication ~> ((l: Expression, r: Expression) => BinaryOperation(Addition, l, r))) |
-			("-" ~!~ multiplication ~> ((l: Expression, r: Expression) => BinaryOperation(Subtraction, l, r)))
+			(WhitespaceAround("+") ~!~ multiplication ~> ((l: Expression, r: Expression) => BinaryOperation(Addition, l, r))) |
+			(WhitespaceAround("-") ~!~ multiplication ~> ((l: Expression, r: Expression) => BinaryOperation(Subtraction, l, r)))
 		)
 	}
 
 	private def multiplication: Rule1[Expression] = rule { // Left associative
 		exponentiation ~ zeroOrMore(
-			("*" ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Multiplication, l, r))) |
-			("/" ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Division, l, r))) |
-			("%" ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Remainder, l, r)))
+			(WhitespaceAround("*") ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Multiplication, l, r))) |
+			(WhitespaceAround("/") ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Division, l, r))) |
+			(WhitespaceAround("%") ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Remainder, l, r)))
 		)
 	}
 
 	private def exponentiation: Rule1[Expression] = rule { // Right associative
 		computedMemberAccess ~ zeroOrMore(
-			"^" ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Exponentiation, l, r))
+			WhitespaceAround("^") ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Exponentiation, l, r))
 		)
 	}
 
@@ -94,7 +94,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def memberAccess: Rule1[Expression] = rule {
-		factor ~ zeroOrMore("." ~ Identifier ~ AnyWhitespace ~> (
+		factor ~ zeroOrMore(NotAfterWhitespace ~ '.' ~ Identifier ~ AnyWhitespace ~> (
 			(expression: Expression, identifier: String) => MemberAccess(expression, Value.String(identifier))
 		))
 	}
@@ -118,9 +118,9 @@ trait L3_Expressions { this: org.parboiled2.Parser
 		// They need to be separate rules as both body-subrules must allow empty input, and so if we had
 		// "[" ~ (undelimitedListBody | delimitedListBody) ~ "]", things would always only work for one or the other
 		// depending on the order.
-		"[" ~!~
-			(undelimitedListBody ~ "]" |
-			delimitedListBody ~ "]") ~> Term.List
+		'[' ~!~ AnyWhitespace ~
+			(undelimitedListBody ~ ']' |
+			delimitedListBody ~ ']') ~> Term.List
 	}
 
 	private def undelimitedList: Rule1[Term.List] = rule {
@@ -134,7 +134,9 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def delimitedListBody: Rule1[Seq[Expression]] = rule {
-		zeroOrMore(Expression).separatedBy(",") ~ optional(",") ~ AnyWhitespace
+		zeroOrMore(Expression).separatedBy(AnyWhitespaceAround(",")) ~
+			optional(AnyWhitespace ~ ',') ~ // Don't match whitespace after this as any such whitespace will be
+			AnyWhitespace // Can match any whitespace as the list will be terminated by something
 	}
 
 	private def variableName: Rule1[ValueSymbol] = rule {
@@ -155,12 +157,12 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def subExpression: Rule1[Expression] = rule {
-		"(" ~ Expression ~ ")"
+		AnyWhitespaceAround("(") ~ Expression ~ ')'
 	}
 
 	private def conditional: Rule1[Conditional] = rule {
 		// The error is just IntelliJ being dumb.
-		("@if" ~!~ subExpression ~ Expression ~ optional("@else" ~!~ Expression)) ~> (
+		(AnyWhitespaceAround("@if") ~!~ subExpression ~ AnyWhitespace ~ Expression ~ optional(AnyWhitespaceAround("@else") ~!~ Expression)) ~> (
 			(condition: Expression, consequent: Expression, alternative: Option[Expression]) => Conditional(
 				condition, consequent, alternative
 			)
@@ -177,12 +179,13 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def anonymousFunction: Rule1[Expression] = rule {
-		"(" ~ zeroOrMore(
-			('$' ~ variableName ~ TypeAnnotation ~ optional("=" ~!~ Expression)) ~> (
+		'(' ~ zeroOrMore(
+			('$' ~ variableName ~ TypeAnnotation ~ optional(AnyWhitespaceAround("=") ~!~ Expression)) ~> (
 				(name: ValueSymbol, typeAnnotation: Option[Ast.Type.Any], value: Option[Expression]) =>
 					ValueSymbolDeclaration(name, typeAnnotation, value)
 			)
-		).separatedBy(",") ~ optional(",") ~ ")" ~ TypeAnnotation ~ Token("=>") ~ AnyWhitespace ~ Expression ~> Value.Function
+		).separatedBy(AnyWhitespaceAround(",")) ~ optional(AnyWhitespace ~ ',') ~
+			AnyWhitespaceAround(")") ~ TypeAnnotation ~ AnyWhitespaceAround("=>") ~ Expression ~> Value.Function
 	}
 
 
@@ -203,11 +206,11 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def typeAliasDeclaration: Rule1[TypeAliasDeclaration] = rule {
-		(Token("@type") ~ MandatorySingleLineWhitespace ~ TypeAlias ~ SingleLineString("=") ~ Type) ~> TypeAliasDeclaration
+		(Token("@type") ~ MandatorySingleLineWhitespace ~ TypeAlias ~ AnyWhitespaceAround("=") ~ Type) ~> TypeAliasDeclaration
 	}
 
 	private def variableDeclaration: Rule1[VariableDeclaration] = rule {
-		(Token("@let") ~ MandatorySingleLineWhitespace ~ Variable ~ TypeAnnotation ~ "=" ~!~ Expression) ~> (
+		(Token("@let") ~ MandatorySingleLineWhitespace ~ Variable ~ TypeAnnotation ~ AnyWhitespaceAround("=") ~!~ Expression) ~> (
 			(variable: Variable, typeAnnotation: Option[Ast.Type.Any], value: Expression) =>
 				VariableDeclaration(ValueSymbolDeclaration(variable.name, typeAnnotation, value))
 			)

@@ -46,8 +46,7 @@ class TypesSpec extends BaseParserSpec {
 
 	it should "parse a large Function type spanning several lines" in {
 		assert(parse(
-			"""
-				|(
+			"""(
 				|	Scalar,
 				|	String,
 				|) => String

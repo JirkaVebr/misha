@@ -34,7 +34,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 	/* NUMBERS */
 
 	private def number: Rule1[Value.Number] = rule {
-		atomic(base ~ optional(exponent) ~ optional(unitOfMeasure) ~ SingleLineWhitespace) ~> (createNumber(_, _, _))
+		atomic(base ~ optional(exponent) ~ optional(unitOfMeasure)) ~> (createNumber(_, _, _))
 	}
 
 	private def integral: Rule1[Double] = rule {
@@ -63,7 +63,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 	}
 
 	private def unitOfMeasure: Rule1[NumberUnit.Unit] = rule {
-		('%' ~ SingleLineWhitespace ~ push(NumberUnit.Percentage)) |
+		('%' ~ push(NumberUnit.Percentage)) |
 		capture(oneOrMore(CharPredicate.Alpha)) ~> ((unitOfMeasure: String) => UnitOfMeasure(Map(unitOfMeasure -> 1)))
 	}
 
@@ -84,7 +84,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 	}
 
 	private def colorKeyword: Rule1[Color] = rule {
-		valueMap(ColorKeywords.map, ignoreCase = true) ~ SingleLineWhitespace
+		valueMap(ColorKeywords.map, ignoreCase = true)
 	}
 
 
@@ -102,7 +102,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 	private def quotedStringInner(body: (CharPredicate) => Rule1[String]): Rule1[Value.String] = rule {
 		(('\'' ~ body(SingleQuoteOrBackslash) ~ '\'') |
 			('"' ~ body(DoubleQuoteOrBackslash) ~ '"')
-		) ~ SingleLineWhitespace ~> Value.String
+		) ~> Value.String
 	}
 
 	private def escapedChar: Rule0 = rule (
@@ -118,7 +118,7 @@ trait L1_Literals { this: org.parboiled2.Parser
 	}
 
 	private def unquotedString: Rule1[Value.String] = rule {
-		Identifier ~ AnyWhitespace ~> Value.String
+		Identifier ~> Value.String
 	}
 
 	def Identifier: Rule1[String] = rule {

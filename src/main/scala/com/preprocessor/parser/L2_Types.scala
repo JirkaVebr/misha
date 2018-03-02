@@ -19,12 +19,12 @@ trait L2_Types { this: org.parboiled2.Parser
 
 	private def subtractionType: Rule1[Ast.Type.Any] = rule {
 		unionType ~ optional(
-			"--" ~!~ unionType ~> Ast.Type.Subtraction
+			AnyWhitespaceAround("--") ~!~ unionType ~> Ast.Type.Subtraction
 		)
 	}
 
 	private def unionType: Rule1[Ast.Type.Any] = rule {
-		oneOrMore(facultativeType).separatedBy("|") ~> (
+		oneOrMore(facultativeType).separatedBy(AnyWhitespaceAround("|")) ~> (
 			(subtypes: Seq[Ast.Type.Any]) => if (subtypes.lengthCompare(1) == 0) subtypes.head else Ast.Type.Union(subtypes.toSet)
 		)
 	}
@@ -40,11 +40,11 @@ trait L2_Types { this: org.parboiled2.Parser
 	}
 
 	private def nonCompositeType: Rule1[Ast.Type.Any] = rule {
-		valueMap(RootEnvironment.preDefinedTypes) ~ SingleLineWhitespace
+		valueMap(RootEnvironment.preDefinedTypes)
 	}
 
 	def TypeAlias: Rule1[Ast.Type.TypeAlias] = rule {
-		capture(CharPredicate.UpperAlpha ~ zeroOrMore(CharPredicate.AlphaNum)) ~ SingleLineWhitespace ~> (
+		capture(CharPredicate.UpperAlpha ~ zeroOrMore(CharPredicate.AlphaNum)) ~> (
 			(alias: String) => Ast.Type.TypeAlias(alias)
 		)
 	}
@@ -59,7 +59,8 @@ trait L2_Types { this: org.parboiled2.Parser
 
 	// This syntax error is just IntelliJ being stupid; to the compiler this is fine.
 	private def functionType: Rule1[Ast.Type.Function] = rule {
-		("(" ~ zeroOrMore(Type).separatedBy(",") ~ optional(",") ~ ")" ~ "=>" ~ Type) ~> Ast.Type.Function
+		('(' ~ AnyWhitespace ~ zeroOrMore(Type).separatedBy(AnyWhitespaceAround(",")) ~
+			optional(AnyWhitespace ~ ',') ~ AnyWhitespaceAround(")") ~ Token("=>") ~ AnyWhitespace ~ Type) ~> Ast.Type.Function
 	}
 
 	private def tuple2Type: Rule1[Ast.Type.Tuple2] = rule {

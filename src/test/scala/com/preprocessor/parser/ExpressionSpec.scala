@@ -114,6 +114,21 @@ class ExpressionSpec extends BaseParserSpec {
 		assert(parse("[,]") == Term.List(Vector())) // This probably shouldn't be allowed
 	}
 
+	it should "correctly parse a delimited list spanning several lines" in {
+		assert(parse(
+			"""[
+				|	1
+				|	2
+				|	3
+				|]"""".stripMargin) == Term.List(Vector(Scalar(1), Scalar(2), Scalar(3))))
+		assert(parse(
+			"""[
+				|	1,
+				|	2,
+				|	3
+				|]""".stripMargin) == Term.List(Vector(Scalar(1), Scalar(2), Scalar(3))))
+	}
+
 	it should "correctly parse an undelimited list" in {
 		assert(parse("myFunction(1 2 3, 2)") ==
 			FunctionCall(Variable("myFunction"), Vector(Term.List(Vector(Scalar(1), Scalar(2), Scalar(3))), Scalar(2))))
@@ -121,8 +136,19 @@ class ExpressionSpec extends BaseParserSpec {
 			FunctionCall(Variable("myFunction"), Vector(Term.List(Vector(Scalar(1), BinaryOperation(Addition, Scalar(2), Scalar(3)), Scalar(4))), Scalar(2))))
 	}
 
-	it should "correctly parse a conditional" in {
+	it should "correctly parse a simple conditional" in {
 		assert(parse("@if ($myVariable) 1 @else 2") ==
+			Conditional(Variable("myVariable"), Scalar(1), Some(Scalar(2))))
+		assert(parse("@if ($myVariable) 1") ==
+			Conditional(Variable("myVariable"), Scalar(1), None))
+	}
+
+	it should "correctly parse a conditional spanning several liens" in {
+		assert(parse(
+			"""@if ($myVariable)
+				|	1
+				|@else
+				|	2""".stripMargin) ==
 			Conditional(Variable("myVariable"), Scalar(1), Some(Scalar(2))))
 	}
 
