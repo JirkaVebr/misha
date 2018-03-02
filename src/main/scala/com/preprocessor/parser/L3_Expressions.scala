@@ -9,11 +9,6 @@ import com.preprocessor.ast.Ast._
 import com.preprocessor.ast.Symbol.ValueSymbol
 import org.parboiled2._
 
-trait Expr
-case class Num(n: Int) extends Expr
-case class BinLop(l: Expr, r: Expr) extends Expr
-case class BinRop1(l: Expr, r: Expr) extends Expr
-case class BinRop2(l: Expr, r: Expr) extends Expr
 
 trait L3_Expressions { this: org.parboiled2.Parser
 	with StringBuilding
