@@ -30,11 +30,23 @@ trait L0_Whitespace extends org.parboiled2.Parser {
 	}
 
 	def Token(stringToken: String): Rule0 = rule {
-		atomic(str(stringToken))
+		atomic(str(stringToken)).named(stringToken)
+	}
+
+	def WhitespaceAround(operator: String): Rule0 = rule {
+		SingleLineWhitespace ~ Token(operator) ~ SingleLineWhitespace
+	}
+
+	def AnyWhitespaceAround(operator: String): Rule0 = rule {
+		AnyWhitespace ~ Token(operator) ~ AnyWhitespace
+	}
+
+	def NotAfterWhitespace: Rule0 = rule {
+		test(!WhiteSpaceChar.matchesAny(lastChar.toString))
 	}
 
 	implicit def whitespaceAfterString(stringToken: String): Rule0 = rule {
-		Token(stringToken) ~ AnyWhitespace
+		(Token(stringToken) ~ SingleLineWhitespace).named(stringToken)
 	}
 
 }
