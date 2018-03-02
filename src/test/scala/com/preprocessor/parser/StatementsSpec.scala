@@ -2,8 +2,10 @@ package com.preprocessor.parser
 
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Statement._
-import com.preprocessor.ast.Ast.Value.{Important, Scalar}
+import com.preprocessor.ast.Ast.Term.FunctionCall
+import com.preprocessor.ast.Ast.Value.{Important, Rgba, Scalar}
 import com.preprocessor.ast.Ast.{Term, Type, Value, ValueSymbolDeclaration}
+import com.preprocessor.ast.NumberUnit.UnitOfMeasure
 import com.preprocessor.spec.ColorKeywords
 
 
@@ -49,9 +51,14 @@ class StatementsSpec extends BaseParserSpec {
 			Property(Value.String("color"), ColorKeywords.map("blue"), Some(Important)))
 	}
 
-	//it should "correctly parse a function call" in {
-	//	assert(parse("color red") == Rule(Value.String("div a strong"), sequence(NoOp)))
-	//}
+	it should "correctly parse a sugared property/function call" in {
+		assert(parse("color red") == FunctionCall(Term.Variable("color"), List(Rgba(255, 0, 0))))
+		assert(parse("transition color .3s, opacity .5s ease-in-out") == FunctionCall(
+			Term.Variable("transition"), Vector(Term.List(Vector(
+				Term.List(Vector(Value.String("color"), Value.Dimensioned(.3, UnitOfMeasure(Map("s" -> 1))))),
+				Term.List(Vector(Value.String("opacity"), Value.Dimensioned(.5, UnitOfMeasure(Map("s" -> 1))), Value.String("ease-in-out")))
+			)))))
+	}
 
 	protected def parse(input: java.lang.String): Statement = parseRule(input, _.Statement)
 }

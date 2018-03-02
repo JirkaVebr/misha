@@ -16,6 +16,14 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	with L1_Literals
 	with L2_Types =>
 
+	private val anyWhitespaceSeparator: () => Rule0 = () => rule (MandatoryAnyWhitespace)
+
+	private val whitespaceSeparator: () => Rule0 = () => rule (MandatorySingleLineWhitespace)
+
+	private val commaSeparator: () => Rule0 = () => rule (WhitespaceAround(","))
+
+	private val expressionBody: () => Rule1[Expression] = () => rule (Expression)
+
 
 	def Expression: Rule1[Expression] = rule {
 		assignment
@@ -114,18 +122,18 @@ trait L3_Expressions { this: org.parboiled2.Parser
 		// "[" ~ (undelimitedListBody | delimitedListBody) ~ "]", things would always only work for one or the other
 		// depending on the order.
 		'[' ~!~ AnyWhitespace ~
-			(undelimitedListBody ~ ']' |
-			delimitedListBody ~ ']') ~> Term.List
+			((undelimitedListBody(anyWhitespaceSeparator) ~ AnyWhitespace ~ ']') |
+				(delimitedListBody ~ AnyWhitespace ~ ']')) ~> Term.List
 	}
 
 	private def undelimitedList: Rule1[Term.List] = rule {
-		undelimitedListBody ~> Term.List
+		undelimitedListBody(whitespaceSeparator) ~> Term.List
 	}
 
-	private def undelimitedListBody: Rule1[Seq[Expression]] = rule {
+	private def undelimitedListBody(separator: () => Rule0, content: () => Rule1[Expression] = expressionBody): Rule1[Seq[Expression]] = rule {
 		// We really need at least two items for it to be considered a list. Should one want to create a list of one item,
 		// they should surround it with square brackets.
-		(2 to Integer.MAX_VALUE).times(Expression).separatedBy(AnyWhitespace) ~ AnyWhitespace
+		(2 to Integer.MAX_VALUE).times(content()).separatedBy(separator())
 	}
 
 	private def delimitedListBody: Rule1[Seq[Expression]] = rule {
@@ -193,7 +201,7 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def sequenceNode: Rule1[Statement] = rule {
-		(typeAliasDeclaration | variableDeclaration | property | rule | Expression) ~ EndOfLine
+		(typeAliasDeclaration | variableDeclaration | property | rule | propertyFunctionCall | Expression) ~ EndOfLine
 	}
 
 	private def rule: Rule1[Ast.Statement.Rule] = rule { // TODO using quoted strings is temporary
@@ -213,6 +221,21 @@ trait L3_Expressions { this: org.parboiled2.Parser
 
 	private def property: Rule1[Property] = rule {
 		(Token("@property") ~ "(" ~ Expression ~ "," ~ Expression ~ optional("," ~ Expression) ~ optional(",") ~ ")") ~> Property
+	}
+
+	private def propertyFunctionCall: Rule1[FunctionCall] = rule {
+		Identifier ~ MandatorySingleLineWhitespace ~ oneOrMore(propertyFunctionArgument).separatedBy(MandatorySingleLineWhitespace) ~> (
+			(identifier: String, arguments: Seq[Expression]) =>
+				FunctionCall(Term.Variable(identifier), arguments)
+		)
+	}
+
+	private def propertyFunctionArgument: Rule1[Expression] = rule {
+		undelimitedListBody(commaSeparator, propertyFunctionArgumentInner) ~> Term.List | Expression
+	}
+
+	private val propertyFunctionArgumentInner: () => Rule1[Expression] = () => rule {
+		undelimitedListBody(whitespaceSeparator) ~> Term.List | Expression
 	}
 
 }
