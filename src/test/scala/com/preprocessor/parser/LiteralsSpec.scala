@@ -56,6 +56,7 @@ class LiteralsSpec extends BaseParserSpec {
 	it should "parse a number with a simple unit" in {
 		assert(parse("10e2s") == Value.Dimensioned(1000, UnitOfMeasure(Map("s" -> 1))))
 		assert(parse("0km") == Value.Dimensioned(0, UnitOfMeasure(Map("km" -> 1))))
+		assert(parse(".3s") == Value.Dimensioned(.3, UnitOfMeasure(Map("s" -> 1))))
 		assert(parse("-7e2ms") == Value.Dimensioned(-700, UnitOfMeasure(Map("ms" -> 1))))
 	}
 
