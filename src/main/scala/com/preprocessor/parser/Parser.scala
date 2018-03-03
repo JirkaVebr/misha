@@ -4,7 +4,7 @@ package com.preprocessor.parser
 import org.parboiled2._
 
 
-class Parser(val input: ParserInput) extends org.parboiled2.Parser
+class Parser(val input: IndentDedentParserInput) extends org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace
 	with L1_Literals
@@ -12,3 +12,10 @@ class Parser(val input: ParserInput) extends org.parboiled2.Parser
 	with L3_Expressions
 	with L4_Statements
 	with L6_TopLevel
+
+
+object Parser {
+
+	def create(input: String): Parser =
+		new Parser(new IndentDedentParserInput(input))
+}
