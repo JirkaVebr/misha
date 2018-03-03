@@ -6,11 +6,11 @@ trait L0_Whitespace extends org.parboiled2.Parser {
 	import L0_Whitespace._
 
 	def AnyWhitespace: Rule0 = rule {
-		quiet(zeroOrMore(WhiteSpaceChar))
+		quiet(zeroOrMore(AnyWhiteSpaceChar))
 	}
 
 	def MandatoryAnyWhitespace: Rule0 = rule {
-		oneOrMore(WhiteSpaceChar)
+		oneOrMore(AnyWhiteSpaceChar)
 	}
 
 	def SingleLineWhitespace: Rule0 = rule {
@@ -42,7 +42,7 @@ trait L0_Whitespace extends org.parboiled2.Parser {
 	}
 
 	def NotAfterWhitespace: Rule0 = rule {
-		test(!WhiteSpaceChar.matchesAny(lastChar.toString))
+		test(!AnyWhiteSpaceChar.matchesAny(lastChar.toString))
 	}
 
 	implicit def whitespaceAfterString(stringToken: String): Rule0 = rule {
@@ -52,7 +52,9 @@ trait L0_Whitespace extends org.parboiled2.Parser {
 }
 
 object L0_Whitespace {
+	import Characters._
+
 	private val End: CharPredicate = CharPredicate('\n') ++ Characters.EOI
 	private val SingleLineWhitespaceChar = CharPredicate(" \f\r\t")
-	private val WhiteSpaceChar: CharPredicate = SingleLineWhitespaceChar ++ '\n'
+	private val AnyWhiteSpaceChar: CharPredicate = SingleLineWhitespaceChar ++ CharPredicate(s"\n$INDENT$DEDENT")
 }
