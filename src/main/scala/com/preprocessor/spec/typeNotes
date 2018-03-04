@@ -1,0 +1,37 @@
+
+Css Types:
+
+Identifier
+Integer
+Number
+Percentage
+Ratio 16/9 (positiveInt/positiveInt)
+String
+
+SingleTransitionTimingFunction (func. res & union)
+
+Numeric
+- Angle (deg, grad, rad, turn)
+- Flex (fr)
+- Frequency (Hz, kHz) // TODO useless
+- Length (cap, ch, em, ex, ic, lh, rem, rlh, vh, vw, vi, vb, vmin, vmax, px, cm, mm, Q, in, pc, pt)
+- Resolution (dpi, dpicm, dppx)
+- Time (s, ms)
+
+Union
+ *- BlendMode
+
+Function Results
+- Basic shape
+- Filter function
+- Gradient
+- Image
+- TransformFunction
+
+Difference
+- Counter (Identifier -- (none | inherit | initial))
+
+Special
+- Color
+- Url
+- Position
