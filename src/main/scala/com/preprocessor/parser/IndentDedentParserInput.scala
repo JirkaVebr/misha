@@ -32,6 +32,8 @@ class IndentDedentParserInput(val originalInput: String) extends ParserInput {
 		private var cursor: Int = 0
 		private var currentChar: Char = input.charAt(0)
 		private var indentLevels: List[Int] = List(0)
+		private var insideSingleQuotedString: Boolean = false
+		private var insideDoubleQuotedString: Boolean = false
 
 		convert()
 
@@ -51,12 +53,16 @@ class IndentDedentParserInput(val originalInput: String) extends ParserInput {
 			while (currentChar != EOI) {
 				// Right here we're at the beginning of a new line
 
+				val commentCharsStripped: Int = processComment()
+
 				if (currentChar != '\n' && currentChar != EOI) {
 					inputBuilder.append(currentChar)
 					advance()
+				} else if (commentCharsStripped != 0) {
+					inputBuilder.registerComment(commentCharsStripped)
+					advance()
 				} else {
-
-					inputBuilder.appendNewLine(0) // TODO change the arg
+					inputBuilder.append('\n')
 					advance()
 
 					val newIndentLevel: Int = processIndent()
@@ -85,6 +91,10 @@ class IndentDedentParserInput(val originalInput: String) extends ParserInput {
 					indentLevels = indentLevels.tail
 					inputBuilder.append(DEDENT)
 				}
+			}
+
+			if (inputBuilder.currentChar != '\n') {
+				inputBuilder.append('\n')
 			}
 		}
 
@@ -123,6 +133,21 @@ class IndentDedentParserInput(val originalInput: String) extends ParserInput {
 			processChar(0) // We start at the beginning of a line
 		}
 
+		private def processComment(): Int = {
+			if (insideSingleQuotedString || insideDoubleQuotedString)
+				0
+			else if (currentChar == '/' && nextChar() == '/') {
+				val pastCursor: Int = cursor
+
+				while (currentChar != '\n' && currentChar != EOI)
+					advance()
+
+				cursor - pastCursor
+			} else {
+				0
+			}
+		}
+
 
 		private class InputBuilder {
 			private val builder: StringBuilder = StringBuilder.newBuilder
@@ -133,9 +158,8 @@ class IndentDedentParserInput(val originalInput: String) extends ParserInput {
 				builder.append(char)
 			}
 
-			def appendNewLine(commentCharCount: Int): Unit = {
+			def registerComment(commentCharCount: Int): Unit = {
 				keyMapBuffer.append(cursor - commentCharCount)
-				builder.append('\n')
 			}
 
 			def getConvertedInput: String =
@@ -143,6 +167,13 @@ class IndentDedentParserInput(val originalInput: String) extends ParserInput {
 
 			def getKeyMap: Vector[Int] =
 				keyMapBuffer.toVector
+
+			def currentChar: Char =
+				try {
+					builder.last
+				} catch {
+					case _: NoSuchElementException => EOI
+				}
 		}
 	}
 

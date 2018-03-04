@@ -22,15 +22,15 @@ class IndentDedentParserInputSpec extends BaseParserSpec {
 	}
 
 	it should "close unclosed indents" in {
-		assert(process("a\n	abc") == s"a\n${INDENT}abc\n$DEDENT")
+		assert(process("a\n	abc") == s"a\n${INDENT}abc\n$DEDENT\n")
 	}
 
 	it should "convert several initial tabs to one indent" in {
-		assert(process("a\n			abc") == s"a\n${INDENT}abc\n$DEDENT")
+		assert(process("a\n			abc") == s"a\n${INDENT}abc\n$DEDENT\n")
 	}
 
 	it should "convert several initial spaces to one indent" in {
-		assert(process("a\n            abc") == s"a\n${INDENT}abc\n$DEDENT")
+		assert(process("a\n            abc") == s"a\n${INDENT}abc\n$DEDENT\n")
 	}
 
 	it should "correctly add indents & dedents" in {
@@ -42,10 +42,10 @@ class IndentDedentParserInputSpec extends BaseParserSpec {
 				|d
 				|""".stripMargin) ==
 			s"""a
-				 |${INDENT}b
-				 |c
-				 |${DEDENT}d
-				 |""".stripMargin)
+				|${INDENT}b
+				|c
+				|${DEDENT}d
+				|""".stripMargin)
 	}
 
 	it should "treat a tab as four spaces" in {
@@ -56,9 +56,10 @@ class IndentDedentParserInputSpec extends BaseParserSpec {
 					|    c
 					|""".stripMargin) ==
 				s"""a
-					 |${INDENT}b
-					 |c
-					 |$DEDENT""".stripMargin)
+					|${INDENT}b
+					|c
+					|$DEDENT
+					|""".stripMargin)
 	}
 
 	it should "handle nested blocks" in {
@@ -68,7 +69,7 @@ class IndentDedentParserInputSpec extends BaseParserSpec {
 				|		c
 				|	d
 				|e
-			""".stripMargin) ==
+				|""".stripMargin) ==
 			s"""a
 				|${INDENT}b
 				|${INDENT}c
@@ -82,7 +83,40 @@ class IndentDedentParserInputSpec extends BaseParserSpec {
 			"""a
 				|	b
 				|   c
-			""".stripMargin))
+				|""".stripMargin))
+	}
+
+	it should "strip comments at the beginning of a line" in {
+		assert(process("// foo bar baz") == "\n")
+		assert(process(
+			"""a
+				|// whatever
+				|b
+				|""".stripMargin) == "a\nb\n")
+	}
+
+	it should "strip comments at the end of a line" in {
+		assert(process("content// comment") == "content\n")
+	}
+
+	it should "preserve comment within delimited strings" in {
+		assert(process("'string//string'") == "'string//string'\n")
+		assert(process("\"string//string\"") == "\"string//string\"\n")
+	}
+
+	it should "not get fooled by escape sequences within strings" in {
+		assert(process("\"string\\\"//string\"") == "\"string\\\"//string\"\n")
+		assert(process("'string\\'//string'") == "'string\\'//string'\n")
+	}
+
+	it should "allow strip block comments" in {
+		assert(process(
+			"""a
+				|	// block
+				|		comment
+				|		comment
+				|	b
+				|""".stripMargin) == s"a\n${INDENT}b\n$DEDENT")
 	}
 
 	def process(input: String): String = {
