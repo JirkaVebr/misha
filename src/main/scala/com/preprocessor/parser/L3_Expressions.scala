@@ -16,6 +16,8 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	with L1_Literals
 	with L2_Types =>
 
+	import Characters._
+
 	private val anyWhitespaceSeparator: () => Rule0 = () => rule (MandatoryAnyWhitespace)
 
 	private val whitespaceSeparator: () => Rule0 = () => rule (MandatorySingleLineWhitespace)
@@ -165,7 +167,8 @@ trait L3_Expressions { this: org.parboiled2.Parser
 
 	private def conditional: Rule1[Conditional] = rule {
 		// The error is just IntelliJ being dumb.
-		(AnyWhitespaceAround("@if") ~!~ subExpression ~ AnyWhitespace ~ Expression ~ optional(AnyWhitespaceAround("@else") ~!~ Expression)) ~> (
+		(Token("@if") ~!~ subExpression ~ SingleLineWhitespace ~ Expression ~
+			optional(WhitespaceAround("@else") ~!~ Expression)) ~> (
 			(condition: Expression, consequent: Expression, alternative: Option[Expression]) => Conditional(
 				condition, consequent, alternative
 			)
@@ -177,8 +180,8 @@ trait L3_Expressions { this: org.parboiled2.Parser
 		'&' ~ push(ParentSelector)
 	}
 
-	private def block: Rule1[Block] = rule { // TODO replace '{' and '}' by INDENT and DEDENT respectively
-		'{' ~!~ Statement ~ '}' ~!~ EndOfLine ~> Block
+	private def block: Rule1[Block] = rule {
+		SingleLineWhitespace ~ '\n' ~ INDENT ~!~ Statement ~ DEDENT ~> Block
 	}
 
 	private def anonymousFunction: Rule1[Expression] = rule {
@@ -205,15 +208,15 @@ trait L3_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def rule: Rule1[Ast.Statement.Rule] = rule { // TODO using quoted strings is temporary
-		(QuotedString ~ EndOfLine ~ block) ~> Ast.Statement.Rule
+		(QuotedString ~ SingleLineWhitespace ~ block) ~> Ast.Statement.Rule
 	}
 
 	private def typeAliasDeclaration: Rule1[TypeAliasDeclaration] = rule {
-		(Token("@type") ~ MandatorySingleLineWhitespace ~ TypeAlias ~ AnyWhitespaceAround("=") ~ Type) ~> TypeAliasDeclaration
+		(Token("@type") ~ MandatorySingleLineWhitespace ~ TypeAlias ~ WhitespaceAround("=") ~ Type) ~> TypeAliasDeclaration
 	}
 
 	private def variableDeclaration: Rule1[VariableDeclaration] = rule {
-		(Token("@let") ~ MandatorySingleLineWhitespace ~ Variable ~ TypeAnnotation ~ AnyWhitespaceAround("=") ~!~ Expression) ~> (
+		(Token("@let") ~ MandatorySingleLineWhitespace ~ Variable ~ TypeAnnotation ~ WhitespaceAround("=") ~!~ Expression) ~> (
 			(variable: Variable, typeAnnotation: Option[Ast.Type.Any], value: Expression) =>
 				VariableDeclaration(ValueSymbolDeclaration(variable.name, typeAnnotation, value))
 			)

@@ -149,7 +149,7 @@ class ExpressionSpec extends BaseParserSpec {
 				|	1
 				|@else
 				|	2""".stripMargin) ==
-			Conditional(Variable("myVariable"), Scalar(1), Some(Scalar(2))))
+			Conditional(Variable("myVariable"), Block(Scalar(1)), Some(Block(Scalar(2)))))
 	}
 
 	it should "correctly parse computed member access" in {

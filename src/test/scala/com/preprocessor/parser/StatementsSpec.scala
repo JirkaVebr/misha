@@ -13,11 +13,11 @@ class StatementsSpec extends BaseParserSpec {
 
 	behavior of "The statement parser"
 
-	it should "correctly parse a simple rule" in { // TODO use indent/dedent
+	it should "correctly parse a simple rule" in {
 		assert(parse(
 			""""div a strong"
-				|{123
-				|}""".stripMargin) == Rule(Value.String("div a strong"), Block(Scalar(123))))
+				|	123
+				|""".stripMargin) == Rule(Value.String("div a strong"), Block(Scalar(123))))
 	}
 
 	it should "correctly parse a type alias declaration" in {
@@ -37,12 +37,12 @@ class StatementsSpec extends BaseParserSpec {
 		assert(parse("@let $myVar: Number = 1") == VariableDeclaration(ValueSymbolDeclaration("myVar", Some(Type.Number), Scalar(1))))
 	}
 
-	it should "correctly parse a block" in { // TODO
+	it should "correctly parse a block" in {
 		assert(parse(
-			"""{123
-				|@let $myVar = 1
-				|789
-				|}""".stripMargin) == Block(Sequence(Sequence(Scalar(123), VariableDeclaration(ValueSymbolDeclaration("myVar", None, Scalar(1)))), Scalar(789))))
+			"""@let $myVar =
+				|	123
+				|	456
+				|""".stripMargin) == VariableDeclaration(ValueSymbolDeclaration("myVar", None, Block(Sequence(Scalar(123), Scalar(456))))))
 	}
 
 	it should "correctly parse a property" in {
