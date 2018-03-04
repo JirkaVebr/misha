@@ -10,7 +10,7 @@ import scala.collection.mutable.ArrayBuffer
 
 /**
 	* This class is very heavily inspired by the original IndentDedentInputBuffer from parboiled (not parboiled2) and
-	* the way Python handles the same problem.
+	* the way Python handles the same problem. Comment handling is original though.
 	* @see https://github.com/sirthias/parboiled/blob/ed7b6f2456e27e9eafefdfd2fd2fbe50fc4e47cd/parboiled-core/src/main/java/org/parboiled/buffers/IndentDedentInputBuffer.java
 	* @see https://github.com/python/cpython/blob/master/Parser/tokenizer.c
 	* @param originalInput string
@@ -31,7 +31,6 @@ class IndentDedentParserInput(val originalInput: String) extends ParserInput {
 
 		private var cursor: Int = 0
 		private var currentChar: Char = input.charAt(0)
-		private var indentLevels: List[Int] = List(0)
 		private var insideSingleQuotedString: Boolean = false
 		private var insideDoubleQuotedString: Boolean = false
 
@@ -41,28 +40,38 @@ class IndentDedentParserInput(val originalInput: String) extends ParserInput {
 			inputBuilder.getConvertedInput
 
 		private def convert(): Unit = {
-			//skipWhitespaceLines()
-
+			var indentLevels: List[Int] = List(0)
 			var currentIndentLevel: Int = processIndent()
 
 			if (currentIndentLevel != 0) {
 				throw new InputError // Unexpected indent
 			}
 
-			//noinspection LoopVariableNotUpdated
+			var insideBlockComment: Boolean = false
+			var blockCommentStartCursor: Int = 0
+			var blockCommentIndentLevel: Int = 0
+
 			while (currentChar != EOI) {
 				// Right here we're at the beginning of a new line
 
-				val commentCharsStripped: Int = processComment()
+				// Don't want to get confused by nested comments
+				val commentCharsStripped: Int = if (insideBlockComment) 0 else processComment()
 
 				if (currentChar != '\n' && currentChar != EOI) {
-					inputBuilder.append(currentChar)
-					advance()
-				} else if (commentCharsStripped != 0) {
-					inputBuilder.registerComment(commentCharsStripped)
+					if (!insideBlockComment) {
+						inputBuilder.append(currentChar)
+					}
 					advance()
 				} else {
-					inputBuilder.append('\n')
+
+					if (!insideBlockComment) {
+						if (commentCharsStripped == 0) {
+							inputBuilder.append('\n')
+						} else {
+							blockCommentStartCursor = cursor - commentCharsStripped
+							blockCommentIndentLevel = currentIndentLevel
+						}
+					}
 					advance()
 
 					val newIndentLevel: Int = processIndent()
@@ -70,12 +79,23 @@ class IndentDedentParserInput(val originalInput: String) extends ParserInput {
 					if (newIndentLevel > currentIndentLevel) {
 						indentLevels = newIndentLevel :: indentLevels
 						currentIndentLevel = newIndentLevel
-						inputBuilder.append(INDENT)
+
+						if (commentCharsStripped == 0 && !insideBlockComment) {
+							inputBuilder.append(INDENT)
+						} else {
+							insideBlockComment = true
+						}
 					} else {
 						while (newIndentLevel < currentIndentLevel && newIndentLevel <= indentLevels.head) {
 							indentLevels = indentLevels.tail
 							currentIndentLevel = indentLevels.head
-							inputBuilder.append(DEDENT)
+
+							if (!insideBlockComment || currentIndentLevel > blockCommentIndentLevel) {
+								inputBuilder.append(DEDENT)
+							} else {
+								insideBlockComment = false
+								inputBuilder.registerComment(cursor - blockCommentStartCursor)
+							}
 						}
 						if (newIndentLevel != currentIndentLevel) {
 							throw new InputError

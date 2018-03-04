@@ -109,14 +109,26 @@ class IndentDedentParserInputSpec extends BaseParserSpec {
 		assert(process("'string\\'//string'") == "'string\\'//string'\n")
 	}
 
-	it should "allow strip block comments" in {
+	it should "strip block comments" in {
 		assert(process(
 			"""a
 				|	// block
 				|		comment
 				|		comment
 				|	b
-				|""".stripMargin) == s"a\n${INDENT}b\n$DEDENT")
+				|""".stripMargin) == s"a\n${INDENT}b\n$DEDENT\n")
+	}
+
+	it should "not get fooled by nested block comments" in {
+		assert(process(
+			"""a
+				|	// block
+				|		comment
+				|		comment
+				|		// nested //
+				|		foo
+				|	b
+				|""".stripMargin) == s"a\n${INDENT}b\n$DEDENT\n")
 	}
 
 	def process(input: String): String = {
