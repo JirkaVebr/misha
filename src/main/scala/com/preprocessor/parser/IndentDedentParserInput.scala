@@ -43,6 +43,10 @@ class IndentDedentParserInput(val originalInput: String) extends ParserInput {
 
 			var currentIndentLevel: Int = processIndent()
 
+			if (currentIndentLevel != 0) {
+				throw new InputError // Unexpected indent
+			}
+
 			//noinspection LoopVariableNotUpdated
 			while (currentChar != EOI) {
 				// Right here we're at the beginning of a new line
