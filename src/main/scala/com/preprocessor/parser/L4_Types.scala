@@ -4,11 +4,12 @@ import com.preprocessor.ast.Ast
 import com.preprocessor.interpreter.RootEnvironment
 import org.parboiled2._
 
-trait L3_Types { this: org.parboiled2.Parser
+trait L4_Types { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace
 	with L1_Strings
-	with L2_Literals =>
+	with L2_Numbers
+	with L3_Literals =>
 
 	def TypeAnnotation: Rule1[Option[Ast.Type.Any]] = rule {
 		optional(":" ~!~ Type)

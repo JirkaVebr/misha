@@ -8,10 +8,11 @@ class LanguageParser(val input: IndentDedentParserInput) extends org.parboiled2.
 	with StringBuilding
 	with L0_Whitespace
 	with L1_Strings
-	with L2_Literals
-	with L3_Types
-	with L4_Expressions
-	with L5_TopLevel
+	with L2_Numbers
+	with L3_Literals
+	with L4_Types
+	with L5_Expressions
+	with L6_TopLevel
 
 
 object LanguageParser {
