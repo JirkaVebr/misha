@@ -73,5 +73,34 @@ object PseudoClasses {
 	}
 
 
+	/**
+		* @see https://drafts.csswg.org/selectors-4/#child-index
+		*/
+	sealed trait Nth extends PseudoClass {
+		def kind: String
+
+		override def name: String = "nth-" + kind
+	}
+
+	case object Child extends Nth {
+		override def kind: String = "child"
+	}
+	case object LastChild extends Nth {
+		override def kind: String = "last-child"
+	}
+	case object OfType extends Nth {
+		override def kind: String = "of-type"
+	}
+	case object LastOfType extends Nth {
+		override def kind: String = "last-of-type"
+	}
+	case object Col extends Nth {
+		override def kind: String = "col"
+	}
+	case object LastCol extends Nth {
+		override def kind: String = "last-col"
+	}
+
+	case class NthAb(a: Int, b: Int)
 
 }
