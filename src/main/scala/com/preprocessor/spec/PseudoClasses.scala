@@ -56,4 +56,22 @@ object PseudoClasses {
 		Rtl.value -> Rtl
 	)
 
+
+	/**
+		* @see https://drafts.csswg.org/selectors-4/#drag-pseudos
+		*/
+	sealed trait DropFilter extends ArgumentEnum
+
+	case object Active extends DropFilter {
+		override def value: String = "active"
+	}
+	case object Valid extends DropFilter {
+		override def value: String = "valid"
+	}
+	case object Invalid extends DropFilter {
+		override def value: String = "invalid"
+	}
+
+
+
 }
