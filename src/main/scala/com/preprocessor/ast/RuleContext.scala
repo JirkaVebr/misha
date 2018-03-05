@@ -3,6 +3,11 @@ package com.preprocessor.ast
 import com.preprocessor.ast.Ast.Term.MagicSymbol
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.Symbol.ValueSymbol
+import com.preprocessor.spec.AttributeSelector.{MatchTarget, Modifier}
+import com.preprocessor.spec.Identifier
+import com.preprocessor.spec.PseudoClasses.Nullary.NullaryPseudoClass
+import com.preprocessor.spec.PseudoClasses.{AnPlusB, Directionality, DropFilter}
+import com.preprocessor.spec.SelectorCombinator.Combinator
 
 object RuleContext {
 
@@ -14,33 +19,24 @@ object RuleContext {
 		sealed trait Selector extends RuleContext
 
 		case object Universal extends Selector
-		case class Element(name: String, namespace: Option[Namespace.Namespace] = None) extends Selector
-		case class Class(name: String) extends Selector
-		case class Id(name: String) extends Selector
+		case class Compound(combinator: Combinator, left: Selector, right: Selector) extends Selector
 
+		case class Element(name: Identifier, namespace: Option[Namespace.Namespace] = None) extends Selector
+		case class PseudoElement(name: String) extends Selector
+		case class Class(name: Identifier) extends Selector
+		case class Id(name: Identifier) extends Selector
 
-		case class Binary(combinator: Combinator, left: Selector, right: Selector) extends Selector
-		sealed trait Combinator
+		sealed trait PseudoClass extends Selector
+		case class SubSelector(kind: SubSelector, subSelectors: Seq[Selector]) extends PseudoClass
+		case class Dir(directionality: Directionality) extends PseudoClass
+		case class Drop(filter: Option[DropFilter]) extends PseudoClass
+		case class Lang(name: Identifier) extends PseudoClass
+		case class Nullary(pseudoClass: NullaryPseudoClass) extends PseudoClass
+		case class GenericPseudoClass(name: String) extends PseudoClass
+		case class Nth(kind: Nth, ab: AnPlusB, of: Option[Selector]) extends PseudoClass
 
-		case object Multiple extends Combinator // A, B
-		case object Descendant extends Combinator // A B
-		case object Child extends Combinator // A > B
-		case object AdjacentSibling extends Combinator // A + B
-		case object GeneralSibling extends Combinator // A ~ B
-
-
-		case class Attribute(matcher: Matcher, name: String, value: Option[String] = None, modifier: Option[Modifier] = None)
-
-		sealed trait Modifier
-		case object CaseInsensitive extends Modifier
-
-		sealed trait Matcher
-		case object Equals extends Matcher // [attr=value]
-		case object Includes extends Matcher // [attr~=value]
-		case object Prefix extends Matcher // [attr|=value]
-		case object Preceded extends Matcher // [attr^=value]
-		case object Followed extends Matcher // [attr$=value]
-		case object Contains extends Matcher // [attr*=value]
+		// target being None signifies checking just for attribute presence
+		case class Attribute(name: String, target: Option[MatchTarget] = None, modifier: Option[Modifier] = None)
 
 	}
 
