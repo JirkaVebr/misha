@@ -33,22 +33,27 @@ object PseudoClasses {
 	)
 
 
+	trait ArgumentEnum {
+		def value: String
+	}
+
+
 	/**
 		* @see https://drafts.csswg.org/selectors-4/#the-dir-pseudo
 		*/
-	sealed trait Directionality extends PseudoClass
+	sealed trait Directionality extends ArgumentEnum
 
 	case object Ltr extends Directionality {
-		override def name: String = "ltr"
+		override def value: String = "ltr"
 	}
 	case object Rtl extends Directionality {
-		override def name: String = "rtl"
+		override def value: String = "rtl"
 	}
-	case class UndefinedDirectionality(name: String) extends Directionality
+	case class UndefinedDirectionality(value: String) extends Directionality
 
 	val directionality: Map[String, Directionality] = Map(
-		Ltr.name -> Ltr,
-		Rtl.name -> Rtl
+		Ltr.value -> Ltr,
+		Rtl.value -> Rtl
 	)
 
 }
