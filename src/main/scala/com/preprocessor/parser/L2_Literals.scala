@@ -8,16 +8,17 @@ import com.preprocessor.spec.ColorKeywords
 import org.parboiled2._
 
 
-trait L1_Literals { this: org.parboiled2.Parser
+trait L2_Literals { this: org.parboiled2.Parser
 	with StringBuilding
-	with L0_Whitespace =>
+	with L0_Whitespace
+	with L1_Strings =>
 
 	import CharPredicate.HexDigit
-	import L1_Literals._
+	import L2_Literals._
 
 
 	def Literal: Rule1[Primitive] = rule {
-		Flag | boolean | number | QuotedString | color | unquotedString
+		Flag | boolean | number | QuotedString | color | UnquotedString
 	}
 
 	def Flag: Rule1[Flag] = rule {
@@ -88,53 +89,11 @@ trait L1_Literals { this: org.parboiled2.Parser
 	}
 
 
-	/* STRINGS */
-	// The string parsing is heavily based on the parboiled2 example Json parser
-
-	def QuotedString: Rule1[Value.String] = rule {
-		quotedStringInner(quotedStringBody)
-	}
-
-	private val quotedStringBody: CharPredicate => Rule1[String] = (charPredicate: CharPredicate) => rule {
-		clearSB() ~ zeroOrMore((!charPredicate ~ ANY ~ appendSB()) | '\\' ~ escapedChar) ~ push(sb.toString)
-	}
-
-	private def quotedStringInner(body: (CharPredicate) => Rule1[String]): Rule1[Value.String] = rule {
-		(('\'' ~ body(SingleQuoteOrBackslash) ~ '\'') |
-			('"' ~ body(DoubleQuoteOrBackslash) ~ '"')
-		) ~> Value.String
-	}
-
-	private def escapedChar: Rule0 = rule (
-		StringDelimiterOrBackslash ~ appendSB()
-			| 'n' ~ appendSB('\n')
-			| 'r' ~ appendSB('\r')
-			| 't' ~ appendSB('\t')
-			| unicodeSequence ~> { (code: Int) => sb.append(code.asInstanceOf[Char]); () }
-	)
-
-	private def unicodeSequence: Rule1[Int] = rule {
-		capture((1 to 4).times(HexDigit)) ~> ((hexDigits: String) => java.lang.Integer.parseInt(hexDigits, 16))
-	}
-
-	private def unquotedString: Rule1[Value.String] = rule {
-		Identifier ~> Value.String
-	}
-
-	def Identifier: Rule1[String] = rule {
-		capture(optional("--") ~ oneOrMore(AlphaNumUnderscore) ~ zeroOrMore(AlphaNumDashUnderscore))
-	}
-
 }
 
-object L1_Literals {
+object L2_Literals {
 	val Signs = CharPredicate("+-")
 	val Exponent = CharPredicate("eE")
-	val AlphaNumUnderscore: CharPredicate = CharPredicate.AlphaNum ++ '_'
-	val AlphaNumDashUnderscore: CharPredicate = AlphaNumUnderscore ++ '-'
-	val SingleQuoteOrBackslash = CharPredicate("'\\")
-	val DoubleQuoteOrBackslash = CharPredicate("\"\\")
-	val StringDelimiterOrBackslash = CharPredicate("\"\\'")
 
 
 	private def signToFactor(sign: String): Int = if (sign == "-") -1 else 1

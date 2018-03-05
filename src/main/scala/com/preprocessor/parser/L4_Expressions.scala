@@ -10,11 +10,12 @@ import com.preprocessor.ast.Symbol.ValueSymbol
 import org.parboiled2._
 
 
-trait L3_Expressions { this: org.parboiled2.Parser
+trait L4_Expressions { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace
-	with L1_Literals
-	with L2_Types =>
+	with L1_Strings
+	with L2_Literals
+	with L3_Types =>
 
 	import Characters._
 
