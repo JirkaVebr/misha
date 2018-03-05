@@ -101,6 +101,10 @@ object PseudoClasses {
 		override def kind: String = "last-col"
 	}
 
-	case class NthAb(a: Int, b: Int)
+	/**
+		* No need for special cases for `even` and `odd` as these reduce to 2n and 2n+1 respectively
+		* @see https://drafts.csswg.org/css-syntax-3/#anb-microsyntax
+		*/
+	case class AnPlusB(a: Int, b: Int)
 
 }
