@@ -1,6 +1,6 @@
 package com.preprocessor
 
-import com.preprocessor.parser.{IndentDedentParserInput, Parser}
+import com.preprocessor.parser.{IndentDedentParserInput, LanguageParser}
 import org.parboiled2.ParseError
 
 import scala.io.Source
@@ -10,7 +10,7 @@ import scala.util.{Failure, Success}
 object Main extends App {
 
 	val testSource = Source.fromFile("src/input/test.tss").mkString
-	var parseResult = new Parser(new IndentDedentParserInput(testSource)).Program.run()
+	var parseResult = new LanguageParser(new IndentDedentParserInput(testSource)).Program.run()
 	//var parseResult = new TestParser(testSource).Expression.run()
 
 
