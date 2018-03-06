@@ -1,12 +1,12 @@
-package com.preprocessor.parser
+package com.preprocessor.parser.language
 
 import com.preprocessor.ast.Ast
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Statement._
 import com.preprocessor.ast.Ast.Term._
-import com.preprocessor.ast.Ast.Type.Flag
 import com.preprocessor.ast.Ast._
 import com.preprocessor.ast.Symbol.ValueSymbol
+import com.preprocessor.parser._
 import org.parboiled2._
 
 
@@ -137,7 +137,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	private def undelimitedListBody(separator: () => Rule0, content: () => Rule1[Expression] = expressionBody): Rule1[Seq[Expression]] = rule {
 		// We really need at least two items for it to be considered a list. Should one want to create a list of one item,
 		// they should surround it with square brackets.
-		(2 to Integer.MAX_VALUE).times(content()).separatedBy(separator())
+		(2 to Int.MaxValue).times(content()).separatedBy(separator())
 	}
 
 	private def delimitedListBody: Rule1[Seq[Expression]] = rule {

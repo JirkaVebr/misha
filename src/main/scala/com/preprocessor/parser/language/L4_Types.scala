@@ -1,7 +1,8 @@
-package com.preprocessor.parser
+package com.preprocessor.parser.language
 
 import com.preprocessor.ast.Ast
 import com.preprocessor.interpreter.RootEnvironment
+import com.preprocessor.parser.{L0_Whitespace, L1_Strings, L2_Numbers}
 import org.parboiled2._
 
 trait L4_Types { this: org.parboiled2.Parser

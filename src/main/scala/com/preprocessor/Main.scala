@@ -1,6 +1,7 @@
 package com.preprocessor
 
-import com.preprocessor.parser.{IndentDedentParserInput, LanguageParser}
+import com.preprocessor.parser.IndentDedentParserInput
+import com.preprocessor.parser.language.LanguageParser
 import org.parboiled2.ParseError
 
 import scala.io.Source

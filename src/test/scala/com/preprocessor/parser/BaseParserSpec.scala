@@ -2,6 +2,7 @@ package com.preprocessor.parser
 
 import com.preprocessor.BaseSpec
 import com.preprocessor.ast.Ast.Node
+import com.preprocessor.parser.language.LanguageParser
 import org.parboiled2.{ParseError, Rule1}
 
 import scala.util.{Failure, Success}

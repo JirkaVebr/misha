@@ -1,6 +1,7 @@
-package com.preprocessor.parser
+package com.preprocessor.parser.language
 
 import com.preprocessor.ast.Ast
+import com.preprocessor.parser._
 import org.parboiled2._
 
 trait L6_TopLevel { this: org.parboiled2.Parser
