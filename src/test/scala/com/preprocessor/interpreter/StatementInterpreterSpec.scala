@@ -21,7 +21,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 
 		val newState = run(VariableDeclaration(ValueSymbolDeclaration(symbol, None, varValue)))
 		assert(newState.environment.isInCurrentScope(symbol))
-		assert(newState.environment.lookup(symbol).get.value == varValue)
+		assert(newState.environment.lookup(symbol).get.value === varValue)
 	}
 
 	it should "reject declaration of existing variables" in {
@@ -58,7 +58,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 				),
 				Variable(symbol2)
 			)
-		).valueRecord.value == consequent)
+		).valueRecord.value === consequent)
 	}
 
 	it should "correctly create a type alias" in {
@@ -66,7 +66,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val newType = Type.Number
 		val newState = run(TypeAliasDeclaration(TypeAlias(symbol), newType))
 
-		assert(newState.environment.lookup(symbol).get == newType)
+		assert(newState.environment.lookup(symbol).get === newType)
 	}
 
 	/*it should "allow narrowing type alias declarations" in {
@@ -76,7 +76,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val newType = Type.Number
 		val newState = run(TypeAliasDeclaration(TypeAlias(symbol), newType))(stateWithOldType)
 
-		assert(newState.environment.lookup(symbol).get == newType)
+		assert(newState.environment.lookup(symbol).get === newType)
 	}*/
 
 	it should "reject non-narrowing type alias declarations" in {
@@ -98,7 +98,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 				Property(Value.String("position"), Value.String("absolute"))
 			)
 		)
-		assert(newState.environment.lookupCurrent(PropertySymbol).get == List(
+		assert(newState.environment.lookupCurrent(PropertySymbol).get === List(
 			PropertyRecord("position", "absolute"),
 			PropertyRecord("width", "80%"),
 			PropertyRecord("line-height", "1.6")
@@ -119,8 +119,8 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		))))
 		val ruleEnvironment = newState.environment.subEnvironments.head
 
-		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get == RuleContext.RawRuleHead(List(Right(".class"))))
-		assert(ruleEnvironment.lookupCurrent(PropertySymbol).get == List(
+		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleContext.RawRuleHead(List(Right(".class"))))
+		assert(ruleEnvironment.lookupCurrent(PropertySymbol).get === List(
 			PropertyRecord("width", "80%"),
 			PropertyRecord("line-height", "1.6")
 		))

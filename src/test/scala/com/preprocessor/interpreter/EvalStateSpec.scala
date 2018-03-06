@@ -10,16 +10,16 @@ class EvalStateSpec extends BaseInterpreterSpec {
 		val environment = new Environment()
 		val evalState = EvalState(environment)
 
-		assert(evalState.environment == environment)
-		assert(evalState.valueRecord.recordType == Type.Unit)
-		assert(evalState.valueRecord.value == Value.Unit)
+		assert(evalState.environment === environment)
+		assert(evalState.valueRecord.recordType === Type.Unit)
+		assert(evalState.valueRecord.value === Value.Unit)
 
 		val numberType = Type.Scalar
 		val numberValue = Value.Scalar(123)
 		val newState = evalState evaluatedTo numberValue
 
-		assert(newState.get.environment == environment)
-		assert(newState.get.valueRecord.recordType == numberType)
-		assert(newState.get.valueRecord.value == numberValue)
+		assert(newState.get.environment === environment)
+		assert(newState.get.valueRecord.recordType === numberType)
+		assert(newState.get.valueRecord.value === numberValue)
 	}
 }

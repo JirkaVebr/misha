@@ -16,7 +16,7 @@ class EmitterSpec extends BaseEmitterSpec {
 			PropertyRecord("color", "blue")
 		))
 
-		assert(emit(withProperties) ==
+		assert(emit(withProperties) ===
 			"""	color: blue;
 				|	line-height: 1.6;
 				|""".stripMargin)
@@ -28,7 +28,7 @@ class EmitterSpec extends BaseEmitterSpec {
 		val childWithProperty = childEnvironment.putNew(PropertySymbol)(List(PropertyRecord("color", "blue")))
 		val baseWithChild = childWithProperty.popSubScope().get
 
-		assert(emit(baseWithChild) ==
+		assert(emit(baseWithChild) ===
 			"""	line-height: 1.6;
 				|	color: blue;
 				|""".stripMargin)
@@ -41,7 +41,7 @@ class EmitterSpec extends BaseEmitterSpec {
 			PropertyRecord("color", "blue")
 		))
 
-		assert(emit(withProperties) ==
+		assert(emit(withProperties) ===
 			""".myClass {
 				|	color: blue;
 				|	line-height: 1.6;

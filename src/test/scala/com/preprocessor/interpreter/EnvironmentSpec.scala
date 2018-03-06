@@ -28,7 +28,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		environment = environment.putNew(testTypeSymbol)(testType)
 
 		assert(environment.lookup(testTypeSymbol).nonEmpty)
-		assert(environment.lookup(testTypeSymbol).get == testType)
+		assert(environment.lookup(testTypeSymbol).get === testType)
 		assert(environment.isInCurrentScope(testTypeSymbol))
 		assert(environment.isInScope(testTypeSymbol))
 	}
@@ -54,9 +54,9 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		assert(environment.lookup(testValueSymbol).nonEmpty)
 		assert(environment.lookup(RuleContextSymbol).nonEmpty)
 
-		assert(environment.lookup(testTypeSymbol).get == testType)
-		assert(environment.lookup(testValueSymbol).get == testValue)
-		assert(environment.lookup(RuleContextSymbol).get == testContext)
+		assert(environment.lookup(testTypeSymbol).get === testType)
+		assert(environment.lookup(testValueSymbol).get === testValue)
+		assert(environment.lookup(RuleContextSymbol).get === testContext)
 	}
 
 	it should "retrieve data from parent" in {
@@ -72,7 +72,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		val childEnvironment = parentEnvironment.pushSubScope()
 
 		assert(childEnvironment.lookup(testTypeSymbol).nonEmpty)
-		assert(childEnvironment.lookup(testTypeSymbol).get == testType)
+		assert(childEnvironment.lookup(testTypeSymbol).get === testType)
 		assert(childEnvironment.lookup(TypeSymbol("AbsentTypeName")).isEmpty)
 	}
 
@@ -91,11 +91,11 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		childEnvironment = childEnvironment.putNew(testTypeSymbol)(testTypeChild)
 
 		assert(childEnvironment.lookup(testTypeSymbol).nonEmpty)
-		assert(childEnvironment.lookup(testTypeSymbol).get == testTypeChild)
-		assert(parentEnvironment.lookup(testTypeSymbol).get == testTypeParent)
+		assert(childEnvironment.lookup(testTypeSymbol).get === testTypeChild)
+		assert(parentEnvironment.lookup(testTypeSymbol).get === testTypeParent)
 		assert(childEnvironment.isInScope(testTypeSymbol))
 
 		val parentEnvironmentAgain = childEnvironment.popSubScope()
-		assert(parentEnvironmentAgain.get.lookup(testTypeSymbol).get == testTypeParent)
+		assert(parentEnvironmentAgain.get.lookup(testTypeSymbol).get === testTypeParent)
 	}
 }

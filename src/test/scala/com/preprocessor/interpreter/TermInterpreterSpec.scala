@@ -20,7 +20,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		val variable = Variable(symbol)
 		val newState = state.withNewSymbol(symbol)(ValueRecord(varValue, varType)).get
 
-		assert(run(variable)(newState).valueRecord.value == varValue)
+		assert(run(variable)(newState).valueRecord.value === varValue)
 	}
 
 	it should "reject undefined variable reads" in {
@@ -30,7 +30,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 	it should "correctly interpret tuples" in {
 		assert(run(Term.Tuple2(
 			UnaryOperation(LogicalNegation, Value.Boolean(true)), Value.String("foo")
-		)).valueRecord.value == Value.Tuple2(
+		)).valueRecord.value === Value.Tuple2(
 			Value.Boolean(false), Value.String("foo")
 		))
 	}
