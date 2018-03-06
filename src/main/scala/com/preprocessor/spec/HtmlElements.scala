@@ -28,7 +28,7 @@ object HtmlElements {
 	case object Aside extends SectionElement { def name = "aside" }
 	case object Body extends SectionElement { def name = "body" }
 	case object Footer extends SectionElement { def name = "footer" }
-	case object HGroup extends SectionElement { def name = "hgroup" }
+	case object Hgroup extends SectionElement { def name = "hgroup" }
 	case object Header extends SectionElement { def name = "header" }
 	case object Nav extends SectionElement { def name = "nav" }
 	case object Section extends SectionElement { def name = "section" }
