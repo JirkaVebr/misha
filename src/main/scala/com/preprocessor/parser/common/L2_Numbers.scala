@@ -1,4 +1,4 @@
-package com.preprocessor.parser
+package com.preprocessor.parser.common
 
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.NumberUnit

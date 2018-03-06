@@ -1,7 +1,6 @@
-package com.preprocessor.parser
+package com.preprocessor.parser.common
 
 import com.preprocessor.ast.Ast.Value
-import com.preprocessor.parser.L1_Strings._
 import org.parboiled2.CharPredicate.HexDigit
 import org.parboiled2._
 
@@ -13,6 +12,8 @@ import org.parboiled2._
 trait L1_Strings { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace =>
+
+	import L1_Strings._
 
 	def String: Rule1[Value.String] = rule {
 		QuotedString | UnquotedString

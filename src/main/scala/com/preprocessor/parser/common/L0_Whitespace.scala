@@ -1,5 +1,6 @@
-package com.preprocessor.parser
+package com.preprocessor.parser.common
 
+import com.preprocessor.parser.Characters
 import org.parboiled2._
 
 trait L0_Whitespace extends org.parboiled2.Parser {

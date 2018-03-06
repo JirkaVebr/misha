@@ -2,7 +2,7 @@ package com.preprocessor.parser.language
 
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.Ast.Value.{Color, Duplicate, Flag, Important, Primitive, Rgba}
-import com.preprocessor.parser.{L0_Whitespace, L1_Strings, L2_Numbers}
+import com.preprocessor.parser.common.{L0_Whitespace, L1_Strings, L2_Numbers}
 import com.preprocessor.spec.ColorKeywords
 import org.parboiled2._
 
