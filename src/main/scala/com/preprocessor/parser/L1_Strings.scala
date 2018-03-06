@@ -3,7 +3,7 @@ package com.preprocessor.parser
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.parser.L1_Strings._
 import org.parboiled2.CharPredicate.HexDigit
-import org.parboiled2.{CharPredicate, Rule0, Rule1, StringBuilding}
+import org.parboiled2._
 
 /**
 	* The string parsing is heavily based on the parboiled2 example Json parser
@@ -14,6 +14,9 @@ trait L1_Strings { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace =>
 
+	def String: Rule1[Value.String] = rule {
+		QuotedString | UnquotedString
+	}
 
 	def QuotedString: Rule1[Value.String] = rule {
 		quotedStringInner(quotedStringBody)
