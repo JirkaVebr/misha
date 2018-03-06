@@ -16,8 +16,8 @@ class LanguageParser(val input: IndentDedentParserInput) extends org.parboiled2.
 	with L6_TopLevel
 
 
-object LanguageParser {
+object LanguageParser extends ParserFactory[LanguageParser] {
 
-	def create(input: String): LanguageParser =
+	override def create(input: String): LanguageParser =
 		new LanguageParser(new IndentDedentParserInput(input))
 }

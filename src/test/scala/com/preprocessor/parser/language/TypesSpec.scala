@@ -82,5 +82,5 @@ class TypesSpec extends BaseParserSpec {
 	}
 
 
-	protected def parse(input: String): Type.Any = parseRule(input, _.Type)
+	protected def parse(input: String): Type.Any = parseLanguageRule(input, _.Type)
 }

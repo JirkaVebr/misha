@@ -182,6 +182,6 @@ class ExpressionSpec extends BaseParserSpec {
 	}
 
 
-	protected def parse(input: java.lang.String): Expression = parseRule(input, _.Expression)
+	protected def parse(input: java.lang.String): Expression = parseLanguageRule(input, _.Expression)
 
 }

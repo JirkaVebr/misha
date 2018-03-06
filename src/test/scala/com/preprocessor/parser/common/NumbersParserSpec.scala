@@ -63,8 +63,8 @@ class NumbersParserSpec extends BaseParserSpec {
 		assert(parse("11.22%") == Value.Percentage(11.22))
 	}
 
-	protected def parse(input: String): Value.Value = parseRule(input, _.Number)
+	protected def parse(input: String): Value.Value = parseLanguageRule(input, _.Number)
 
-	protected def parseUnsignedInt(input: String): Int = parseRule(input, _.UnsignedInteger)
+	protected def parseUnsignedInt(input: String): Int = parseLanguageRule(input, _.UnsignedInteger)
 
 }

@@ -2,6 +2,7 @@ package com.preprocessor.parser.common
 
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.parser.BaseParserSpec
+import com.preprocessor.parser.language.LanguageParser
 
 class StringsParserSpec extends BaseParserSpec {
 
@@ -26,6 +27,6 @@ class StringsParserSpec extends BaseParserSpec {
 		assert(parse("d_-_e-_-f") == Value.String("d_-_e-_-f"))
 	}
 
-	protected def parse(input: String): Value.Value = parseRule(input, _.String)
+	protected def parse(input: String): Value.Value = parseLanguageRule(input, _.String)
 
 }

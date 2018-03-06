@@ -61,5 +61,5 @@ class StatementsSpec extends BaseParserSpec {
 			)))))
 	}
 
-	protected def parse(input: java.lang.String): Statement = parseRule(input, _.Statement)
+	protected def parse(input: java.lang.String): Statement = parseLanguageRule(input, _.Statement)
 }
