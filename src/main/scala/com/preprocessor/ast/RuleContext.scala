@@ -5,7 +5,7 @@ import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.Symbol.ValueSymbol
 import com.preprocessor.spec.AttributeSelector.{MatchTarget, Modifier}
 import com.preprocessor.spec.Identifier
-import com.preprocessor.spec.PseudoClasses.Nullary.NullaryPseudoClass
+import com.preprocessor.spec.PseudoClasses.NonFunctional.NonFunctionalPseudoClass
 import com.preprocessor.spec.PseudoClasses.{AnPlusB, Directionality, DropFilter}
 import com.preprocessor.spec.PseudoElements
 import com.preprocessor.spec.SelectorCombinator.Combinator
@@ -31,7 +31,7 @@ object RuleContext {
 		case class Dir(directionality: Directionality) extends PseudoClass
 		case class Drop(filter: Option[DropFilter]) extends PseudoClass
 		case class Lang(name: Identifier) extends PseudoClass
-		case class Nullary(pseudoClass: NullaryPseudoClass) extends PseudoClass
+		case class NonFunctional(pseudoClass: NonFunctionalPseudoClass) extends PseudoClass
 		case class CustomPseudoClass(name: Identifier) extends PseudoClass
 		case class Nth(kind: Nth, ab: AnPlusB, of: Option[Selector]) extends PseudoClass
 

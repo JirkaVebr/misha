@@ -1,6 +1,6 @@
 package com.preprocessor.spec
 
-import com.preprocessor.spec.PseudoClasses.Nullary.NullaryPseudoClass
+import com.preprocessor.spec.PseudoClasses.NonFunctional.NonFunctionalPseudoClass
 
 object PseudoClasses {
 
@@ -110,8 +110,8 @@ object PseudoClasses {
 	case class AnPlusB(a: Int, b: Int)
 
 
-	object Nullary {
-		sealed trait NullaryPseudoClass extends PseudoClass
+	object NonFunctional {
+		sealed trait NonFunctionalPseudoClass extends PseudoClass
 
 		/**
 			* Drop and Current are intentionally essentially duplicates of their special-support counterparts in order to ease
@@ -119,87 +119,87 @@ object PseudoClasses {
 			*
 			* Enumerating them in order to allow use of parboiled2's valueMaps and to make subsequent AST manipulation easier.
 			*/
-		case object Active extends NullaryPseudoClass { override def name: String = "active" }
-		case object AnyLink extends NullaryPseudoClass { override def name: String = "any-link" }
-		case object Blank extends NullaryPseudoClass { override def name: String = "blank" }
-		case object Checked extends NullaryPseudoClass { override def name: String = "checked" }
-		case object Current extends NullaryPseudoClass { override def name: String = "link" }
-		case object Default extends NullaryPseudoClass { override def name: String = "default" }
-		case object Disabled extends NullaryPseudoClass { override def name: String = "disabled" }
-		case object Drop extends NullaryPseudoClass { override def name: String = "link" }
-		case object Empty extends NullaryPseudoClass { override def name: String = "empty" }
-		case object Enabled extends NullaryPseudoClass { override def name: String = "enabled" }
-		case object FirstChild extends NullaryPseudoClass { override def name: String = "first-child" }
-		case object FirstOfType extends NullaryPseudoClass { override def name: String = "first-of-type" }
-		case object Focus extends NullaryPseudoClass { override def name: String = "focus" }
-		case object FocusVisible extends NullaryPseudoClass { override def name: String = "focus-visible" }
-		case object FocusWithin extends NullaryPseudoClass { override def name: String = "focus-within" }
-		case object Future extends NullaryPseudoClass { override def name: String = "future" }
-		case object Hover extends NullaryPseudoClass { override def name: String = "hover" }
-		case object Indeterminate extends NullaryPseudoClass { override def name: String = "indeterminate" }
-		case object InRange extends NullaryPseudoClass { override def name: String = "in-range" }
-		case object Invalid extends NullaryPseudoClass { override def name: String = "invalid" }
-		case object LastChild extends NullaryPseudoClass { override def name: String = "last-child" }
-		case object LastOfType extends NullaryPseudoClass { override def name: String = "last-of-type" }
-		case object Link extends NullaryPseudoClass { override def name: String = "link" }
-		case object LocalLink extends NullaryPseudoClass { override def name: String = "local-link" }
-		case object OnlyChild extends NullaryPseudoClass { override def name: String = "only-child" }
-		case object OnlyOfType extends NullaryPseudoClass { override def name: String = "only-of-type" }
-		case object OutOfRange extends NullaryPseudoClass { override def name: String = "out-of-range" }
-		case object Past extends NullaryPseudoClass { override def name: String = "past" }
-		case object PlaceholderShown extends NullaryPseudoClass { override def name: String = "placeholder-shown" }
-		case object ReadOnly extends NullaryPseudoClass { override def name: String = "read-only" }
-		case object ReadWrite extends NullaryPseudoClass { override def name: String = "read-write" }
-		case object Required extends NullaryPseudoClass { override def name: String = "required" }
-		case object Root extends NullaryPseudoClass { override def name: String = "root" }
-		case object Scope extends NullaryPseudoClass { override def name: String = "scope" }
-		case object Target extends NullaryPseudoClass { override def name: String = "target" }
-		case object TargetWithin extends NullaryPseudoClass { override def name: String = "target-within" }
-		case object UserInvalid extends NullaryPseudoClass { override def name: String = "user-invalid" }
-		case object Valid extends NullaryPseudoClass { override def name: String = "valid" }
-		case object Visited extends NullaryPseudoClass { override def name: String = "visited" }
+		case object Active extends NonFunctionalPseudoClass { override def name: String = "active" }
+		case object AnyLink extends NonFunctionalPseudoClass { override def name: String = "any-link" }
+		case object Blank extends NonFunctionalPseudoClass { override def name: String = "blank" }
+		case object Checked extends NonFunctionalPseudoClass { override def name: String = "checked" }
+		case object Current extends NonFunctionalPseudoClass { override def name: String = "link" }
+		case object Default extends NonFunctionalPseudoClass { override def name: String = "default" }
+		case object Disabled extends NonFunctionalPseudoClass { override def name: String = "disabled" }
+		case object Drop extends NonFunctionalPseudoClass { override def name: String = "link" }
+		case object Empty extends NonFunctionalPseudoClass { override def name: String = "empty" }
+		case object Enabled extends NonFunctionalPseudoClass { override def name: String = "enabled" }
+		case object FirstChild extends NonFunctionalPseudoClass { override def name: String = "first-child" }
+		case object FirstOfType extends NonFunctionalPseudoClass { override def name: String = "first-of-type" }
+		case object Focus extends NonFunctionalPseudoClass { override def name: String = "focus" }
+		case object FocusVisible extends NonFunctionalPseudoClass { override def name: String = "focus-visible" }
+		case object FocusWithin extends NonFunctionalPseudoClass { override def name: String = "focus-within" }
+		case object Future extends NonFunctionalPseudoClass { override def name: String = "future" }
+		case object Hover extends NonFunctionalPseudoClass { override def name: String = "hover" }
+		case object Indeterminate extends NonFunctionalPseudoClass { override def name: String = "indeterminate" }
+		case object InRange extends NonFunctionalPseudoClass { override def name: String = "in-range" }
+		case object Invalid extends NonFunctionalPseudoClass { override def name: String = "invalid" }
+		case object LastChild extends NonFunctionalPseudoClass { override def name: String = "last-child" }
+		case object LastOfType extends NonFunctionalPseudoClass { override def name: String = "last-of-type" }
+		case object Link extends NonFunctionalPseudoClass { override def name: String = "link" }
+		case object LocalLink extends NonFunctionalPseudoClass { override def name: String = "local-link" }
+		case object OnlyChild extends NonFunctionalPseudoClass { override def name: String = "only-child" }
+		case object OnlyOfType extends NonFunctionalPseudoClass { override def name: String = "only-of-type" }
+		case object OutOfRange extends NonFunctionalPseudoClass { override def name: String = "out-of-range" }
+		case object Past extends NonFunctionalPseudoClass { override def name: String = "past" }
+		case object PlaceholderShown extends NonFunctionalPseudoClass { override def name: String = "placeholder-shown" }
+		case object ReadOnly extends NonFunctionalPseudoClass { override def name: String = "read-only" }
+		case object ReadWrite extends NonFunctionalPseudoClass { override def name: String = "read-write" }
+		case object Required extends NonFunctionalPseudoClass { override def name: String = "required" }
+		case object Root extends NonFunctionalPseudoClass { override def name: String = "root" }
+		case object Scope extends NonFunctionalPseudoClass { override def name: String = "scope" }
+		case object Target extends NonFunctionalPseudoClass { override def name: String = "target" }
+		case object TargetWithin extends NonFunctionalPseudoClass { override def name: String = "target-within" }
+		case object UserInvalid extends NonFunctionalPseudoClass { override def name: String = "user-invalid" }
+		case object Valid extends NonFunctionalPseudoClass { override def name: String = "valid" }
+		case object Visited extends NonFunctionalPseudoClass { override def name: String = "visited" }
 	}
 
-	val nullaryPseudoClass: Map[String, NullaryPseudoClass] = Map(
-		Nullary.Active.name -> Nullary.Active,
-		Nullary.AnyLink.name -> Nullary.AnyLink,
-		Nullary.Blank.name -> Nullary.Blank,
-		Nullary.Checked.name -> Nullary.Checked,
-		Nullary.Current.name -> Nullary.Current,
-		Nullary.Default.name -> Nullary.Default,
-		Nullary.Disabled.name -> Nullary.Disabled,
-		Nullary.Drop.name -> Nullary.Drop,
-		Nullary.Empty.name -> Nullary.Empty,
-		Nullary.Enabled.name -> Nullary.Enabled,
-		Nullary.FirstChild.name -> Nullary.FirstChild,
-		Nullary.FirstOfType.name -> Nullary.FirstOfType,
-		Nullary.Focus.name -> Nullary.Focus,
-		Nullary.FocusVisible.name -> Nullary.FocusVisible,
-		Nullary.FocusWithin.name -> Nullary.FocusWithin,
-		Nullary.Future.name -> Nullary.Future,
-		Nullary.Hover.name -> Nullary.Hover,
-		Nullary.Indeterminate.name -> Nullary.Indeterminate,
-		Nullary.InRange.name -> Nullary.InRange,
-		Nullary.Invalid.name -> Nullary.Invalid,
-		Nullary.LastChild.name -> Nullary.LastChild,
-		Nullary.LastOfType.name -> Nullary.LastOfType,
-		Nullary.Link.name -> Nullary.Link,
-		Nullary.LocalLink.name -> Nullary.LocalLink,
-		Nullary.OnlyChild.name -> Nullary.OnlyChild,
-		Nullary.OnlyOfType.name -> Nullary.OnlyOfType,
-		Nullary.OutOfRange.name -> Nullary.OutOfRange,
-		Nullary.Past.name -> Nullary.Past,
-		Nullary.PlaceholderShown.name -> Nullary.PlaceholderShown,
-		Nullary.ReadOnly.name -> Nullary.ReadOnly,
-		Nullary.ReadWrite.name -> Nullary.ReadWrite,
-		Nullary.Required.name -> Nullary.Required,
-		Nullary.Root.name -> Nullary.Root,
-		Nullary.Scope.name -> Nullary.Scope,
-		Nullary.Target.name -> Nullary.Target,
-		Nullary.TargetWithin.name -> Nullary.TargetWithin,
-		Nullary.UserInvalid.name -> Nullary.UserInvalid,
-		Nullary.Valid.name -> Nullary.Valid,
-		Nullary.Visited.name -> Nullary.Visited
+	val nullaryPseudoClass: Map[String, NonFunctionalPseudoClass] = Map(
+		NonFunctional.Active.name -> NonFunctional.Active,
+		NonFunctional.AnyLink.name -> NonFunctional.AnyLink,
+		NonFunctional.Blank.name -> NonFunctional.Blank,
+		NonFunctional.Checked.name -> NonFunctional.Checked,
+		NonFunctional.Current.name -> NonFunctional.Current,
+		NonFunctional.Default.name -> NonFunctional.Default,
+		NonFunctional.Disabled.name -> NonFunctional.Disabled,
+		NonFunctional.Drop.name -> NonFunctional.Drop,
+		NonFunctional.Empty.name -> NonFunctional.Empty,
+		NonFunctional.Enabled.name -> NonFunctional.Enabled,
+		NonFunctional.FirstChild.name -> NonFunctional.FirstChild,
+		NonFunctional.FirstOfType.name -> NonFunctional.FirstOfType,
+		NonFunctional.Focus.name -> NonFunctional.Focus,
+		NonFunctional.FocusVisible.name -> NonFunctional.FocusVisible,
+		NonFunctional.FocusWithin.name -> NonFunctional.FocusWithin,
+		NonFunctional.Future.name -> NonFunctional.Future,
+		NonFunctional.Hover.name -> NonFunctional.Hover,
+		NonFunctional.Indeterminate.name -> NonFunctional.Indeterminate,
+		NonFunctional.InRange.name -> NonFunctional.InRange,
+		NonFunctional.Invalid.name -> NonFunctional.Invalid,
+		NonFunctional.LastChild.name -> NonFunctional.LastChild,
+		NonFunctional.LastOfType.name -> NonFunctional.LastOfType,
+		NonFunctional.Link.name -> NonFunctional.Link,
+		NonFunctional.LocalLink.name -> NonFunctional.LocalLink,
+		NonFunctional.OnlyChild.name -> NonFunctional.OnlyChild,
+		NonFunctional.OnlyOfType.name -> NonFunctional.OnlyOfType,
+		NonFunctional.OutOfRange.name -> NonFunctional.OutOfRange,
+		NonFunctional.Past.name -> NonFunctional.Past,
+		NonFunctional.PlaceholderShown.name -> NonFunctional.PlaceholderShown,
+		NonFunctional.ReadOnly.name -> NonFunctional.ReadOnly,
+		NonFunctional.ReadWrite.name -> NonFunctional.ReadWrite,
+		NonFunctional.Required.name -> NonFunctional.Required,
+		NonFunctional.Root.name -> NonFunctional.Root,
+		NonFunctional.Scope.name -> NonFunctional.Scope,
+		NonFunctional.Target.name -> NonFunctional.Target,
+		NonFunctional.TargetWithin.name -> NonFunctional.TargetWithin,
+		NonFunctional.UserInvalid.name -> NonFunctional.UserInvalid,
+		NonFunctional.Valid.name -> NonFunctional.Valid,
+		NonFunctional.Visited.name -> NonFunctional.Visited
 	)
 
 
