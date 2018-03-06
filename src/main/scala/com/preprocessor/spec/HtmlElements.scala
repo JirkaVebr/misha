@@ -158,7 +158,7 @@ object HtmlElements {
 	case class CustomElement(name: String) extends HtmlElement
 
 
-	val htmlElements: Map[String, HtmlElement] = Map(
+	val htmlElements: Map[String, HtmlElement] = scala.collection.immutable.Map(
 		A.name -> A,
 		Abbr.name -> Abbr,
 		Address.name -> Address,
