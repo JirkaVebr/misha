@@ -35,8 +35,6 @@ object AttributeSelector {
 		override def symbol: String = "*=" // [attr*=value]
 	}
 
-	case class MatchTarget(matcher: Matcher, value: Identifier)
-
 }
 
 
