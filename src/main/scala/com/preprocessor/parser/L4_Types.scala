@@ -59,7 +59,6 @@ trait L4_Types { this: org.parboiled2.Parser
 		functionType | tuple2Type
 	}
 
-	// This syntax error is just IntelliJ being stupid; to the compiler this is fine.
 	private def functionType: Rule1[Ast.Type.Function] = rule {
 		('(' ~ AnyWhitespace ~ zeroOrMore(Type).separatedBy(AnyWhitespaceAround(",")) ~
 			optional(AnyWhitespace ~ ',') ~ AnyWhitespaceAround(")") ~ Token("=>") ~ AnyWhitespace ~ Type) ~> Ast.Type.Function
