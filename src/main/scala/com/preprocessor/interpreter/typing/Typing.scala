@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter.typing
 
-import com.preprocessor.ast.Ast.Value.{Boolean, Color, Composite, Dimensioned, Flag, Function, Number, Percentage, Primitive, Scalar, String, Tuple2, Unit}
-import com.preprocessor.ast.Ast.{Type, Value}
+import com.preprocessor.ast.Language.Value.{Boolean, Color, Composite, Dimensioned, Flag, Function, Number, Percentage, Primitive, Scalar, String, Tuple2, Unit}
+import com.preprocessor.ast.Language.{Type, Value}
 import com.preprocessor.interpreter.Environment
 
 object Typing {

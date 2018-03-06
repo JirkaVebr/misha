@@ -1,6 +1,6 @@
 package com.preprocessor.parser.language
 
-import com.preprocessor.ast.Ast.Program
+import com.preprocessor.ast.Language.Program
 import com.preprocessor.parser._
 import com.preprocessor.parser.common.{L0_Whitespace, L1_Strings, L2_Numbers}
 import org.parboiled2._

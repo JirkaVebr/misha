@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Symbol.{PropertySymbol, RuleContextSymbol, TypeSymbol, ValueSymbol}
-import com.preprocessor.ast.{Ast, Symbol}
+import com.preprocessor.ast.{Language, Symbol}
 
 class RootEnvironment extends Environment {
 
@@ -17,16 +17,16 @@ class RootEnvironment extends Environment {
 
 object RootEnvironment {
 	val preDefinedTypes: Map[String, Symbol.TypeSymbol#Value] = Map(
-		"Any" -> Ast.Type.Any,
-		"Color" -> Ast.Type.Color,
-		"Boolean" -> Ast.Type.Boolean,
-		"Flag" -> Ast.Type.Flag,
-		"Formula" -> Ast.Type.Formula,
-		"Number" -> Ast.Type.Number,
-		"Numeric" -> Ast.Type.Numeric,
-		"Percentage" -> Ast.Type.Numeric,
-		"Scalar" -> Ast.Type.Scalar,
-		"String" -> Ast.Type.String,
-		"Unit" -> Ast.Type.Unit
+		"Any" -> Language.Type.Any,
+		"Color" -> Language.Type.Color,
+		"Boolean" -> Language.Type.Boolean,
+		"Flag" -> Language.Type.Flag,
+		"Formula" -> Language.Type.Formula,
+		"Number" -> Language.Type.Number,
+		"Numeric" -> Language.Type.Numeric,
+		"Percentage" -> Language.Type.Numeric,
+		"Scalar" -> Language.Type.Scalar,
+		"String" -> Language.Type.String,
+		"Unit" -> Language.Type.Unit
 	)
 }

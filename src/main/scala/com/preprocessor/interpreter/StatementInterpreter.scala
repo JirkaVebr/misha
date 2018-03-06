@@ -1,8 +1,8 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.Expression.Expression
-import com.preprocessor.ast.Ast.Statement._
-import com.preprocessor.ast.Ast.{Statement, Value}
+import com.preprocessor.ast.Language.Expression.Expression
+import com.preprocessor.ast.Language.Statement._
+import com.preprocessor.ast.Language.{Statement, Value}
 import com.preprocessor.ast.RuleContext.RawRuleHead
 import com.preprocessor.ast.Symbol.PropertySymbol
 import com.preprocessor.ast.{PropertyRecord, ValueRecord}

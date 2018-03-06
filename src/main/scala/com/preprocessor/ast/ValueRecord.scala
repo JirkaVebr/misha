@@ -1,6 +1,6 @@
 package com.preprocessor.ast
 
-import com.preprocessor.ast.Ast.{Type, Value}
+import com.preprocessor.ast.Language.{Type, Value}
 
 /**
 	* This object encapsulates a key-value pair as a more convenient alternative to tuples. Its usage throughout the

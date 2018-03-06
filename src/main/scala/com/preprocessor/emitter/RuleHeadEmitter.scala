@@ -1,6 +1,6 @@
 package com.preprocessor.emitter
 
-import com.preprocessor.ast.Ast.Term.MagicSymbol
+import com.preprocessor.ast.Language.Term.MagicSymbol
 import com.preprocessor.ast.RuleContext.RawRuleHead
 import com.preprocessor.ast.Symbol.RuleContextSymbol
 

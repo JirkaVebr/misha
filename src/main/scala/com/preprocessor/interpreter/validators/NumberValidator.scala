@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter.validators
 
-import com.preprocessor.ast.Ast.Value.{Percentage, Scalar}
+import com.preprocessor.ast.Language.Value.{Percentage, Scalar}
 
 object NumberValidator {
 

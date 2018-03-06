@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.{Type, Value}
+import com.preprocessor.ast.Language.{Type, Value}
 
 class EvalStateSpec extends BaseInterpreterSpec {
 

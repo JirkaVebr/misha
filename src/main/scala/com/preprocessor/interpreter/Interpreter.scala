@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.Program
-import com.preprocessor.ast.{Ast, ValueRecord}
+import com.preprocessor.ast.Language.Program
+import com.preprocessor.ast.{Language, ValueRecord}
 
 import scala.util.{Failure, Success, Try}
 
@@ -20,7 +20,7 @@ class Interpreter(val program: Program) {
 object Interpreter {
 
 	// TODO this isn't tail recursive, and so for longer lists this will be a total nightmare
-	def chainRun[V <: Ast.Node](items: scala.List[V], state: EvalState, evaluate: (V, EvalState) => Try[EvalState]):
+	def chainRun[V <: Language.Node](items: scala.List[V], state: EvalState, evaluate: (V, EvalState) => Try[EvalState]):
 	Try[(scala.List[ValueRecord], EvalState)] =
 		items match {
 			case Nil => Success((scala.List[ValueRecord](), state))

@@ -1,9 +1,9 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Term.Term
-import com.preprocessor.ast.Ast.Value.{Dimensioned, Percentage, Scalar}
-import com.preprocessor.ast.Ast.{Type, Value}
+import com.preprocessor.ast.Language.Expression._
+import com.preprocessor.ast.Language.Term.Term
+import com.preprocessor.ast.Language.Value.{Dimensioned, Percentage, Scalar}
+import com.preprocessor.ast.Language.{Type, Value}
 import com.preprocessor.error.ProgramError
 import com.preprocessor.error.ProgramError.{IllTypedConditionBranches, NonBooleanCondition}
 import com.preprocessor.interpreter.typing.Subtype

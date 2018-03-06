@@ -1,9 +1,9 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Statement.VariableDeclaration
-import com.preprocessor.ast.Ast.Value.Scalar
-import com.preprocessor.ast.Ast.{Term, Type, Value, ValueSymbolDeclaration}
+import com.preprocessor.ast.Language.Expression._
+import com.preprocessor.ast.Language.Statement.VariableDeclaration
+import com.preprocessor.ast.Language.Value.Scalar
+import com.preprocessor.ast.Language.{Term, Type, Value, ValueSymbolDeclaration}
 import com.preprocessor.ast.Symbol.ValueSymbol
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError

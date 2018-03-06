@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter.validators
 
-import com.preprocessor.ast.Ast.Value.Scalar
+import com.preprocessor.ast.Language.Value.Scalar
 import com.preprocessor.interpreter.BaseInterpreterSpec
 
 class NumberValidatorSpec extends BaseInterpreterSpec {

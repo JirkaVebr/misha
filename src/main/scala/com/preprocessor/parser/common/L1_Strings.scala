@@ -1,6 +1,6 @@
 package com.preprocessor.parser.common
 
-import com.preprocessor.ast.Ast.Value
+import com.preprocessor.ast.Language.Value
 import org.parboiled2.CharPredicate.HexDigit
 import org.parboiled2._
 

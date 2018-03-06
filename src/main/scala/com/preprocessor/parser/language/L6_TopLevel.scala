@@ -1,6 +1,6 @@
 package com.preprocessor.parser.language
 
-import com.preprocessor.ast.Ast
+import com.preprocessor.ast.Language
 import com.preprocessor.parser.common.{L0_Whitespace, L1_Strings, L2_Numbers}
 import org.parboiled2._
 
@@ -13,8 +13,8 @@ trait L6_TopLevel { this: org.parboiled2.Parser
 	with L4_Types
 	with L5_Expressions =>
 
-	def Program: Rule1[Ast.Program] = rule {
-		AnyWhitespace ~ Expression ~ AnyWhitespace ~ EOI ~> Ast.Program
+	def Program: Rule1[Language.Program] = rule {
+		AnyWhitespace ~ Expression ~ AnyWhitespace ~ EOI ~> Language.Program
 	}
 
 }

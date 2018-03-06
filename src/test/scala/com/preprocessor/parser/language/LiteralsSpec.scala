@@ -1,7 +1,7 @@
 package com.preprocessor.parser.language
 
-import com.preprocessor.ast.Ast.Value
-import com.preprocessor.ast.Ast.Value.{CurrentColor, Rgba, Transparent}
+import com.preprocessor.ast.Language.Value
+import com.preprocessor.ast.Language.Value.{CurrentColor, Rgba, Transparent}
 import com.preprocessor.parser.BaseParserSpec
 
 class LiteralsSpec extends BaseParserSpec {

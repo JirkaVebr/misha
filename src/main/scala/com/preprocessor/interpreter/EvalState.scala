@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.{Ast, ValueRecord}
-import com.preprocessor.ast.Ast.{Type, Value}
+import com.preprocessor.ast.{Language, ValueRecord}
+import com.preprocessor.ast.Language.{Type, Value}
 import com.preprocessor.ast.Symbol.Symbol
 import com.preprocessor.error.ProgramError.ProgramErrorCode
 import com.preprocessor.error.{Error, ProgramError}
@@ -25,7 +25,7 @@ case class EvalState(environment: Environment, valueRecord: ValueRecord = ValueR
 	@inline def withNewSymbol(symbol: Symbol)(value: symbol.Value): Success[EvalState] =
 		Success(EvalState(environment.putNew(symbol)(value), valueRecord))
 
-	def fail(errorCode: ProgramErrorCode, nodes: Ast.Node*): Failure[EvalState] =
+	def fail(errorCode: ProgramErrorCode, nodes: Language.Node*): Failure[EvalState] =
 		Failure(ProgramError(errorCode, this, (if (nodes.isEmpty) List(valueRecord.value) else nodes): _*))
 
 	def failFatally(error: Error): Failure[EvalState] = Failure(error)

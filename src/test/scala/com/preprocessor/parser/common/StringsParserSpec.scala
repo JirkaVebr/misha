@@ -1,6 +1,6 @@
 package com.preprocessor.parser.common
 
-import com.preprocessor.ast.Ast.Value
+import com.preprocessor.ast.Language.Value
 import com.preprocessor.parser.BaseParserSpec
 import com.preprocessor.parser.language.LanguageParser
 

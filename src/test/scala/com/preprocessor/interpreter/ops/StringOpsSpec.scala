@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter.ops
 
-import com.preprocessor.ast.Ast.Value
-import com.preprocessor.ast.Ast.Value.Scalar
+import com.preprocessor.ast.Language.Value
+import com.preprocessor.ast.Language.Value.Scalar
 import com.preprocessor.interpreter.BaseInterpreterSpec
 
 class StringOpsSpec extends BaseInterpreterSpec {

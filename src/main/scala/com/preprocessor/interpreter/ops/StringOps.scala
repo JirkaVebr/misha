@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter.ops
 
-import com.preprocessor.ast.Ast.Value
-import com.preprocessor.ast.Ast.Value.{Dimensioned, Number, Percentage, Primitive, Scalar}
+import com.preprocessor.ast.Language.Value
+import com.preprocessor.ast.Language.Value.{Dimensioned, Number, Percentage, Primitive, Scalar}
 import com.preprocessor.interpreter.validators.NumberValidator
 
 object StringOps {

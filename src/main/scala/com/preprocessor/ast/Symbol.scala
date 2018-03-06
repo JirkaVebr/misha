@@ -9,7 +9,7 @@ object Symbol {
 	}
 
 	case class TypeSymbol(typeName: String) extends Symbol {
-		override type Value = Ast.Type.Any
+		override type Value = Language.Type.Any
 	}
 
 	case class ValueSymbol(valueName: String) extends Symbol {

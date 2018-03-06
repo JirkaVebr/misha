@@ -1,10 +1,10 @@
 package com.preprocessor.parser.language
 
-import com.preprocessor.ast.Ast
-import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Statement._
-import com.preprocessor.ast.Ast.Term._
-import com.preprocessor.ast.Ast._
+import com.preprocessor.ast.Language
+import com.preprocessor.ast.Language.Expression._
+import com.preprocessor.ast.Language.Statement._
+import com.preprocessor.ast.Language.Term._
+import com.preprocessor.ast.Language._
 import com.preprocessor.ast.Symbol.ValueSymbol
 import com.preprocessor.parser._
 import com.preprocessor.parser.common.{L0_Whitespace, L1_Strings, L2_Numbers}
@@ -190,7 +190,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	private def anonymousFunction: Rule1[Expression] = rule {
 		'(' ~ zeroOrMore(
 			('$' ~ variableName ~ TypeAnnotation ~ optional(AnyWhitespaceAround("=") ~!~ Expression)) ~> (
-				(name: ValueSymbol, typeAnnotation: Option[Ast.Type.Any], value: Option[Expression]) =>
+				(name: ValueSymbol, typeAnnotation: Option[Language.Type.Any], value: Option[Expression]) =>
 					ValueSymbolDeclaration(name, typeAnnotation, value)
 			)
 		).separatedBy(AnyWhitespaceAround(",")) ~ optional(AnyWhitespace ~ ',') ~
@@ -210,8 +210,8 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		(typeAliasDeclaration | variableDeclaration | property | rule | propertyFunctionCall | Expression) ~ EndOfLine
 	}
 
-	private def rule: Rule1[Ast.Statement.Rule] = rule { // TODO using quoted strings is temporary
-		(QuotedString ~ SingleLineWhitespace ~ block) ~> Ast.Statement.Rule
+	private def rule: Rule1[Language.Statement.Rule] = rule { // TODO using quoted strings is temporary
+		(QuotedString ~ SingleLineWhitespace ~ block) ~> Language.Statement.Rule
 	}
 
 	private def typeAliasDeclaration: Rule1[TypeAliasDeclaration] = rule {
@@ -220,7 +220,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 
 	private def variableDeclaration: Rule1[VariableDeclaration] = rule {
 		(Token("@let") ~ MandatorySingleLineWhitespace ~ Variable ~ TypeAnnotation ~ WhitespaceAround("=") ~!~ Expression) ~> (
-			(variable: Variable, typeAnnotation: Option[Ast.Type.Any], value: Expression) =>
+			(variable: Variable, typeAnnotation: Option[Language.Type.Any], value: Expression) =>
 				VariableDeclaration(ValueSymbolDeclaration(variable.name, typeAnnotation, value))
 			)
 	}

@@ -1,21 +1,21 @@
 package com.preprocessor.error
 
-import com.preprocessor.ast.Ast
+import com.preprocessor.ast.Language
 import com.preprocessor.interpreter.EvalState
 
-class ProgramError(val errorCode: ProgramError.ProgramErrorCode, val evalState: EvalState, val nodes: Ast.Node*) extends Error
+class ProgramError(val errorCode: ProgramError.ProgramErrorCode, val evalState: EvalState, val nodes: Language.Node*) extends Error
 
 
 object ProgramError {
 	sealed trait ProgramErrorCode {
-		def message(nodes: Ast.Node*): String
+		def message(nodes: Language.Node*): String
 	}
 
 	abstract class SimpleError(val message: String) extends ProgramErrorCode {
-		override def message(nodes: Ast.Node*): String = message
+		override def message(nodes: Language.Node*): String = message
 	}
 
-	def apply(errorCode: ProgramError.ProgramErrorCode, evalState: EvalState, nodes: Ast.Node*): ProgramError =
+	def apply(errorCode: ProgramError.ProgramErrorCode, evalState: EvalState, nodes: Language.Node*): ProgramError =
 		new ProgramError(errorCode, evalState, nodes: _*)
 
 	case object AssigningToNonVariable extends SimpleError("Assignment to a non-variable")
@@ -39,7 +39,7 @@ object ProgramError {
 	case object TypeAnnotationMismatch extends SimpleError("Assigned value doesn't match the declared type annotation")
 	case object WritingUninitializedVariable extends SimpleError("Writing to an uninitialized variable")
 
-	case class UnexpectedType(expected: Ast.Type.Any, actual: Ast.Type.Any) extends ProgramErrorCode {
-		override def message(nodes: Ast.Node*): String = ???
+	case class UnexpectedType(expected: Language.Type.Any, actual: Language.Type.Any) extends ProgramErrorCode {
+		override def message(nodes: Language.Node*): String = ???
 	}
 }

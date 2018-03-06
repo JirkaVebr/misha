@@ -1,6 +1,6 @@
 package com.preprocessor.ast
 
-import com.preprocessor.ast.Ast.Expression.{Block, Expression}
+import com.preprocessor.ast.Language.Expression.{Block, Expression}
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
 import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
 import com.preprocessor.interpreter.typing.{Subtype, Typing}
@@ -11,7 +11,7 @@ import scala.collection.immutable.{Map => SMap}
 /**
 	* this object is deliberately rather lengthy ‒ we want to take advantage of the `sealed` keyword.
 	*/
-object Ast {
+object Language {
 
 	sealed abstract class Node
 

@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter.typing
 
-import com.preprocessor.ast.Ast.Type
+import com.preprocessor.ast.Language.Type
 
 object Subtype {
 

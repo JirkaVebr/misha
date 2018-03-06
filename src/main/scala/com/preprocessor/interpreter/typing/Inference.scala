@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter.typing
 
-import com.preprocessor.ast.Ast.{Type, Value}
+import com.preprocessor.ast.Language.{Type, Value}
 
 object Inference {
 

@@ -1,6 +1,6 @@
 package com.preprocessor.spec
 
-import com.preprocessor.ast.Ast.Value._
+import com.preprocessor.ast.Language.Value._
 
 
 /**

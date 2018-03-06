@@ -1,8 +1,8 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.Expression.{LogicalNegation, UnaryOperation}
-import com.preprocessor.ast.Ast.Term.{Term, Variable}
-import com.preprocessor.ast.Ast.{Term, Type, Value}
+import com.preprocessor.ast.Language.Expression.{LogicalNegation, UnaryOperation}
+import com.preprocessor.ast.Language.Term.{Term, Variable}
+import com.preprocessor.ast.Language.{Term, Type, Value}
 import com.preprocessor.ast.Symbol.ValueSymbol
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError

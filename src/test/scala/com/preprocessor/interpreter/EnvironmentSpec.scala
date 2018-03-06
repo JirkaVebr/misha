@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.{Type, Value}
-import com.preprocessor.ast.Ast.Type.Color
+import com.preprocessor.ast.Language.{Type, Value}
+import com.preprocessor.ast.Language.Type.Color
 import com.preprocessor.ast.RuleContext.Selector.Universal
 import com.preprocessor.ast.Symbol.{RuleContextSymbol, TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.ValueRecord

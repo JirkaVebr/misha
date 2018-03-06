@@ -1,8 +1,8 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Value.{Color, Composite, Dimensioned, Flag, Number, Percentage, Primitive, Rgba, Scalar, String, Tuple2, Unit}
-import com.preprocessor.ast.Ast.{Term, Value}
+import com.preprocessor.ast.Language.Expression._
+import com.preprocessor.ast.Language.Value.{Color, Composite, Dimensioned, Flag, Number, Percentage, Primitive, Rgba, Scalar, String, Tuple2, Unit}
+import com.preprocessor.ast.Language.{Term, Value}
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError._

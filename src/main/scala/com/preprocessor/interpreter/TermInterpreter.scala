@@ -1,9 +1,9 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.Expression.Expression
-import com.preprocessor.ast.Ast.Term._
-import com.preprocessor.ast.Ast.Value._
-import com.preprocessor.ast.Ast.{Term, Value}
+import com.preprocessor.ast.Language.Expression.Expression
+import com.preprocessor.ast.Language.Term._
+import com.preprocessor.ast.Language.Value._
+import com.preprocessor.ast.Language.{Term, Value}
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError.ReadingUndefinedVariable
 

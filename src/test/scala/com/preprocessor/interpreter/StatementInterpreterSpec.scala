@@ -1,10 +1,10 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.Statement._
-import com.preprocessor.ast.Ast.Term.Variable
-import com.preprocessor.ast.Ast.Type.TypeAlias
-import com.preprocessor.ast.Ast.{Type, Value, ValueSymbolDeclaration}
+import com.preprocessor.ast.Language.Expression._
+import com.preprocessor.ast.Language.Statement._
+import com.preprocessor.ast.Language.Term.Variable
+import com.preprocessor.ast.Language.Type.TypeAlias
+import com.preprocessor.ast.Language.{Type, Value, ValueSymbolDeclaration}
 import com.preprocessor.ast.Symbol.{RuleContextSymbol, PropertySymbol, TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.{PropertyRecord, RuleContext, ValueRecord}
 import com.preprocessor.error.ProgramError

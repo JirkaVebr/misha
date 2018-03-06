@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter.ops
 
-import com.preprocessor.ast.Ast.Value.{Percentage, Rgba}
+import com.preprocessor.ast.Language.Value.{Percentage, Rgba}
 import com.preprocessor.interpreter.BaseInterpreterSpec
 
 class ColorOpsSpec extends BaseInterpreterSpec{

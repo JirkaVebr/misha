@@ -1,7 +1,7 @@
 package com.preprocessor.spec
 
-import com.preprocessor.ast.Ast.Type.{Literal, Union}
-import com.preprocessor.ast.Ast.Value
+import com.preprocessor.ast.Language.Type.{Literal, Union}
+import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.Symbol
 
 object BlendModeType {
