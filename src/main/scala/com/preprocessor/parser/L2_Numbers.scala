@@ -17,6 +17,10 @@ trait L2_Numbers { this: org.parboiled2.Parser
 		atomic(base ~ optional(exponent) ~ optional(unitOfMeasure)) ~> (createNumber(_, _, _))
 	}
 
+	def Integer: Rule1[Int] = rule {
+		sign ~ digits ~> ((sign: Int, digits: String) => sign * digits.toInt)
+	}
+
 	private def integral: Rule1[Double] = rule {
 		digits ~> ((digits: String) => digits.toDouble)
 	}

@@ -17,6 +17,16 @@ class NumbersParserSpec extends BaseParserSpec {
 		assert(parse("-123") == Value.Scalar(-123))
 	}
 
+	it should "parse an integer" in {
+		assert(parseInt("+0") == 0)
+		assert(parseInt("0") == 0)
+		assert(parseInt("0000") == 0)
+		assert(parseInt("-0") == 0)
+		assert(parseInt("+123") == 123)
+		assert(parseInt("123") == 123)
+		assert(parseInt("-123") == -123)
+	}
+
 	it should "parse a fractional literal" in {
 		assert(parse("+0.00") == Value.Scalar(0))
 		assert(parse("0.00") == Value.Scalar(0))
@@ -57,5 +67,7 @@ class NumbersParserSpec extends BaseParserSpec {
 	}
 
 	protected def parse(input: String): Value.Value = parseRule(input, _.Number)
+
+	protected def parseInt(input: String): Int = parseRule(input, _.Integer)
 
 }
