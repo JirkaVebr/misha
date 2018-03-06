@@ -36,7 +36,7 @@ object RuleContext {
 		case class Nth(kind: Nth, ab: AnPlusB, of: Option[Selector]) extends PseudoClass
 
 		sealed trait PseudoElement extends Selector
-		case class SpecifiedElement(element: PseudoElements.PseudoElement) extends PseudoElement
+		case class SpecifiedPseudoElement(element: PseudoElements.PseudoElement) extends PseudoElement
 		case class CustomPseudoElement(name: Identifier) extends PseudoElement
 
 		// target being None signifies checking just for attribute presence
