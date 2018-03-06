@@ -1,6 +1,7 @@
 package com.preprocessor.parser.common
 
 import com.preprocessor.ast.Ast.Value
+import com.preprocessor.spec.Identifier
 import org.parboiled2.CharPredicate.HexDigit
 import org.parboiled2._
 
@@ -52,6 +53,10 @@ trait L1_Strings { this: org.parboiled2.Parser
 
 	def Identifier: Rule1[String] = rule {
 		capture(optional("--") ~ oneOrMore(AlphaNumUnderscore) ~ zeroOrMore(AlphaNumDashUnderscore))
+	}
+
+	def CssIdentifier: Rule1[Identifier] = rule {
+		Identifier ~> com.preprocessor.spec.Identifier
 	}
 
 }
