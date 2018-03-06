@@ -1,7 +1,8 @@
-package com.preprocessor.parser
+package com.preprocessor.parser.common
 
 import com.preprocessor.ast.Ast.Value
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
+import com.preprocessor.parser.BaseParserSpec
 
 class NumbersParserSpec extends BaseParserSpec {
 

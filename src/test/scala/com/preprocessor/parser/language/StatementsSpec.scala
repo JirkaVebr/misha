@@ -1,4 +1,4 @@
-package com.preprocessor.parser
+package com.preprocessor.parser.language
 
 import com.preprocessor.ast.Ast.Expression._
 import com.preprocessor.ast.Ast.Statement._
@@ -6,6 +6,7 @@ import com.preprocessor.ast.Ast.Term.FunctionCall
 import com.preprocessor.ast.Ast.Value.{Important, Rgba, Scalar}
 import com.preprocessor.ast.Ast.{Term, Type, Value, ValueSymbolDeclaration}
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
+import com.preprocessor.parser.BaseParserSpec
 import com.preprocessor.spec.ColorKeywords
 
 

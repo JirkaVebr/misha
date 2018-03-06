@@ -1,9 +1,10 @@
-package com.preprocessor.parser
+package com.preprocessor.parser.language
 
 import com.preprocessor.ast.Ast.Expression._
-import com.preprocessor.ast.Ast.{Term, Type, ValueSymbolDeclaration}
 import com.preprocessor.ast.Ast.Term.{FunctionCall, MemberAccess, ParentSelector, Variable}
 import com.preprocessor.ast.Ast.Value._
+import com.preprocessor.ast.Ast.{Term, Type, ValueSymbolDeclaration}
+import com.preprocessor.parser.BaseParserSpec
 
 class ExpressionSpec extends BaseParserSpec {
 

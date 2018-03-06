@@ -1,16 +1,16 @@
-package com.preprocessor.parser
+package com.preprocessor.parser.language
 
 import com.preprocessor.ast.Ast.Value
-import com.preprocessor.ast.Ast.Value.{CurrentColor, Duplicate, Important, Rgba, Transparent}
-import com.preprocessor.ast.NumberUnit.UnitOfMeasure
+import com.preprocessor.ast.Ast.Value.{CurrentColor, Rgba, Transparent}
+import com.preprocessor.parser.BaseParserSpec
 
 class LiteralsSpec extends BaseParserSpec {
 
 	behavior of "The literal parser"
 
 	it should "parse a flag keyword" in {
-		assert(parse("!important") == Important)
-		assert(parse("!duplicate") == Duplicate)
+		assert(parse("!important") == Value.Important)
+		assert(parse("!duplicate") == Value.Duplicate)
 	}
 
 	it should "parse a boolean literal" in {

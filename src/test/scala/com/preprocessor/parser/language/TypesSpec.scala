@@ -1,6 +1,7 @@
-package com.preprocessor.parser
+package com.preprocessor.parser.language
 
 import com.preprocessor.ast.Ast.{Type, Value}
+import com.preprocessor.parser.BaseParserSpec
 
 class TypesSpec extends BaseParserSpec {
 
