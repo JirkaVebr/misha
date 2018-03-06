@@ -2,6 +2,9 @@ package com.preprocessor.spec
 
 object PseudoElements {
 
+	/**
+		* @see https://drafts.csswg.org/css-pseudo-4/
+		*/
 	sealed trait PseudoElement {
 		def name: String
 	}
