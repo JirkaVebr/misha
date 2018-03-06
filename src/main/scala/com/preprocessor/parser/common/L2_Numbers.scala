@@ -30,11 +30,11 @@ trait L2_Numbers { this: org.parboiled2.Parser
 	}
 
 	private def base: Rule1[Double] = rule {
-		((sign ~ integral ~ optional(fractional)) ~> (computeBase(_, _, _))) |
-			(sign ~ fractional ~> ((sign: Int, fractional: Double) => computeBase(sign, 0, Some(fractional))))
+		((Sign ~ integral ~ optional(fractional)) ~> (computeBase(_, _, _))) |
+			(Sign ~ fractional ~> ((sign: Int, fractional: Double) => computeBase(sign, 0, Some(fractional))))
 	}
 
-	private def sign: Rule1[Int] = rule {
+	def Sign: Rule1[Int] = rule {
 		capture(optional(Signs)) ~> (signToFactor(_))
 	}
 
@@ -43,7 +43,7 @@ trait L2_Numbers { this: org.parboiled2.Parser
 	}
 
 	private def exponent: Rule1[Double] = rule {
-		(Exponent ~ sign ~ digits) ~> ((sign: Int, digits: String) => sign * digits.toDouble)
+		(Exponent ~ Sign ~ digits) ~> ((sign: Int, digits: String) => sign * digits.toDouble)
 	}
 
 	private def unitOfMeasure: Rule1[NumberUnit.Unit] = rule {
@@ -59,7 +59,7 @@ object L2_Numbers {
 	val Exponent = CharPredicate("eE")
 
 
-	private def signToFactor(sign: String): Int = if (sign == "-") -1 else 1
+	def signToFactor(sign: String): Int = if (sign == "-") -1 else 1
 
 	private def digitsToFractional(digits: String): Double = {
 		val digitsCount = digits.length
