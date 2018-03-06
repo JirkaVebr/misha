@@ -20,7 +20,7 @@ trait L3_AnPlusB { this: org.parboiled2.Parser
 	}
 
 	private def An: Rule1[Int] = rule {
-		(Sign ~ UnsignedInteger ~ 'n' ~> computeValue) | push(0)
+		(Sign ~ (UnsignedInteger | push(1)) ~ 'n' ~> computeValue) | push(0)
 	}
 
 	private def B: Rule1[Int] = rule {
