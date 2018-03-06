@@ -1,14 +1,19 @@
 package com.preprocessor.ast
 
 import com.preprocessor.ast.Language.Term.MagicSymbol
+import com.preprocessor.ast.Selector.Selector
 
 object RuleContext {
 
 	sealed trait RuleContext
 
 	case class RawRuleHead(components: List[Either[MagicSymbol, String]]) extends RuleContext
+	sealed trait ProcessedRuleHead extends RuleContext
 
-	sealed trait AtRule extends RuleContext
+
+	case class RuleSelector(selector: Selector) extends ProcessedRuleHead
+
+	sealed trait AtRule extends ProcessedRuleHead
 
 	case class CounterStyle() extends AtRule
 	case class Document() extends AtRule

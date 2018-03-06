@@ -1,5 +1,6 @@
 package com.preprocessor.ast
 
+import com.preprocessor.ast.RuleContext.RuleContext
 import com.preprocessor.spec.AttributeSelector.Modifier
 import com.preprocessor.spec.PseudoClasses
 import com.preprocessor.spec.PseudoClasses.NonFunctional.NonFunctionalPseudoClass

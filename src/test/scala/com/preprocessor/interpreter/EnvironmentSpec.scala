@@ -1,8 +1,9 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Language.{Type, Value}
 import com.preprocessor.ast.Language.Type.Color
-import com.preprocessor.ast.RuleContext.Selector.Universal
+import com.preprocessor.ast.Language.{Type, Value}
+import com.preprocessor.ast.RuleContext.RuleSelector
+import com.preprocessor.ast.Selector.Universal
 import com.preprocessor.ast.Symbol.{RuleContextSymbol, TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.ValueRecord
 
@@ -40,7 +41,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		val testType = Color
 		val testValueSymbol = ValueSymbol("test")
 		val testValue = ValueRecord(Value.Scalar(1), Type.Number)
-		val testContext = Universal
+		val testContext = RuleSelector(Universal)
 
 		assert(environment.lookup(testTypeSymbol).isEmpty)
 		assert(environment.lookup(testValueSymbol).isEmpty)
