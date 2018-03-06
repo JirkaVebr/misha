@@ -32,7 +32,7 @@ object RuleContext {
 		case class Drop(filter: Option[DropFilter]) extends PseudoClass
 		case class Lang(name: Identifier) extends PseudoClass
 		case class Nullary(pseudoClass: NullaryPseudoClass) extends PseudoClass
-		case class GenericPseudoClass(name: String) extends PseudoClass
+		case class CustomPseudoClass(name: Identifier) extends PseudoClass
 		case class Nth(kind: Nth, ab: AnPlusB, of: Option[Selector]) extends PseudoClass
 
 		// target being None signifies checking just for attribute presence
