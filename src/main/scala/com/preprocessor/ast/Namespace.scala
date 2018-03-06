@@ -4,7 +4,7 @@ object Namespace {
 	sealed trait Namespace
 
 
-	case class NamedNamespace(name: String) extends Namespace
+	case class NamedNamespace(name: CssIdentifier) extends Namespace
 
 	case object UniversalNamespace extends Namespace
 
