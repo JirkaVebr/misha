@@ -33,7 +33,7 @@ object AttributeSelector {
 		override def symbol: String = "^=" // [attr^=value]
 	}
 	case object Followed extends Matcher {
-		override def symbol: String = "=" // [attr$=value]
+		override def symbol: String = "$=" // [attr$=value]
 	}
 	case object Contains extends Matcher {
 		override def symbol: String = "*=" // [attr*=value]
