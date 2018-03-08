@@ -164,6 +164,7 @@ object HtmlElements {
 		A.name -> A,
 		Abbr.name -> Abbr,
 		Address.name -> Address,
+		AnyElement.name -> AnyElement,
 		Area.name -> Area,
 		Article.name -> Article,
 		Aside.name -> Aside,

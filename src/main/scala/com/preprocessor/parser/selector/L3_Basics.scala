@@ -2,8 +2,10 @@ package com.preprocessor.parser.selector
 
 import com.preprocessor.ast
 import com.preprocessor.ast.Namespace.{AnyNamespace, NamedNamespace, Namespace, NoNamespace}
-import com.preprocessor.ast.{CssIdentifier, QualifiedAttribute, QualifiedName}
+import com.preprocessor.ast.{CssIdentifier, QualifiedAttribute, QualifiedElement, QualifiedName}
 import com.preprocessor.parser.common.{L0_Whitespace, L1_Strings, L2_Numbers}
+import com.preprocessor.spec.HtmlElements
+import com.preprocessor.spec.HtmlElements.{AnyElement, CustomElement}
 import org.parboiled2._
 
 trait L3_Basics { this: org.parboiled2.Parser
@@ -20,6 +22,20 @@ trait L3_Basics { this: org.parboiled2.Parser
 		qualifiedName ~> (
 			(namespace: Option[Namespace], identifier: CssIdentifier) =>
 				QualifiedAttribute(identifier, namespace.getOrElse(NoNamespace))
+		)
+	}
+
+	def QualifiedElementName: Rule1[QualifiedElement] = rule {
+		namespace ~ (
+			(ch('*') ~> (
+				(namespace: Option[Namespace]) => QualifiedElement(AnyElement, namespace)
+			)) |
+			(CssIdentifier ~> (
+				(namespace: Option[Namespace], identifier: CssIdentifier) =>
+					QualifiedElement(HtmlElements.htmlElements.getOrElse(
+						identifier.value, CustomElement(identifier.value)
+					), namespace)
+				))
 		)
 	}
 

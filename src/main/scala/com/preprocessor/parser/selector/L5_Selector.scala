@@ -37,7 +37,7 @@ trait L5_Selector { this: org.parboiled2.Parser
 				case '.' => actualClass
 				case ':' => pseudo
 				case '[' => attribute
-				case _ => MISMATCH
+				case _ => element
 			}
 		}
 	}
@@ -48,6 +48,10 @@ trait L5_Selector { this: org.parboiled2.Parser
 
 	private def actualClass: Rule1[Class] = rule {
 		'.' ~!~ CssIdentifier ~> Class
+	}
+
+	private def element: Rule1[Element] = rule {
+		QualifiedElementName ~> Element
 	}
 
 	private def pseudo: Rule1[SimpleSelector] = rule {

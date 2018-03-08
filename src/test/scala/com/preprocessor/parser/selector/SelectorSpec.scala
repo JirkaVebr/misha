@@ -1,10 +1,11 @@
 package com.preprocessor.parser.selector
 
-import com.preprocessor.ast.Namespace.AnyNamespace
-import com.preprocessor.ast.{MatchTarget, QualifiedAttribute}
+import com.preprocessor.ast.Namespace.{AnyNamespace, NamedNamespace}
+import com.preprocessor.ast.{MatchTarget, QualifiedAttribute, QualifiedElement}
 import com.preprocessor.ast.Selector._
 import com.preprocessor.parser.BaseParserSpec
 import com.preprocessor.spec.AttributeSelector._
+import com.preprocessor.spec.HtmlElements.{AnyElement, CustomElement, Div, H1}
 import com.preprocessor.spec.PseudoElements
 
 class SelectorSpec extends BaseParserSpec {
@@ -25,6 +26,17 @@ class SelectorSpec extends BaseParserSpec {
 		assert(parse("[*|tabindex]") === Attribute(QualifiedAttribute("tabindex", AnyNamespace)))
 		assert(parse("[tabindex=123]") === Attribute(QualifiedAttribute("tabindex"), Some(MatchTarget(Equals, "123"))))
 		assert(parse("[ 	 |tabindex |=	456	]") === Attribute(QualifiedAttribute("tabindex"), Some(MatchTarget(Prefix, "456"))))
+	}
+
+	it should "correctly parse elements" in {
+		assert(parse("div") === Element(QualifiedElement(Div)))
+		assert(parse("h1") === Element(QualifiedElement(H1)))
+		assert(parse("*") === Element(QualifiedElement(AnyElement)))
+		assert(parse("*|*") === Element(QualifiedElement(AnyElement, Some(AnyNamespace))))
+		assert(parse("someRandomElement") === Element(QualifiedElement(CustomElement("someRandomElement"))))
+		assert(parse("myNamespace|someRandomElement") === Element(
+			QualifiedElement(CustomElement("someRandomElement"), Some(NamedNamespace("myNamespace")))
+		))
 	}
 
 	it should "correctly parse pseudo elements" in {
