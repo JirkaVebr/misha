@@ -12,6 +12,10 @@ object AttributeSelector {
 		override def name: String = "i"
 	}
 
+	val modifiers: Map[String, Modifier] = Map(
+		CaseInsensitive.name -> CaseInsensitive
+	)
+
 
 	sealed trait Matcher {
 		def symbol: String
@@ -34,6 +38,15 @@ object AttributeSelector {
 	case object Contains extends Matcher {
 		override def symbol: String = "*=" // [attr*=value]
 	}
+
+	val matchers: Map[String, Matcher] = Map(
+		Equals.symbol -> Equals,
+		Includes.symbol -> Includes,
+		Prefix.symbol -> Prefix,
+		Preceded.symbol -> Preceded,
+		Followed.symbol -> Followed,
+		Contains.symbol -> Contains
+	)
 
 }
 
