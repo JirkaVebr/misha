@@ -14,9 +14,8 @@ class SelectorParser(val input: ParserInput) extends Parser
 	with L1_Strings
 	with L2_Numbers
 	with L3_Basics
-	with L4_AnPlusB {
-
-	def Selector: Rule1[Selector] = ???
+	with L4_AnPlusB
+	with L5_Selector {
 
 }
 
