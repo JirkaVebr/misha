@@ -5,6 +5,7 @@ import com.preprocessor.ast.{MatchTarget, QualifiedAttribute}
 import com.preprocessor.ast.Selector._
 import com.preprocessor.parser.BaseParserSpec
 import com.preprocessor.spec.AttributeSelector._
+import com.preprocessor.spec.PseudoElements
 
 class SelectorSpec extends BaseParserSpec {
 
@@ -24,6 +25,12 @@ class SelectorSpec extends BaseParserSpec {
 		assert(parse("[*|tabindex]") === Attribute(QualifiedAttribute("tabindex", AnyNamespace)))
 		assert(parse("[tabindex=123]") === Attribute(QualifiedAttribute("tabindex"), Some(MatchTarget(Equals, "123"))))
 		assert(parse("[ 	 |tabindex |=	456	]") === Attribute(QualifiedAttribute("tabindex"), Some(MatchTarget(Prefix, "456"))))
+	}
+
+	it should "correctly parse pseudo elements" in {
+		assert(parse("::before") === PseudoElement(PseudoElements.Before))
+		assert(parse("::selection") === PseudoElement(PseudoElements.Selection))
+		assert(parse("::balderdash") === PseudoElement(PseudoElements.CustomPseudoElement("balderdash")))
 	}
 
 
