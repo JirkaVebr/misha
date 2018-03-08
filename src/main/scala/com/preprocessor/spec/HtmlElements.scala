@@ -9,6 +9,8 @@ object HtmlElements {
 		def name: String
 	}
 
+	case object AnyElement extends HtmlElement { def name = "*" }
+
 	sealed trait DocumentElement extends HtmlElement
 	case object Html extends DocumentElement { def name = "html" }
 
