@@ -20,6 +20,8 @@ object PseudoElements {
 	case object Selection extends PseudoElement { override def name: String = "selection"}
 	case object SpellingError extends PseudoElement { override def name: String = "spelling-error"}
 
+	case class CustomPseudoElement(name: String) extends PseudoElement
+
 
 	val pseudoElements: Map[String, PseudoElement] = Map(
 		After.name -> After,
