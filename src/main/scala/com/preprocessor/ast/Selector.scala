@@ -28,10 +28,9 @@ object Selector {
 	case class Dir(directionality: Directionality) extends PseudoClass
 	case class Drop(filter: Option[DropFilter]) extends PseudoClass
 	case class Lang(name: CssIdentifier) extends PseudoClass
-	case class NonFunctional(pseudoClass: NonFunctionalPseudoClass) extends PseudoClass
-	case class CustomPseudoClass(name: CssIdentifier) extends PseudoClass
 	case class Nth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[Selector]) extends PseudoClass
 	case class RawNth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[Selector]) extends PseudoClass with RawSelector
+	case class NonFunctional(pseudoClass: NonFunctionalPseudoClass) extends PseudoClass
 
 	case class Compound(selectors: Set[SimpleSelector]) extends Selector
 	case class RawCompound(selectors: Seq[SimpleSelector]) extends RawSelector

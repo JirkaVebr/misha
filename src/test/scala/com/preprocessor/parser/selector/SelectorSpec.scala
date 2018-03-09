@@ -6,7 +6,7 @@ import com.preprocessor.ast.Selector._
 import com.preprocessor.parser.BaseParserSpec
 import com.preprocessor.spec.AttributeSelector._
 import com.preprocessor.spec.HtmlElements.{AnyElement, CustomElement, Div, H1}
-import com.preprocessor.spec.PseudoElements
+import com.preprocessor.spec.{PseudoClasses, PseudoElements}
 
 class SelectorSpec extends BaseParserSpec {
 
@@ -43,6 +43,12 @@ class SelectorSpec extends BaseParserSpec {
 		assert(parse("::before") === PseudoElement(PseudoElements.Before))
 		assert(parse("::selection") === PseudoElement(PseudoElements.Selection))
 		assert(parse("::balderdash") === PseudoElement(PseudoElements.CustomPseudoElement("balderdash")))
+	}
+
+	it should "correctly parse non-functional pseudo classes" in {
+		assert(parse(":hover") === NonFunctional(PseudoClasses.NonFunctional.Hover))
+		assert(parse(":focus") === NonFunctional(PseudoClasses.NonFunctional.Focus))
+		assert(parse(":random-pseudo-class") === NonFunctional(PseudoClasses.NonFunctional.CustomPseudoClass("random-pseudo-class")))
 	}
 
 

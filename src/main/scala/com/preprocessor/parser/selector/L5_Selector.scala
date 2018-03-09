@@ -4,9 +4,11 @@ import com.preprocessor.ast.{CssIdentifier, MatchTarget}
 import com.preprocessor.ast.Selector._
 import com.preprocessor.parser.common.{L0_Whitespace, L1_Strings, L2_Numbers}
 import com.preprocessor.spec.AttributeSelector.{Matcher, Modifier}
-import com.preprocessor.spec.{AttributeSelector, PseudoElements}
+import com.preprocessor.spec.PseudoClasses.NonFunctional.CustomPseudoClass
+import com.preprocessor.spec.{AttributeSelector, PseudoClasses, PseudoElements}
 import com.preprocessor.spec.PseudoElements.CustomPseudoElement
 import org.parboiled2.{StringBuilding, _}
+import shapeless.{::, HNil}
 
 import scala.annotation.switch
 
@@ -68,7 +70,19 @@ trait L5_Selector { this: org.parboiled2.Parser
 	}
 
 	private def pseudoClass: Rule1[PseudoClass] = rule {
-		CssIdentifier ~> CustomPseudoClass // TODO
+		CssIdentifier ~ (
+			('(' ~!~ SingleLineWhitespace ~ functionalPseudoClass ~ SingleLineWhitespace ~ ')') |
+			run((identifier: CssIdentifier) => NonFunctional(PseudoClasses.nonFunctionalPseudoClass.get(identifier) match {
+				case Some(pseudoClass) => pseudoClass
+				case None => CustomPseudoClass(identifier)
+			}))
+		)
+	}
+
+	private def functionalPseudoClass: Rule[CssIdentifier :: HNil, PseudoClass :: HNil] = rule {
+		run((identifier: CssIdentifier) => {
+			NonFunctional(CustomPseudoClass(identifier)) // TODO
+		})
 	}
 
 

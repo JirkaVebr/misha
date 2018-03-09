@@ -158,9 +158,11 @@ object PseudoClasses {
 		case object UserInvalid extends NonFunctionalPseudoClass { override def name: String = "user-invalid" }
 		case object Valid extends NonFunctionalPseudoClass { override def name: String = "valid" }
 		case object Visited extends NonFunctionalPseudoClass { override def name: String = "visited" }
+
+		case class CustomPseudoClass(name: String) extends NonFunctionalPseudoClass
 	}
 
-	val nullaryPseudoClass: Map[String, NonFunctionalPseudoClass] = Map(
+	val nonFunctionalPseudoClass: Map[String, NonFunctionalPseudoClass] = Map(
 		NonFunctional.Active.name -> NonFunctional.Active,
 		NonFunctional.AnyLink.name -> NonFunctional.AnyLink,
 		NonFunctional.Blank.name -> NonFunctional.Blank,
