@@ -1,5 +1,7 @@
 package com.preprocessor.parser.selector
 
+import com.preprocessor.ast
+import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.Selector._
 import com.preprocessor.ast.{CssIdentifier, MatchTarget}
 import com.preprocessor.parser.common.{L0_Whitespace, L1_Strings, L2_Numbers}
@@ -187,6 +189,15 @@ trait L5_Selector { this: org.parboiled2.Parser
 		)) | push(NonFunctional(PseudoClasses.NonFunctional.Drop))
 	}
 
-	private def langPseudoClass: Rule1[PseudoClass] = ???
+	private def langPseudoClass: Rule1[PseudoClass] = rule {
+		oneOrMore(
+			CssIdentifier |
+			(QuotedString ~> ((string: Value.String) => push(ast.CssIdentifier(string.value))))
+		).separatedBy(WhitespaceAround(",")) ~> (
+			(identifiers: Seq[CssIdentifier]) => {
+				Lang(identifiers.toSet)
+			}
+		)
+	}
 
 }

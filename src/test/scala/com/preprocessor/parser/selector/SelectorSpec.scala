@@ -81,6 +81,11 @@ class SelectorSpec extends BaseParserSpec {
 		assertThrows[ParseError](parse(":drop(something-invalid)"))
 	}
 
+	it should "correctly parse the :lang() pseudo clas" in {
+		assert(parse(":lang(en)") === Lang(Set("en")))
+		assert(parse(":lang(fr, de, it)") === Lang(Set("fr", "de", "it")))
+	}
+
 	it should "correctly parse compound selectors" in {
 		assert(parse("div#myId:hover") === RawCompound(Seq(
 			Element(QualifiedElement(Div)),
