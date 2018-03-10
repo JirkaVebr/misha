@@ -61,6 +61,8 @@ class SelectorSpec extends BaseParserSpec {
 	it should "correctly parse nth-* pseudo classes" in {
 		assert(parse(":nth-of-type(2n + 3)") === RawNth(PseudoClasses.OfType, AnPlusB(2, 3)))
 		assert(parse(":nth-child(even of div)") === RawNth(PseudoClasses.Child, AnPlusB(2, 0), Some(Element(QualifiedElement(Div)))))
+
+		assertThrows[ParseError](parse(":nth-of-type(2nn)"))
 	}
 
 	it should "correctly parse the :dir() pseudo class" in {
