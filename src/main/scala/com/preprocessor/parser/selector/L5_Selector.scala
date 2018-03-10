@@ -14,6 +14,10 @@ import shapeless.{::, HNil}
 
 import scala.annotation.switch
 
+/**
+	* TODO special char escaping
+	* @see https://drafts.csswg.org/selectors-4/#case-sensitive
+	*/
 trait L5_Selector { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace
