@@ -51,6 +51,9 @@ trait L5_Selector { this: org.parboiled2.Parser
 		(MandatorySingleLineWhitespace ~ push(Descendant))
 	}
 
+	/**
+		* @see https://drafts.csswg.org/selectors-4/#typedef-compound-selector
+		*/
 	private def compoundSelector: Rule1[Selector] = rule {
 		oneOrMore(simpleSelector) ~> (
 			(selectors: Seq[SimpleSelector]) =>
