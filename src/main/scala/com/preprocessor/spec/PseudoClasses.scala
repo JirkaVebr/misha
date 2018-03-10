@@ -87,6 +87,12 @@ object PseudoClasses {
 		override val value: String = "invalid"
 	}
 
+	val dropFilter: Map[String, DropFilter] = Map(
+		Active.value -> Active,
+		Valid.value -> Valid,
+		Invalid.value -> Invalid
+	)
+
 
 	/**
 		* @see https://drafts.csswg.org/selectors-4/#child-index
