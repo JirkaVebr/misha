@@ -52,6 +52,11 @@ class SelectorSpec extends BaseParserSpec {
 		assert(parse(":random-pseudo-class") === NonFunctional(PseudoClasses.NonFunctional.CustomPseudoClass("random-pseudo-class")))
 	}
 
+	it should "correctly parse sub-selectors" in {
+		assert(parse(":matches(h1)") === RawSubSelector(PseudoClasses.Matches, Element(QualifiedElement(H1))))
+		assert(parse(":not(*)") === RawSubSelector(PseudoClasses.Not, Element(QualifiedElement(AnyElement))))
+	}
+
 	it should "correctly parse nth-* pseudo classes" in {
 		assert(parse(":nth-of-type(2n + 3)") === RawNth(PseudoClasses.OfType, AnPlusB(2, 3)))
 		assert(parse(":nth-child(even of div)") === RawNth(PseudoClasses.Child, AnPlusB(2, 0), Some(Element(QualifiedElement(Div)))))
