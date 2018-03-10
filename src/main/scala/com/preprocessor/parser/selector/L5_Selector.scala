@@ -7,6 +7,7 @@ import com.preprocessor.spec.AttributeSelector.{Matcher, Modifier}
 import com.preprocessor.spec.PseudoClasses.NonFunctional.CustomPseudoClass
 import com.preprocessor.spec.PseudoClasses.UndefinedDirectionality
 import com.preprocessor.spec.PseudoElements.CustomPseudoElement
+import com.preprocessor.spec.SelectorCombinator._
 import com.preprocessor.spec.{AttributeSelector, PseudoClasses, PseudoElements}
 import org.parboiled2.{StringBuilding, _}
 import shapeless.{::, HNil}
@@ -106,12 +107,12 @@ trait L5_Selector { this: org.parboiled2.Parser
 
 	private def functionalPseudoClass: Rule[CssIdentifier :: HNil, PseudoClass :: HNil] = rule {
 		run((identifier: CssIdentifier) => PseudoClasses.subSelectors.get(identifier) match {
-			case Some(subSelector) => Selector ~> (RawSubSelector(subSelector, _))
+			case Some(subSelector) => Selector ~> (SubSelector(subSelector, _))
 			case None => PseudoClasses.nthPseudoClasses.get(identifier) match {
 				case Some(nth) =>
 					AnPlusB ~ optional(
 						MandatorySingleLineWhitespace ~ Token("of") ~ MandatorySingleLineWhitespace ~ Selector
-					) ~> (RawNth(nth, _, _))
+					) ~> (Nth(nth, _, _))
 				case None => identifier.value match {
 					case PseudoClasses.Dir.name => dirPseudoClass
 					case PseudoClasses.Drop.name => dropPseudoClass
