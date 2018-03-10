@@ -62,6 +62,11 @@ class SelectorSpec extends BaseParserSpec {
 		assert(parse(":nth-child(even of div)") === RawNth(PseudoClasses.Child, AnPlusB(2, 0), Some(Element(QualifiedElement(Div)))))
 	}
 
+	it should "correctly parse the :dir() pseudo class" in {
+		assert(parse(":dir(ltr)") === Dir(PseudoClasses.Ltr))
+		assert(parse(":dir(from-the-top-to-the-bottom)") === Dir(PseudoClasses.UndefinedDirectionality("from-the-top-to-the-bottom")))
+	}
+
 
 	protected def parse(input: String): Selector = parseSelectorRule(input, _.Selector)
 

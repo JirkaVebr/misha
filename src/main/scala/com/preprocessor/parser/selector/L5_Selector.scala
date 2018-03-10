@@ -5,6 +5,7 @@ import com.preprocessor.ast.Selector._
 import com.preprocessor.parser.common.{L0_Whitespace, L1_Strings, L2_Numbers}
 import com.preprocessor.spec.AttributeSelector.{Matcher, Modifier}
 import com.preprocessor.spec.PseudoClasses.NonFunctional.CustomPseudoClass
+import com.preprocessor.spec.PseudoClasses.UndefinedDirectionality
 import com.preprocessor.spec.{AttributeSelector, PseudoClasses, PseudoElements}
 import com.preprocessor.spec.PseudoElements.CustomPseudoElement
 import org.parboiled2.{StringBuilding, _}
@@ -72,11 +73,7 @@ trait L5_Selector { this: org.parboiled2.Parser
 	private def pseudoClass: Rule1[PseudoClass] = rule {
 		CssIdentifier ~ run {
 			(cursorChar: @switch) match {
-				case '(' => '(' ~!~
-					SingleLineWhitespace ~
-					functionalPseudoClass ~
-					SingleLineWhitespace ~
-					')'
+				case '(' => '(' ~!~ SingleLineWhitespace ~ functionalPseudoClass ~ SingleLineWhitespace ~ ')'
 				case _ => run((identifier: CssIdentifier) => NonFunctional(PseudoClasses.nonFunctionalPseudoClass.get(identifier) match {
 					case Some(pseudoClass) => pseudoClass
 					case None => CustomPseudoClass(identifier)
@@ -115,9 +112,27 @@ trait L5_Selector { this: org.parboiled2.Parser
 					AnPlusB ~ optional(
 						MandatorySingleLineWhitespace ~ Token("of") ~ MandatorySingleLineWhitespace ~ Selector
 					) ~> (RawNth(nth, _, _))
-				case None => MISMATCH // TODO
+				case None => identifier.value match {
+					case PseudoClasses.Dir.name => dirPseudoClass
+					case PseudoClasses.Drop.name => dropPseudoClass
+					case PseudoClasses.Lang.name => langPseudoClass
+					case _ => MISMATCH
+				}
 			}
 		})
 	}
+
+	private def dirPseudoClass: Rule1[PseudoClass] = rule {
+		CssIdentifier ~> (
+			(identifier: CssIdentifier) => PseudoClasses.directionality.get(identifier) match {
+				case Some(directionality) => Dir(directionality)
+				case None => Dir(UndefinedDirectionality(identifier))
+			}
+		)
+	}
+
+	private def dropPseudoClass: Rule1[PseudoClass] = ???
+
+	private def langPseudoClass: Rule1[PseudoClass] = ???
 
 }
