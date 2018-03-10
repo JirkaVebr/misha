@@ -85,9 +85,13 @@ trait L5_Selector { this: org.parboiled2.Parser
 
 	private def pseudoElement: Rule1[PseudoElement] = rule {
 		':' ~!~ CssIdentifier ~> (
-			(identifier: CssIdentifier) => PseudoElements.pseudoElements.get(identifier) match {
-				case Some(element) => PseudoElement(element)
-				case None => PseudoElement(CustomPseudoElement(identifier))
+			(identifier: CssIdentifier) => {
+				val lower = identifier.value.toLowerCase
+
+				PseudoElements.pseudoElements.get(lower) match {
+					case Some(element) => PseudoElement(element)
+					case None => PseudoElement(CustomPseudoElement(lower))
+				}
 			}
 		)
 	}
@@ -96,10 +100,11 @@ trait L5_Selector { this: org.parboiled2.Parser
 		CssIdentifier ~ run {
 			(cursorChar: @switch) match {
 				case '(' => '(' ~!~ SingleLineWhitespace ~ functionalPseudoClass ~ SingleLineWhitespace ~ ')'
-				case _ => run((identifier: CssIdentifier) => NonFunctional(PseudoClasses.nonFunctionalPseudoClass.get(identifier) match {
-					case Some(pseudoClass) => pseudoClass
-					case None => CustomPseudoClass(identifier)
-				}))
+				case _ => run((identifier: CssIdentifier) =>
+					NonFunctional(PseudoClasses.nonFunctionalPseudoClass.get(identifier.value.toLowerCase) match {
+						case Some(pseudoClass) => pseudoClass
+						case None => CustomPseudoClass(identifier)
+					}))
 			}
 		}
 	}
@@ -127,18 +132,22 @@ trait L5_Selector { this: org.parboiled2.Parser
 
 
 	private def functionalPseudoClass: Rule[CssIdentifier :: HNil, PseudoClass :: HNil] = rule {
-		run((identifier: CssIdentifier) => PseudoClasses.subSelectors.get(identifier) match {
-			case Some(subSelector) => Selector ~> (SubSelector(subSelector, _))
-			case None => PseudoClasses.nthPseudoClasses.get(identifier) match {
-				case Some(nth) =>
-					AnPlusB ~ optional(
-						MandatorySingleLineWhitespace ~ Token("of") ~ MandatorySingleLineWhitespace ~ Selector
-					) ~> (Nth(nth, _, _))
-				case None => identifier.value match {
-					case PseudoClasses.Dir.name => dirPseudoClass
-					case PseudoClasses.Drop.name => dropPseudoClass
-					case PseudoClasses.Lang.name => langPseudoClass
-					case _ => MISMATCH
+		run((identifier: CssIdentifier) => {
+			val normalized = identifier.value.toLowerCase
+
+			PseudoClasses.subSelectors.get(normalized) match {
+				case Some(subSelector) => Selector ~> (SubSelector(subSelector, _))
+				case None => PseudoClasses.nthPseudoClasses.get(normalized) match {
+					case Some(nth) =>
+						AnPlusB ~ optional(
+							MandatorySingleLineWhitespace ~ Token("of") ~ MandatorySingleLineWhitespace ~ Selector
+						) ~> (Nth(nth, _, _))
+					case None => normalized match {
+						case PseudoClasses.Dir.name => dirPseudoClass
+						case PseudoClasses.Drop.name => dropPseudoClass
+						case PseudoClasses.Lang.name => langPseudoClass
+						case _ => MISMATCH
+					}
 				}
 			}
 		})
@@ -146,7 +155,7 @@ trait L5_Selector { this: org.parboiled2.Parser
 
 	private def dirPseudoClass: Rule1[PseudoClass] = rule {
 		CssIdentifier ~> (
-			(identifier: CssIdentifier) => PseudoClasses.directionality.get(identifier) match {
+			(identifier: CssIdentifier) => PseudoClasses.directionality.get(identifier.value.toLowerCase) match {
 				case Some(directionality) => Dir(directionality)
 				case None => Dir(UndefinedDirectionality(identifier))
 			}
@@ -161,7 +170,7 @@ trait L5_Selector { this: org.parboiled2.Parser
 				if (identifiers.lengthCompare(normalized.size) == 0) {
 					if (normalized.forall(PseudoClasses.dropFilter.get(_).isDefined))
 						push(Drop(normalized.map((identifier: CssIdentifier) =>
-							PseudoClasses.dropFilter(identifier.value)
+							PseudoClasses.dropFilter(identifier.value.toLowerCase)
 						)))
 					else failX("one or more of " + PseudoClasses.dropFilter.keys.mkString(", "))
 				} else {
