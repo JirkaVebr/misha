@@ -23,13 +23,13 @@ object Selector {
 	case class Class(name: CssIdentifier) extends SimpleSelector
 
 	sealed trait PseudoClass extends SimpleSelector
-	case class SubSelector(kind: SubSelector, subSelector: Selector) extends PseudoClass
-	case class RawSubSelector(kind: SubSelector, subSelector: Selector) extends PseudoClass with RawSelector
+	case class SubSelector(kind: PseudoClasses.SubSelector, subSelector: Selector) extends PseudoClass
+	case class RawSubSelector(kind: PseudoClasses.SubSelector, subSelector: Selector) extends PseudoClass with RawSelector
 	case class Dir(directionality: Directionality) extends PseudoClass
 	case class Drop(filter: Option[DropFilter]) extends PseudoClass
 	case class Lang(name: CssIdentifier) extends PseudoClass
-	case class Nth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[Selector]) extends PseudoClass
-	case class RawNth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[Selector]) extends PseudoClass with RawSelector
+	case class Nth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[Selector] = None) extends PseudoClass
+	case class RawNth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[Selector] = None) extends PseudoClass with RawSelector
 	case class NonFunctional(pseudoClass: NonFunctionalPseudoClass) extends PseudoClass
 
 	case class Compound(selectors: Set[SimpleSelector]) extends Selector
