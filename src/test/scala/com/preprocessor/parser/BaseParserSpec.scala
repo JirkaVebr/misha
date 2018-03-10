@@ -5,29 +5,20 @@ import com.preprocessor.parser.language.LanguageParser
 import com.preprocessor.parser.selector.SelectorParser
 import org.parboiled2.{ParseError, Rule1}
 
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 class BaseParserSpec extends BaseSpec {
 
 	protected def parseLanguageRule[A](input: String, rule: LanguageParser => Rule1[A]): A =
-		parseRule[LanguageParser, A](LanguageParser, input, rule)
+		parseRule[LanguageParser, A](LanguageParser, input, rule).get
 
 	protected def parseSelectorRule[A](input: String, rule: SelectorParser => Rule1[A]): A =
-		parseRule[SelectorParser, A](SelectorParser, input, rule)
+		parseRule[SelectorParser, A](SelectorParser, input, rule).get
 
-
-	protected def parseRule[P <: org.parboiled2.Parser, A](parserFactory: ParserFactory[P], input: String, rule: P => Rule1[A]): A = {
+	protected def parseRule[P <: org.parboiled2.Parser, A](parserFactory: ParserFactory[P], input: String, rule: P => Rule1[A]): Try[A] = {
 		// __run() isn't public API, so this may break
 		// @see https://groups.google.com/forum/#!topic/parboiled-user/uwcy6MVZV5s
 		val parser: P = parserFactory.create(input)
-		parser.__run(rule(parser)) match {
-			case Success(result) => result
-			case Failure(failure: ParseError) =>
-				println(failure.format(parser))
-				fail()
-			case a =>
-				println(a)
-				fail()
-		}
+		parser.__run(rule(parser))
 	}
 }
