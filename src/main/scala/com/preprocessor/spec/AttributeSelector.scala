@@ -6,10 +6,10 @@ package com.preprocessor.spec
 object AttributeSelector {
 
 	sealed trait Modifier {
-		def name: String
+		val name: String
 	}
 	case object CaseInsensitive extends Modifier {
-		override def name: String = "i"
+		override val name: String = "i"
 	}
 
 	val modifiers: Map[String, Modifier] = Map(
@@ -21,22 +21,22 @@ object AttributeSelector {
 		def symbol: String
 	}
 	case object Equals extends Matcher {
-		override def symbol: String = "=" // [attr=value]
+		override val symbol: String = "=" // [attr=value]
 	}
 	case object Includes extends Matcher {
-		override def symbol: String = "~=" // [attr~=value]
+		override val symbol: String = "~=" // [attr~=value]
 	}
 	case object Prefix extends Matcher {
-		override def symbol: String = "|=" // [attr|=value]
+		override val symbol: String = "|=" // [attr|=value]
 	}
 	case object Preceded extends Matcher {
-		override def symbol: String = "^=" // [attr^=value]
+		override val symbol: String = "^=" // [attr^=value]
 	}
 	case object Followed extends Matcher {
-		override def symbol: String = "$=" // [attr$=value]
+		override val symbol: String = "$=" // [attr$=value]
 	}
 	case object Contains extends Matcher {
-		override def symbol: String = "*=" // [attr*=value]
+		override val symbol: String = "*=" // [attr*=value]
 	}
 
 	val matchers: Map[String, Matcher] = Map(
