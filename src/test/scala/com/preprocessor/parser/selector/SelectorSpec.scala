@@ -8,6 +8,7 @@ import com.preprocessor.spec.AttributeSelector._
 import com.preprocessor.spec.HtmlElements.{AnyElement, CustomElement, Div, H1}
 import com.preprocessor.spec.PseudoClasses.AnPlusB
 import com.preprocessor.spec.{PseudoClasses, PseudoElements}
+import org.parboiled2.ParseError
 
 class SelectorSpec extends BaseParserSpec {
 
@@ -65,6 +66,16 @@ class SelectorSpec extends BaseParserSpec {
 	it should "correctly parse the :dir() pseudo class" in {
 		assert(parse(":dir(ltr)") === Dir(PseudoClasses.Ltr))
 		assert(parse(":dir(from-the-top-to-the-bottom)") === Dir(PseudoClasses.UndefinedDirectionality("from-the-top-to-the-bottom")))
+	}
+
+	it should "correctly parse the :drop() pseudo class" in {
+		assert(parse(":drop") === NonFunctional(PseudoClasses.NonFunctional.Drop))
+		assert(parse(":drop()") === NonFunctional(PseudoClasses.NonFunctional.Drop))
+		assert(parse(":drop(active)") === Drop(Set(PseudoClasses.Active)))
+		assert(parse(":drop(invalid active)") === Drop(Set(PseudoClasses.Active, PseudoClasses.Invalid)))
+
+		assertThrows[ParseError](parse(":drop(invalid invalid)"))
+		assertThrows[ParseError](parse(":drop(something-invalid)"))
 	}
 
 

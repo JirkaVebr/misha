@@ -26,7 +26,7 @@ object Selector {
 	case class SubSelector(kind: PseudoClasses.SubSelector, subSelector: Selector) extends PseudoClass
 	case class RawSubSelector(kind: PseudoClasses.SubSelector, subSelector: Selector) extends PseudoClass with RawSelector
 	case class Dir(directionality: Directionality) extends PseudoClass
-	case class Drop(filter: Option[DropFilter]) extends PseudoClass
+	case class Drop(filter: Set[DropFilter]) extends PseudoClass
 	case class Lang(name: CssIdentifier) extends PseudoClass
 	case class Nth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[Selector] = None) extends PseudoClass
 	case class RawNth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[Selector] = None) extends PseudoClass with RawSelector

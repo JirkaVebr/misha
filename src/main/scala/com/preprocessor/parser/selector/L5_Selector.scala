@@ -1,13 +1,13 @@
 package com.preprocessor.parser.selector
 
-import com.preprocessor.ast.{CssIdentifier, MatchTarget}
 import com.preprocessor.ast.Selector._
+import com.preprocessor.ast.{CssIdentifier, MatchTarget}
 import com.preprocessor.parser.common.{L0_Whitespace, L1_Strings, L2_Numbers}
 import com.preprocessor.spec.AttributeSelector.{Matcher, Modifier}
 import com.preprocessor.spec.PseudoClasses.NonFunctional.CustomPseudoClass
 import com.preprocessor.spec.PseudoClasses.UndefinedDirectionality
-import com.preprocessor.spec.{AttributeSelector, PseudoClasses, PseudoElements}
 import com.preprocessor.spec.PseudoElements.CustomPseudoElement
+import com.preprocessor.spec.{AttributeSelector, PseudoClasses, PseudoElements}
 import org.parboiled2.{StringBuilding, _}
 import shapeless.{::, HNil}
 
@@ -131,7 +131,23 @@ trait L5_Selector { this: org.parboiled2.Parser
 		)
 	}
 
-	private def dropPseudoClass: Rule1[PseudoClass] = ???
+	private def dropPseudoClass: Rule1[PseudoClass] = rule {
+		(oneOrMore(CssIdentifier).separatedBy(MandatorySingleLineWhitespace) ~> (
+			(identifiers: Seq[CssIdentifier]) => {
+				val normalized = identifiers.toSet
+
+				if (identifiers.lengthCompare(normalized.size) == 0) {
+					if (normalized.forall(PseudoClasses.dropFilter.get(_).isDefined))
+						push(Drop(normalized.map((identifier: CssIdentifier) =>
+							PseudoClasses.dropFilter(identifier.value)
+						)))
+					else failX("one or more of " + PseudoClasses.dropFilter.keys.mkString(", "))
+				} else {
+					failX("Duplicate drop keywords") // @pedantic
+				}
+			}
+		)) | push(NonFunctional(PseudoClasses.NonFunctional.Drop))
+	}
 
 	private def langPseudoClass: Rule1[PseudoClass] = ???
 
