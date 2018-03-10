@@ -8,6 +8,11 @@ object PseudoClasses {
 		def name: String
 	}
 
+	case object Lang extends PseudoClass {
+		override def name: String = "lang"
+	}
+
+
 	sealed trait SubSelector extends PseudoClass
 
 	case object Not extends SubSelector {
@@ -43,6 +48,10 @@ object PseudoClasses {
 	/**
 		* @see https://drafts.csswg.org/selectors-4/#the-dir-pseudo
 		*/
+	case object Dir extends PseudoClass {
+		override def name: String = "dir"
+	}
+
 	sealed trait Directionality extends ArgumentEnum
 
 	case object Ltr extends Directionality {
@@ -62,6 +71,10 @@ object PseudoClasses {
 	/**
 		* @see https://drafts.csswg.org/selectors-4/#drag-pseudos
 		*/
+	case object Drop extends PseudoClass {
+		override def name: String = "drop"
+	}
+
 	sealed trait DropFilter extends ArgumentEnum
 
 	case object Active extends DropFilter {
