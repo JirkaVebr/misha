@@ -70,19 +70,19 @@ trait L5_Selector { this: org.parboiled2.Parser
 	}
 
 	private def pseudoClass: Rule1[PseudoClass] = rule {
-		CssIdentifier ~ (
-			('(' ~!~ SingleLineWhitespace ~ functionalPseudoClass ~ SingleLineWhitespace ~ ')') |
-			run((identifier: CssIdentifier) => NonFunctional(PseudoClasses.nonFunctionalPseudoClass.get(identifier) match {
-				case Some(pseudoClass) => pseudoClass
-				case None => CustomPseudoClass(identifier)
-			}))
-		)
-	}
-
-	private def functionalPseudoClass: Rule[CssIdentifier :: HNil, PseudoClass :: HNil] = rule {
-		run((identifier: CssIdentifier) => {
-			NonFunctional(CustomPseudoClass(identifier)) // TODO
-		})
+		CssIdentifier ~ run {
+			(cursorChar: @switch) match {
+				case '(' => '(' ~!~
+					SingleLineWhitespace ~
+					functionalPseudoClass ~
+					SingleLineWhitespace ~
+					')'
+				case _ => run((identifier: CssIdentifier) => NonFunctional(PseudoClasses.nonFunctionalPseudoClass.get(identifier) match {
+					case Some(pseudoClass) => pseudoClass
+					case None => CustomPseudoClass(identifier)
+				}))
+			}
+		}
 	}
 
 
@@ -104,6 +104,20 @@ trait L5_Selector { this: org.parboiled2.Parser
 
 	private def modifier: Rule1[Modifier] = rule {
 		valueMap(AttributeSelector.modifiers)
+	}
+
+
+	private def functionalPseudoClass: Rule[CssIdentifier :: HNil, PseudoClass :: HNil] = rule {
+		run((identifier: CssIdentifier) => PseudoClasses.subSelectors.get(identifier) match {
+			case Some(subSelector) => Selector ~> (RawSubSelector(subSelector, _))
+			case None => PseudoClasses.nthPseudoClasses.get(identifier) match {
+				case Some(nth) =>
+					AnPlusB ~ optional(
+						MandatorySingleLineWhitespace ~ Token("of") ~ MandatorySingleLineWhitespace ~ Selector
+					) ~> (RawNth(nth, _, _))
+				case None => MISMATCH // TODO
+			}
+		})
 	}
 
 }
