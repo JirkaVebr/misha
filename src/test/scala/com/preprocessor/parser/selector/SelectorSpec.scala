@@ -5,8 +5,9 @@ import com.preprocessor.ast.{MatchTarget, QualifiedAttribute, QualifiedElement}
 import com.preprocessor.ast.Selector._
 import com.preprocessor.parser.BaseParserSpec
 import com.preprocessor.spec.AttributeSelector._
-import com.preprocessor.spec.HtmlElements.{AnyElement, CustomElement, Div, H1}
+import com.preprocessor.spec.HtmlElements._
 import com.preprocessor.spec.PseudoClasses.AnPlusB
+import com.preprocessor.spec.SelectorCombinator.{Child, NextSibling}
 import com.preprocessor.spec.{PseudoClasses, PseudoElements}
 import org.parboiled2.ParseError
 
@@ -78,6 +79,42 @@ class SelectorSpec extends BaseParserSpec {
 
 		assertThrows[ParseError](parse(":drop(invalid invalid)"))
 		assertThrows[ParseError](parse(":drop(something-invalid)"))
+	}
+
+	it should "correctly parse compound selectors" in {
+		assert(parse("div#myId:hover") === RawCompound(Seq(
+			Element(QualifiedElement(Div)),
+			Id("myId"),
+			NonFunctional(PseudoClasses.NonFunctional.Hover)
+		)))
+	}
+
+	it should "correctly parse complex selectors" in {
+		assert(parse("input:focus + .myLabel::before > h1") === Complex(NextSibling, RawCompound(Seq(
+			Element(QualifiedElement(Input)),
+			NonFunctional(PseudoClasses.NonFunctional.Focus)
+		)), Complex(Child, RawCompound(Seq(
+			Class("myLabel"),
+			PseudoElement(PseudoElements.Before)
+		)), Element(QualifiedElement(H1)))))
+	}
+
+	it should "correctly parse selector lists" in {
+		assert(parse("h1, h2") === RawSelectorList(Seq(
+			Element(QualifiedElement(H1)),
+			Element(QualifiedElement(H2))
+		)))
+		assert(parse("h1::before, h2 + p::after, div") === RawSelectorList(Seq(
+			RawCompound(Seq(
+				Element(QualifiedElement(H1)),
+				PseudoElement(PseudoElements.Before)
+			)),
+			Complex(NextSibling, Element(QualifiedElement(H2)), RawCompound(Seq(
+				Element(QualifiedElement(P)),
+				PseudoElement(PseudoElements.After)
+			))),
+			Element(QualifiedElement(Div))
+		)))
 	}
 
 

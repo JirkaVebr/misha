@@ -23,10 +23,31 @@ trait L5_Selector { this: org.parboiled2.Parser
 	with L4_AnPlusB =>
 
 	def Selector: Rule1[Selector] = rule {
-		compound
+		selectorList
 	}
 
-	private def compound: Rule1[Selector] = rule {
+	private def selectorList: Rule1[Selector] = rule {
+		oneOrMore(complexSelector).separatedBy(AnyWhitespaceAround(",")) ~> (
+			(selectors: Seq[Selector]) =>
+				if (selectors.lengthCompare(1) == 0) selectors.head
+				else RawSelectorList(selectors)
+		)
+	}
+
+	private def complexSelector: Rule1[Selector] = rule { // Right associative
+		compoundSelector ~ zeroOrMore(combinator ~ complexSelector ~> (
+			(left: Selector, combinator: Combinator, right: Selector) => Complex(combinator, left, right)
+		))
+	}
+
+	private def combinator: Rule1[Combinator] = rule {
+		(WhitespaceAround(">") ~ push(Child)) |
+		(WhitespaceAround("+") ~ push(NextSibling)) |
+		(WhitespaceAround("~") ~ push(SubsequentSibling)) |
+		(MandatorySingleLineWhitespace ~ push(Descendant))
+	}
+
+	private def compoundSelector: Rule1[Selector] = rule {
 		oneOrMore(simpleSelector) ~> (
 			(selectors: Seq[SimpleSelector]) =>
 				if (selectors.lengthCompare(1) == 0) selectors.head
