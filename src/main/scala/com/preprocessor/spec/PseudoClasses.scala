@@ -103,6 +103,15 @@ object PseudoClasses {
 		override def kind: String = "last-col"
 	}
 
+	val nthPseudoClasses: Map[String, Nth] = Map(
+		Child.name -> Child,
+		LastChild.name -> LastChild,
+		OfType.name -> OfType,
+		LastOfType.name -> LastOfType,
+		Col.name -> Col,
+		LastCol.name -> LastCol
+	)
+
 	/**
 		* No need for special cases for `even` and `odd` as these reduce to 2n and 2n+1 respectively
 		* @see https://drafts.csswg.org/css-syntax-3/#anb-microsyntax
