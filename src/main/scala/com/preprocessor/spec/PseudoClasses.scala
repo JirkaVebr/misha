@@ -91,29 +91,25 @@ object PseudoClasses {
 	/**
 		* @see https://drafts.csswg.org/selectors-4/#child-index
 		*/
-	sealed trait Nth extends PseudoClass {
-		def kind: String
-
-		override val name: String = "nth-" + kind
-	}
+	sealed trait Nth extends PseudoClass
 
 	case object Child extends Nth {
-		override val kind: String = "child"
+		override val name: String = "nth-child"
 	}
 	case object LastChild extends Nth {
-		override val kind: String = "last-child"
+		override val name: String = "nth-last-child"
 	}
 	case object OfType extends Nth {
-		override val kind: String = "of-type"
+		override val name: String = "nth-of-type"
 	}
 	case object LastOfType extends Nth {
-		override val kind: String = "last-of-type"
+		override val name: String = "nth-last-of-type"
 	}
 	case object Col extends Nth {
-		override val kind: String = "col"
+		override val name: String = "nth-col"
 	}
 	case object LastCol extends Nth {
-		override val kind: String = "last-col"
+		override val name: String = "nth-last-col"
 	}
 
 	val nthPseudoClasses: Map[String, Nth] = Map(
