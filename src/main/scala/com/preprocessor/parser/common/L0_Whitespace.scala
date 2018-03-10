@@ -34,6 +34,10 @@ trait L0_Whitespace extends org.parboiled2.Parser {
 		atomic(str(stringToken)).named(stringToken)
 	}
 
+	def IgnoreCaseToken(stringToken: String): Rule0 = rule {
+		atomic(ignoreCase(stringToken)).named(stringToken)
+	}
+
 	def WhitespaceAround(operator: String): Rule0 = rule {
 		SingleLineWhitespace ~ Token(operator) ~ SingleLineWhitespace
 	}
