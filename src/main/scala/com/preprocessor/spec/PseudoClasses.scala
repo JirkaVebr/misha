@@ -150,7 +150,7 @@ object PseudoClasses {
 		case object Current extends NonFunctionalPseudoClass { override val name: String = "link" }
 		case object Default extends NonFunctionalPseudoClass { override val name: String = "default" }
 		case object Disabled extends NonFunctionalPseudoClass { override val name: String = "disabled" }
-		case object Drop extends NonFunctionalPseudoClass { override val name: String = "link" }
+		case object Drop extends NonFunctionalPseudoClass { override val name: String = "drop" }
 		case object Empty extends NonFunctionalPseudoClass { override val name: String = "empty" }
 		case object Enabled extends NonFunctionalPseudoClass { override val name: String = "enabled" }
 		case object FirstChild extends NonFunctionalPseudoClass { override val name: String = "first-child" }
