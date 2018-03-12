@@ -13,7 +13,12 @@ import scala.collection.immutable.{Map => SMap}
 	*/
 object Language {
 
-	sealed abstract class Node
+	sealed abstract class Node {
+		protected var _position: Option[NodePosition] = None
+
+		def position: Option[NodePosition] = _position
+		def position_= (newPosition: NodePosition): Unit = _position = Some(newPosition)
+	}
 
 	case class Program(program: Statement.Statement) extends Node
 
