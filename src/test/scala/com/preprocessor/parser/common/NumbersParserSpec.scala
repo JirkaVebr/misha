@@ -1,6 +1,7 @@
 package com.preprocessor.parser.common
 
 import com.preprocessor.ast.Language.Value
+import com.preprocessor.ast.NodePosition
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
 import com.preprocessor.parser.BaseParserSpec
 
@@ -61,6 +62,13 @@ class NumbersParserSpec extends BaseParserSpec {
 		assert(parse("0%") === Value.Percentage(0))
 		assert(parse("123%") === Value.Percentage(123))
 		assert(parse("11.22%") === Value.Percentage(11.22))
+	}
+
+	it should "parse number positioning" in {
+		assert(parse("1").position === Some(NodePosition(0, 1)))
+		assert(parse("123%").position === Some(NodePosition(0, 4)))
+		assert(parse("-123.456").position === Some(NodePosition(0, 8)))
+		assert(parse("3ms").position === Some(NodePosition(0, 3)))
 	}
 
 	protected def parse(input: String): Value.Value = parseLanguageRule(input, _.Number)

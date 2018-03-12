@@ -17,7 +17,7 @@ trait L2_Strings { this: org.parboiled2.Parser
 	import L2_Strings._
 
 	def String: Rule1[Value.String] = rule {
-		QuotedString | UnquotedString
+		nodeStart ~ (QuotedString | UnquotedString) ~ nodeEnd
 	}
 
 	def QuotedString: Rule1[Value.String] = rule {

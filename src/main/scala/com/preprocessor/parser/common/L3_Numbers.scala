@@ -15,7 +15,7 @@ trait L3_Numbers { this: org.parboiled2.Parser
 
 
 	def Number: Rule1[Value.Number] = rule {
-		atomic(base ~ optional(exponent) ~ optional(unitOfMeasure)) ~> (createNumber(_, _, _))
+		nodeStart ~ (atomic(base ~ optional(exponent) ~ optional(unitOfMeasure)) ~> (createNumber(_, _, _))) ~ nodeEnd
 	}
 
 	def UnsignedInteger: Rule1[Int] = rule {
