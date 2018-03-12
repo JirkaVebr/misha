@@ -170,10 +170,10 @@ class ExpressionSpec extends BaseParserSpec {
 		assert(parse("(): Unit => 123") === Function(scala.List(), Some(Type.Unit), Scalar(123)))
 		assert(parse("($a): Unit => 123") ===
 			Function(scala.List(ValueSymbolDeclaration("a", None, None)), Some(Type.Unit), Scalar(123)))
-		assert(parse("($a: Number): Unit => 123") ===
-			Function(scala.List(ValueSymbolDeclaration("a", Some(Type.Number), None)), Some(Type.Unit), Scalar(123)))
-		assert(parse("($a: Number = 1): Unit => 123") ===
-			Function(scala.List(ValueSymbolDeclaration("a", Some(Type.Number), Some(Scalar(1)))), Some(Type.Unit), Scalar(123)))
+		assert(parse("($a: Scalar): Unit => 123") ===
+			Function(scala.List(ValueSymbolDeclaration("a", Some(Type.Scalar), None)), Some(Type.Unit), Scalar(123)))
+		assert(parse("($a: Scalar = 1): Unit => 123") ===
+			Function(scala.List(ValueSymbolDeclaration("a", Some(Type.Scalar), Some(Scalar(1)))), Some(Type.Unit), Scalar(123)))
 	}
 
 	it should "correctly parse complicated arithmetic expressions" in {

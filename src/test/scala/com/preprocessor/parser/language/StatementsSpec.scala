@@ -22,8 +22,8 @@ class StatementsSpec extends BaseParserSpec {
 	}
 
 	it should "correctly parse a type alias declaration" in {
-		assert(parse("@type NumOrString = Numeric | String") ===
-			TypeAliasDeclaration(Type.TypeAlias("NumOrString"), Type.Union(Set(Type.Numeric, Type.String))))
+		assert(parse("@type NumOrString = Scalar | String") ===
+			TypeAliasDeclaration(Type.TypeAlias("NumOrString"), Type.Union(Set(Type.Scalar, Type.String))))
 	}
 
 	it should "correctly parse expressions as statements" in {
@@ -35,7 +35,7 @@ class StatementsSpec extends BaseParserSpec {
 
 	it should "correctly parse a variable declaration" in {
 		assert(parse("@let $myVar = 1") === VariableDeclaration(ValueSymbolDeclaration("myVar", None, Scalar(1))))
-		assert(parse("@let $myVar: Number = 1") === VariableDeclaration(ValueSymbolDeclaration("myVar", Some(Type.Number), Scalar(1))))
+		assert(parse("@let $myVar: Scalar = 1") === VariableDeclaration(ValueSymbolDeclaration("myVar", Some(Type.Scalar), Scalar(1))))
 	}
 
 	it should "correctly parse a block" in {

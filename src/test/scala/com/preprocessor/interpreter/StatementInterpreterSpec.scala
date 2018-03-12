@@ -26,7 +26,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "reject declaration of existing variables" in {
 		val symbol = ValueSymbol("myVar")
-		val varType = Type.Number
+		val varType = Type.Scalar
 		val varValue = Value.Scalar(123)
 		val newState = state.withNewSymbol(symbol)(ValueRecord(varValue, varType)).get
 
@@ -63,7 +63,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "correctly create a type alias" in {
 		val symbol = TypeSymbol("MyType")
-		val newType = Type.Number
+		val newType = Type.Scalar
 		val newState = run(TypeAliasDeclaration(TypeAlias(symbol), newType))
 
 		assert(newState.environment.lookup(symbol).get === newType)
@@ -83,7 +83,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val symbol = TypeSymbol("MyType")
 		val oldType = Type.Boolean
 		val newState = state.withNewSymbol(symbol)(oldType).get
-		val newType = Type.Number
+		val newType = Type.Scalar
 
 		assertThrows[ProgramError](run(TypeAliasDeclaration(TypeAlias(symbol), newType))(newState))
 	}
