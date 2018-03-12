@@ -80,10 +80,9 @@ object Language {
 		case class Subtraction(minuend: Any, subtrahend: Any) extends Composite
 
 		case class List(of: Any) extends Composite
-		case class Map(key: Any, value: Any, mandatoryEntries: Option[SMap[Any, Any]]) extends Composite
+		case class Map(key: Any, value: Any, mandatoryEntries: Option[SMap[Any, Any]] = None) extends Composite
+		case class Formula(subtype: Any) extends Composite // e.g. 100% - 10px
 
-
-		case object Formula extends Primitive // e.g. 100% - 10px
 		case object Numeric extends Primitive // e.g. #ddd or 123vh, that is values that define arithmetic operations
 		case object Color extends Primitive
 

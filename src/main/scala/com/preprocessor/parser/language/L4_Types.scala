@@ -57,7 +57,7 @@ trait L4_Types { this: org.parboiled2.Parser
 	}
 
 	private def simpleCompositeType: Rule1[Language.Type.Composite] = rule {
-		functionType | tuple2Type
+		functionType | tuple2Type | parametrizedType
 	}
 
 	private def functionType: Rule1[Language.Type.Function] = rule {
@@ -67,6 +67,17 @@ trait L4_Types { this: org.parboiled2.Parser
 
 	private def tuple2Type: Rule1[Language.Type.Tuple2] = rule {
 		"(" ~ Type ~ "," ~ Type ~ ")" ~> Language.Type.Tuple2
+	}
+
+	// TODO parse this properly
+	private def parametrizedType: Rule1[Language.Type.Composite] = rule {
+		(Token("Formula") ~ '[' ~ SingleLineWhitespace ~ Type ~ SingleLineWhitespace ~ ']' ~> Language.Type.Formula) |
+		(Token("List") ~ '[' ~ SingleLineWhitespace ~ Type ~ SingleLineWhitespace ~ ']' ~> Language.Type.List) |
+		(Token("Map") ~ '[' ~ SingleLineWhitespace ~
+			Type ~ WhitespaceAround(",") ~
+			Type ~ SingleLineWhitespace ~ ']' ~> (
+			(keyType: Language.Type.Any, valueType: Language.Type.Any) => Language.Type.Map(keyType, valueType)
+		))
 	}
 
 

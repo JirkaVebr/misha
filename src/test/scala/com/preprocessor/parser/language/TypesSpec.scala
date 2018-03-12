@@ -11,10 +11,9 @@ class TypesSpec extends BaseParserSpec {
 		assert(parse("Any") === Type.Any)
 		assert(parse("Color") === Type.Color)
 		assert(parse("Boolean") === Type.Boolean)
-		assert(parse("Formula") === Type.Formula)
 		assert(parse("Number") === Type.Number)
 		assert(parse("Numeric") === Type.Numeric)
-		assert(parse("Percentage") === Type.Numeric)
+		assert(parse("Percentage") === Type.Percentage)
 		assert(parse("Scalar") === Type.Scalar)
 		assert(parse("String") === Type.String)
 		assert(parse("Unit") === Type.Unit)
@@ -79,6 +78,12 @@ class TypesSpec extends BaseParserSpec {
 				Type.Union(Set(Type.Literal(Value.Scalar(123)), Type.Literal(Value.Boolean(true))))
 			)
 		)
+	}
+
+	it should "parse built-in parametrized types" in {
+		assert(parse("List[Scalar]") === Type.List(Type.Scalar))
+		assert(parse("Formula[Length]") === Type.Formula(Type.TypeAlias("Length")))
+		assert(parse("Map[String, Percentage]") === Type.Map(Type.String, Type.Percentage))
 	}
 
 
