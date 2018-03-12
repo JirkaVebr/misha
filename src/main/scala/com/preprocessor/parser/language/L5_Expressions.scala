@@ -188,6 +188,10 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		SingleLineWhitespace ~ '\n' ~ INDENT ~!~ Statement ~ DEDENT ~> Block
 	}
 
+	private def noOp: Rule1[Statement] = rule {
+		SingleLineWhitespace ~ '\n' ~ !INDENT ~ push(NoOp)
+	}
+
 	private def anonymousFunction: Rule1[Expression] = rule {
 		'(' ~ zeroOrMore(
 			('$' ~ variableName ~ TypeAnnotation ~ optional(AnyWhitespaceAround("=") ~!~ Expression)) ~> (
@@ -211,8 +215,13 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		(typeAliasDeclaration | variableDeclaration | property | rule | propertyFunctionCall | Expression) ~ EndOfLine
 	}
 
-	private def rule: Rule1[Language.Statement.Rule] = rule { // TODO using quoted strings is temporary
-		(QuotedString ~ SingleLineWhitespace ~ block) ~> Language.Statement.Rule
+	private def rule: Rule1[Language.Statement.Statement] = rule { // TODO using quoted strings is temporary
+		(QuotedString ~ SingleLineWhitespace ~ (block | noOp)) ~> (
+			(selector: Value.String, body: Statement) => body match {
+				case block: Block => Language.Statement.Rule(selector, block)
+				case _ => NoOp
+			}
+		)
 	}
 
 	private def typeAliasDeclaration: Rule1[TypeAliasDeclaration] = rule {

@@ -14,6 +14,12 @@ class StatementsSpec extends BaseParserSpec {
 
 	behavior of "The statement parser"
 
+	it should "correctly parse an empty rule rule" in {
+		assert(parse(
+			""""div"
+				|""".stripMargin) === NoOp)
+	}
+
 	it should "correctly parse a simple rule" in {
 		assert(parse(
 			""""div a strong"
