@@ -9,11 +9,12 @@ import org.parboiled2._
 	*
 	* @see https://github.com/sirthias/parboiled2/blob/release-2.1/examples/src/main/scala/org/parboiled2/examples/JsonParser.scala
 	*/
-trait L1_Strings { this: org.parboiled2.Parser
+trait L2_Strings { this: org.parboiled2.Parser
 	with StringBuilding
-	with L0_Whitespace =>
+	with L0_Whitespace
+	with L1_AstNode =>
 
-	import L1_Strings._
+	import L2_Strings._
 
 	def String: Rule1[Value.String] = rule {
 		QuotedString | UnquotedString
@@ -56,7 +57,7 @@ trait L1_Strings { this: org.parboiled2.Parser
 
 }
 
-object L1_Strings {
+object L2_Strings {
 	val AlphaNumUnderscore: CharPredicate = CharPredicate.AlphaNum ++ '_'
 	val AlphaNumDashUnderscore: CharPredicate = AlphaNumUnderscore ++ '-'
 	val SingleQuoteOrBackslash = CharPredicate("'\\")

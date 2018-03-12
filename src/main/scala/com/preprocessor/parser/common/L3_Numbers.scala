@@ -5,12 +5,13 @@ import com.preprocessor.ast.NumberUnit
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
 import org.parboiled2._
 
-trait L2_Numbers { this: org.parboiled2.Parser
+trait L3_Numbers { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace
-	with L1_Strings =>
+	with L1_AstNode
+	with L2_Strings =>
 
-	import L2_Numbers._
+	import L3_Numbers._
 
 
 	def Number: Rule1[Value.Number] = rule {
@@ -54,7 +55,7 @@ trait L2_Numbers { this: org.parboiled2.Parser
 }
 
 
-object L2_Numbers {
+object L3_Numbers {
 	val Signs = CharPredicate("+-")
 	val Exponent = CharPredicate("eE")
 

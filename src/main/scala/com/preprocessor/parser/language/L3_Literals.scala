@@ -2,7 +2,7 @@ package com.preprocessor.parser.language
 
 import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.Language.Value.{Color, Duplicate, Flag, Important, Primitive, Rgba}
-import com.preprocessor.parser.common.{L0_Whitespace, L1_Strings, L2_Numbers}
+import com.preprocessor.parser.common.{L0_Whitespace, L1_AstNode, L2_Strings, L3_Numbers}
 import com.preprocessor.spec.ColorKeywords
 import org.parboiled2._
 
@@ -10,8 +10,9 @@ import org.parboiled2._
 trait L3_Literals { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace
-	with L1_Strings
-	with L2_Numbers =>
+	with L1_AstNode
+	with L2_Strings
+	with L3_Numbers =>
 
 	import CharPredicate.HexDigit
 	import L3_Literals._

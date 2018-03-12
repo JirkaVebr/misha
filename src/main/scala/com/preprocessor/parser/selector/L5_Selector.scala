@@ -4,7 +4,7 @@ import com.preprocessor.ast
 import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.Selector._
 import com.preprocessor.ast.{CssIdentifier, MatchTarget}
-import com.preprocessor.parser.common.{L0_Whitespace, L1_Strings, L2_Numbers}
+import com.preprocessor.parser.common.{L0_Whitespace, L1_AstNode, L2_Strings, L3_Numbers}
 import com.preprocessor.spec.AttributeSelector.{Matcher, Modifier}
 import com.preprocessor.spec.PseudoClasses.NonFunctional.CustomPseudoClass
 import com.preprocessor.spec.PseudoClasses.UndefinedDirectionality
@@ -23,8 +23,9 @@ import scala.annotation.switch
 trait L5_Selector { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace
-	with L1_Strings
-	with L2_Numbers
+	with L1_AstNode
+	with L2_Strings
+	with L3_Numbers
 	with L3_Basics
 	with L4_AnPlusB =>
 
