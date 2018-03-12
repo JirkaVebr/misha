@@ -3,7 +3,7 @@ package com.preprocessor.ast
 import com.preprocessor.ast.Language.Expression.{Block, Expression}
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
 import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
-import com.preprocessor.interpreter.typing.{Subtype, Typing}
+import com.preprocessor.interpreter.typing.Typing
 
 import scala.collection.immutable.{Map => SMap}
 
@@ -63,10 +63,7 @@ object Language {
 
 
 	object Type {
-		sealed trait Any extends Node {
-			def isSubtypeOf(otherType: Any): Boolean = Subtype.isSubtypeOf(this, otherType)
-			def isEquivalentTo(otherType: Any): Boolean = Subtype.isEquivalentTo(this, otherType)
-		}
+		sealed trait Any extends Node
 		case object Any extends Any
 
 		sealed trait Primitive extends Any

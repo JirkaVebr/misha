@@ -56,8 +56,9 @@ object ExpressionInterpreter {
 								run(alternative)(stateAfterCondition) match {
 									case Failure(error) => Failure(error)
 									case Success(stateAfterAlternative) =>
-										if (stateAfterConsequent.valueRecord.recordType isEquivalentTo
-											stateAfterAlternative.valueRecord.recordType) {
+										if (Subtype.isEquivalentTo(
+											stateAfterConsequent.valueRecord.recordType, stateAfterAlternative.valueRecord.recordType
+										)) {
 											val superType =
 												Subtype.getLowestCommonSupertype(
 													stateAfterConsequent.valueRecord.recordType, stateAfterAlternative.valueRecord.recordType

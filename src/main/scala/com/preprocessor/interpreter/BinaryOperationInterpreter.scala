@@ -7,6 +7,7 @@ import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError._
 import com.preprocessor.interpreter.ops.{ColorOps, StringOps}
+import com.preprocessor.interpreter.typing.Subtype
 import com.preprocessor.interpreter.validators.NumberValidator
 
 import scala.util.{Failure, Success, Try}
@@ -94,7 +95,7 @@ object BinaryOperationInterpreter {
 				if (newState.environment.isInScope(name)) {
 					val valueRecord = newState.environment.lookup(name).get
 
-					if (newState.valueRecord.recordType isSubtypeOf valueRecord.recordType)
+					if (Subtype.isSubtypeOf(newState.valueRecord.recordType, valueRecord.recordType))
 					// TODO add readonly checks
 						newState.withUpdatedSymbol(name)(valueRecord ~> newState.valueRecord.value)
 					else newState.fail(IllTypedAssignment)
