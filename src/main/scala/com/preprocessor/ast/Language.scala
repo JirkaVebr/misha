@@ -105,6 +105,8 @@ object Language {
 
 		//case class Rule(head: StringInterpolation, body: Statement) extends Statement
 		case class Rule(head: Value.String, body: Block) extends Statement // TODO
+
+		case object NoOp extends Statement
 	}
 
 

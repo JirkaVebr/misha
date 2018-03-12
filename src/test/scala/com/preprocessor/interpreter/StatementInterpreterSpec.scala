@@ -126,6 +126,10 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		))
 	}
 
+	it should "correctly run a no-op" in {
+		assert(run(NoOp).environment === testEnvironment)
+	}
+
 
 	protected def run(expression: Statement)(implicit state: EvalState): EvalState = {
 		val result = StatementInterpreter.run(expression)

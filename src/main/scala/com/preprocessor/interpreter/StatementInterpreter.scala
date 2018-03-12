@@ -20,6 +20,7 @@ object StatementInterpreter {
 		case variableDeclaration: VariableDeclaration => runVariableDeclaration(variableDeclaration)
 		case rule: Rule => runRule(rule)
 		case property: Statement.Property => runProperty(property)
+		case NoOp => runNoOp()
 
 		case expression: Expression => ExpressionInterpreter.run(expression)
 	}
@@ -95,5 +96,7 @@ object StatementInterpreter {
 				case _ => stateAfterName.fail(NonStringPropertyName, property.name)
 			}
 		}
+
+	private def runNoOp()(implicit state: EvalState): Try[EvalState] = Success(state)
 
 }
