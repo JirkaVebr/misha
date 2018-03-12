@@ -11,8 +11,6 @@ class TypesSpec extends BaseParserSpec {
 		assert(parse("Any") === Type.Any)
 		assert(parse("Color") === Type.Color)
 		assert(parse("Boolean") === Type.Boolean)
-		assert(parse("Number") === Type.Number)
-		assert(parse("Numeric") === Type.Numeric)
 		assert(parse("Percentage") === Type.Percentage)
 		assert(parse("Scalar") === Type.Scalar)
 		assert(parse("String") === Type.String)

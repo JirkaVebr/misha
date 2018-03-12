@@ -21,8 +21,6 @@ object RootEnvironment {
 		"Color" -> Language.Type.Color,
 		"Boolean" -> Language.Type.Boolean,
 		"Flag" -> Language.Type.Flag,
-		"Number" -> Language.Type.Number,
-		"Numeric" -> Language.Type.Numeric,
 		"Percentage" -> Language.Type.Percentage,
 		"Scalar" -> Language.Type.Scalar,
 		"String" -> Language.Type.String,

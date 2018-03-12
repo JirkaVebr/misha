@@ -83,10 +83,7 @@ object Language {
 		case class Map(key: Any, value: Any, mandatoryEntries: Option[SMap[Any, Any]] = None) extends Composite
 		case class Formula(subtype: Any) extends Composite // e.g. 100% - 10px
 
-		case object Numeric extends Primitive // e.g. #ddd or 123vh, that is values that define arithmetic operations
 		case object Color extends Primitive
-
-		case object Number extends Primitive // A concrete number, e.g. 123.456
 		case object Scalar extends Primitive // A unitless number
 		case class Dimensioned(typeName: TypeSymbol) extends Primitive // A number with a unit
 		case object Percentage extends Primitive
