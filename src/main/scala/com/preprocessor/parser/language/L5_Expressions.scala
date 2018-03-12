@@ -212,7 +212,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def sequenceNode: Rule1[Statement] = rule {
-		(typeAliasDeclaration | variableDeclaration | property | rule | propertyFunctionCall | Expression) ~ EndOfLine
+		(typeAliasDeclaration | variableDeclaration | property | propertyFunctionCall | rule | Expression) ~ EndOfLine
 	}
 
 	private def rule: Rule1[Language.Statement.Statement] = rule { // TODO using quoted strings is temporary
