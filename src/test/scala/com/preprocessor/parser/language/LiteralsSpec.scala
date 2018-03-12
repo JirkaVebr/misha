@@ -2,6 +2,7 @@ package com.preprocessor.parser.language
 
 import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.Language.Value.{CurrentColor, Rgba, Transparent}
+import com.preprocessor.ast.NodePosition
 import com.preprocessor.parser.BaseParserSpec
 
 class LiteralsSpec extends BaseParserSpec {
@@ -40,6 +41,21 @@ class LiteralsSpec extends BaseParserSpec {
 		assert(parse("cUrReNtCoLor") === CurrentColor)
 		assert(parse("transPARent") === Transparent)
 		assert(parse("RED") === Rgba(255, 0, 0))
+	}
+
+	it should "track positioning of flags" in {
+		assert(parse("!important").position === Some(NodePosition(0, 10)))
+	}
+
+	it should "track positioning of booleans" in {
+		assert(parse("false").position === Some(NodePosition(0, 5)))
+	}
+
+	it should "track positioning of colors" in {
+		assert(parse("#fff").position === Some(NodePosition(0, 4)))
+		assert(parse("#abcdef").position === Some(NodePosition(0, 7)))
+		assert(parse("currentColor").position === Some(NodePosition(0, 12)))
+		assert(parse("red").position === Some(NodePosition(0, 3)))
 	}
 
 

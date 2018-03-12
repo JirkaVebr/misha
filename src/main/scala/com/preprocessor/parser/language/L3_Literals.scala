@@ -19,7 +19,7 @@ trait L3_Literals { this: org.parboiled2.Parser
 
 
 	def Literal: Rule1[Primitive] = rule {
-		Flag | boolean | Number | QuotedString | color | UnquotedString
+		Number | (nodeStart ~ (Flag | boolean | QuotedString | color | UnquotedString) ~ nodeEnd)
 	}
 
 	def Flag: Rule1[Flag] = rule {
