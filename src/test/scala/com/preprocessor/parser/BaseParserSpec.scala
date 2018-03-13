@@ -19,6 +19,15 @@ class BaseParserSpec extends BaseSpec {
 		// __run() isn't public API, so this may break
 		// @see https://groups.google.com/forum/#!topic/parboiled-user/uwcy6MVZV5s
 		val parser: P = parserFactory.create(input)
-		parser.__run(rule(parser))
+		val result = parser.__run(rule(parser))
+		result match {
+			case Failure(exception) => exception match {
+				case e: ParseError =>
+					println(e.format(parser))
+					result
+				case _ => result
+			}
+			case _ => result
+		}
 	}
 }
