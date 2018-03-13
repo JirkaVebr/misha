@@ -2,7 +2,7 @@ package com.preprocessor.parser.language
 
 import com.preprocessor.ast.Language.Expression._
 import com.preprocessor.ast.Language.Statement._
-import com.preprocessor.ast.Language.Term.FunctionCall
+import com.preprocessor.ast.Language.Term.{FunctionCall, ParentSelector}
 import com.preprocessor.ast.Language.Value.{Important, Rgba, Scalar}
 import com.preprocessor.ast.Language.{Term, Type, Value, ValueSymbolDeclaration}
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
@@ -26,6 +26,44 @@ class StatementsSpec extends BaseParserSpec {
 			"""div a strong
 				|	123
 				|""".stripMargin) === Rule(Seq(Left("div a strong")), Block(Scalar(123))))
+	}
+
+	it should "not get confused by at-rules" in {
+		assert(parse(
+			"""@keyframes foo
+				|	123
+				|""".stripMargin) === Rule(Seq(Left("@keyframes foo")), Block(Scalar(123))))
+	}
+
+	it should "allow multi-line selectors if separated by commas" in {
+		assert(parse(
+			"""div,
+				|a strong,
+				|.foo
+				|	123
+				|""".stripMargin) === Rule(Seq(Left("div,\na strong,\n.foo")), Block(Scalar(123))))
+	}
+
+	it should "correctly parse explicit expression interpolation within selectors" in {
+		assert(parse(
+			"""d{i}v
+				|	123
+				|""".stripMargin) === Rule(Seq(Left("d"), Right(Value.String("i")), Left("v")), Block(Scalar(123))))
+		assert(parse(
+			"""*:first{"-" + "type"}
+				|	123
+				|""".stripMargin) ===
+			Rule(Seq(
+				Left("*:first"),
+				Right(BinaryOperation(Addition, Value.String("-"), Value.String("type")))
+			), Block(Scalar(123))))
+	}
+
+	it should "correctly parse implicit expression interpolation within selectors" in {
+		assert(parse(
+			""".myClass &-active
+				|	123
+				|""".stripMargin) === Rule(Seq(Left(".myClass "), Right(ParentSelector), Left("-active")), Block(Scalar(123))))
 	}
 
 	it should "correctly parse a type alias declaration" in {
