@@ -27,7 +27,7 @@ object Language {
 	object Value {
 		import Term._
 
-		sealed abstract class Value() extends Term {
+		sealed abstract class Value extends Term {
 			def valueType: Type.Any = Typing.getType(this)
 		}
 
@@ -103,8 +103,8 @@ object Language {
 		case class TypeAliasDeclaration(alias: TypeAlias, subType: Any) extends Statement
 		case class VariableDeclaration(declaration: ValueSymbolDeclaration[Expression]) extends Statement
 
-		//case class Rule(head: StringInterpolation, body: Statement) extends Statement
-		case class Rule(head: Value.String, body: Block) extends Statement // TODO
+		type RuleHead = Seq[Either[String, Expression]]
+		case class Rule(head: RuleHead, body: Block) extends Statement
 
 		case object NoOp extends Statement
 	}
@@ -146,7 +146,6 @@ object Language {
 		case object LogicalNegation extends UnaryOperator
 		case object ArithmeticNegation extends UnaryOperator
 
-		case class StringInterpolation(components: Seq[Either[String, Expression]]) extends Expression
 		case class Conditional(condition: Expression, consequent: Expression, alternative: Option[Expression])
 			extends Expression
 		case class Block(content: Statement) extends Expression

@@ -1,13 +1,11 @@
 package com.preprocessor.ast
 
-import com.preprocessor.ast.Language.Term.MagicSymbol
 import com.preprocessor.ast.Selector.Selector
 
 object RuleContext {
 
 	sealed trait RuleContext
 
-	case class RawRuleHead(components: List[Either[MagicSymbol, String]]) extends RuleContext
 	sealed trait ProcessedRuleHead extends RuleContext
 
 

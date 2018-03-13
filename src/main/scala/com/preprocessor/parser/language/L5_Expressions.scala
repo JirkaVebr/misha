@@ -21,6 +21,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	with L4_Types =>
 
 	import Characters._
+	import L5_Expressions._
 
 	private val anyWhitespaceSeparator: () => Rule0 = () => rule (MandatoryAnyWhitespace)
 
@@ -212,16 +213,13 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def sequenceNode: Rule1[Statement] = rule {
-		(typeAliasDeclaration | variableDeclaration | property | propertyFunctionCall | rule | Expression) ~ EndOfLine
-	}
-
-	private def rule: Rule1[Language.Statement.Statement] = rule { // TODO using quoted strings is temporary
-		(QuotedString ~ SingleLineWhitespace ~ (block | noOp)) ~> (
-			(selector: Value.String, body: Statement) => body match {
-				case block: Block => Language.Statement.Rule(selector, block)
-				case _ => NoOp
-			}
-		)
+		// Can't factor out the EndOfLine rules as that would have a different meaning
+		(typeAliasDeclaration ~ EndOfLine) |
+		(variableDeclaration ~ EndOfLine) |
+		(property ~ EndOfLine) |
+		(Expression ~ EndOfLine) |
+		(rule ~ EndOfLine) |
+		(propertyFunctionCall ~ EndOfLine)
 	}
 
 	private def typeAliasDeclaration: Rule1[TypeAliasDeclaration] = rule {
@@ -254,4 +252,35 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		undelimitedListBody(whitespaceSeparator) ~> Term.List | Expression
 	}
 
+
+	private def rule: Rule1[Language.Statement.Statement] = rule {
+		(ruleHead ~ SingleLineWhitespace ~ block) ~> Language.Statement.Rule
+	}
+
+	private def ruleHead: Rule1[RuleHead] = rule {
+		oneOrMore(
+			('{' ~ SingleLineWhitespace ~ Expression ~ SingleLineWhitespace ~ '}' ~> (
+				(expression: Expression) => Right(expression)
+			)) | (
+				'&' ~ push(Right(ParentSelector))
+			) | (
+				clearSB() ~ oneOrMore(
+					(!RuleHeadSpecialChars ~ ANY ~ appendSB()) |
+						('\\' ~ '{' ~ appendSB('{')) |
+						(',' ~ appendSB(',') ~
+							(capture(SingleLineWhitespace ~ '\n') ~> ((endOfLine: String) =>
+								appendSB(endOfLine)))
+						)
+				) ~ push(Left(sb.toString))
+			)
+		)
+	}
+
+
+}
+
+object L5_Expressions {
+	import Characters._
+
+	val RuleHeadSpecialChars: CharPredicate = CharPredicate(s"&,\\{\n$INDENT$DEDENT")
 }
