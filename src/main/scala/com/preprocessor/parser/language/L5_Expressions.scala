@@ -1,6 +1,6 @@
 package com.preprocessor.parser.language
 
-import com.preprocessor.ast.Language
+import com.preprocessor.ast.{Language, RuleHead}
 import com.preprocessor.ast.Language.Expression._
 import com.preprocessor.ast.Language.Statement._
 import com.preprocessor.ast.Language.Term._

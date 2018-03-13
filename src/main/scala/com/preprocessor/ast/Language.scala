@@ -103,7 +103,6 @@ object Language {
 		case class TypeAliasDeclaration(alias: TypeAlias, subType: Any) extends Statement
 		case class VariableDeclaration(declaration: ValueSymbolDeclaration[Expression]) extends Statement
 
-		type RuleHead = Seq[Either[String, Seq[Expression]]]
 		case class Rule(head: RuleHead, body: Block) extends Statement
 
 		case object NoOp extends Statement
