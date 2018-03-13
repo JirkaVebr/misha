@@ -113,12 +113,6 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 
-	protected def run(expression: BinaryOperation)(implicit state: EvalState): EvalState = {
-		val result = BinaryOperationInterpreter.run(expression)
-
-		result match {
-			case Failure(exception) => throw exception
-			case Success(value) => value
-		}
-	}
+	protected def run(binaryOperation: BinaryOperation)(implicit state: EvalState): EvalState =
+		super.run[BinaryOperation](BinaryOperationInterpreter.run(_), binaryOperation)
 }

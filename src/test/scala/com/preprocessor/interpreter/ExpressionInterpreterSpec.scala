@@ -66,12 +66,6 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 
-	protected def run(expression: Expression)(implicit state: EvalState): EvalState = {
-		val result = ExpressionInterpreter.run(expression)
-
-		result match {
-			case Failure(exception) => throw exception
-			case Success(value) => value
-		}
-	}
+	protected def run(expression: Expression)(implicit state: EvalState): EvalState =
+		super.run[Expression](ExpressionInterpreter.run(_), expression)
 }

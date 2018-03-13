@@ -35,12 +35,6 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		))
 	}
 
-	protected def run(expression: Term)(implicit state: EvalState): EvalState = {
-		val result = TermInterpreter.run(expression)
-
-		result match {
-			case Failure(exception) => throw exception
-			case Success(value) => value
-		}
-	}
+	protected def run(term: Term)(implicit state: EvalState): EvalState =
+		super.run[Term](TermInterpreter.run(_), term)
 }
