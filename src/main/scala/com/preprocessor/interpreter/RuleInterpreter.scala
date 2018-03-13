@@ -29,7 +29,7 @@ object RuleInterpreter {
 					}
 				})._1.toString
 				val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(
-					SelectorParser(ruleHead).get, ruleHead
+					SelectorParser(ruleHead).get
 				)) // TODO
 
 				StatementInterpreter.run(rule.body.content)(EvalState(newScope)) match {

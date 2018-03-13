@@ -39,7 +39,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		assert(run(ParentSelector).valueRecord.value === Value.String(""))
 
 		val originalRuleHead = ".myClass"
-		val newState = EvalState(testEnvironment.pushSubScope(RuleSelector(Class("myClass"), originalRuleHead)))
+		val newState = EvalState(testEnvironment.pushSubScope(RuleSelector(Class("myClass"))))
 		assert(run(ParentSelector)(newState).valueRecord.value === Value.String(originalRuleHead))
 	}
 
