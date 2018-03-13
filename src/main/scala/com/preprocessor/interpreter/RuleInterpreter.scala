@@ -28,7 +28,9 @@ object RuleInterpreter {
 						case Right(_) => (components.append(StringOps.castToString(values.head.value)), values.tail)
 					}
 				})._1.toString
-				val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(SelectorParser(ruleHead).get)) // TODO
+				val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(
+					SelectorParser(ruleHead).get, ruleHead
+				)) // TODO
 
 				StatementInterpreter.run(rule.body.content)(EvalState(newScope)) match {
 					case fail: Failure[EvalState] => fail

@@ -6,12 +6,12 @@ object RuleContext {
 
 	sealed trait RuleContext
 
-	sealed trait ProcessedRuleHead extends RuleContext
+	abstract class ProcessedRuleHead(val originalHead: String) extends RuleContext
 
 
-	case class RuleSelector(selector: Selector) extends ProcessedRuleHead
+	case class RuleSelector(selector: Selector, override val originalHead: String) extends ProcessedRuleHead(originalHead)
 
-	sealed trait AtRule extends ProcessedRuleHead
+	/*sealed trait AtRule extends ProcessedRuleHead
 
 	case class CounterStyle() extends AtRule
 	case class Document() extends AtRule
@@ -21,7 +21,7 @@ object RuleContext {
 	case class Media() extends AtRule
 	case class Page() extends AtRule
 	case class Supports() extends AtRule
-	case class Viewport() extends AtRule
+	case class Viewport() extends AtRule*/
 
 
 }

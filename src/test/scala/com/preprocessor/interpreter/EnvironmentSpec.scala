@@ -41,7 +41,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		val testType = Color
 		val testValueSymbol = ValueSymbol("test")
 		val testValue = ValueRecord(Value.Scalar(1), Type.Scalar)
-		val testContext = RuleSelector(Class("myClass"))
+		val testContext = RuleSelector(Class("myClass"), ".myClass")
 
 		assert(environment.lookup(testTypeSymbol).isEmpty)
 		assert(environment.lookup(testValueSymbol).isEmpty)
