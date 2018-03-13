@@ -57,6 +57,9 @@ class Environment private
 	def lookupCurrent(name: Symbol): Option[name.Value] =
 		symbolTable.get(name).asInstanceOf[Option[name.Value]]
 
+	def lookupContext(): Option[RuleContextSymbol.Value] =
+		lookup(RuleContextSymbol)
+
 	def lookup(name: Symbol): Option[name.Value] = {
 		val value = lookupCurrent(name)
 		value match {
