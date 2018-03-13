@@ -59,13 +59,6 @@ class StatementsSpec extends BaseParserSpec {
 			), Block(Scalar(123))))
 	}
 
-	it should "correctly parse implicit expression interpolation within selectors" in {
-		assert(parse(
-			""".myClass &-active
-				|	123
-				|""".stripMargin) === Rule(Seq(Left(".myClass "), Right(ParentSelector), Left("-active")), Block(Scalar(123))))
-	}
-
 	it should "correctly parse a type alias declaration" in {
 		assert(parse("@type NumOrString = Scalar | String") ===
 			TypeAliasDeclaration(Type.TypeAlias("NumOrString"), Type.Union(Set(Type.Scalar, Type.String))))
