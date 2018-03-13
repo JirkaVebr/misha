@@ -190,7 +190,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def noOp: Rule1[Statement] = rule {
-		SingleLineWhitespace ~ '\n' ~ !INDENT ~ push(NoOp)
+		atomic(ignoreCase("@no") ~ optional('-') ~ ignoreCase("op")) ~ push(NoOp)
 	}
 
 	private def anonymousFunction: Rule1[Expression] = rule {
@@ -219,7 +219,8 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		(property ~ EndOfLine) |
 		(Expression ~ EndOfLine) |
 		(rule ~ EndOfLine) |
-		(propertyFunctionCall ~ EndOfLine)
+		(propertyFunctionCall ~ EndOfLine) |
+		(noOp ~ EndOfLine)
 	}
 
 	private def typeAliasDeclaration: Rule1[TypeAliasDeclaration] = rule {

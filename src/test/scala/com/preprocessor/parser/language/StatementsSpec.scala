@@ -99,5 +99,13 @@ class StatementsSpec extends BaseParserSpec {
 			)))))
 	}
 
+	it should "correctly parse noOp" in {
+		assert(parse("@noOp") === NoOp)
+		assert(parse("@noop") === NoOp)
+		assert(parse("@no-op") === NoOp)
+		assert(parse("@no-Op") === NoOp)
+		assert(parse("@NOOP") === NoOp)
+	}
+
 	protected def parse(input: java.lang.String): Statement = parseLanguageRule(input, _.Statement)
 }
