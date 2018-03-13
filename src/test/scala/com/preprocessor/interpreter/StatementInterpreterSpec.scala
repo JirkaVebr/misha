@@ -5,8 +5,8 @@ import com.preprocessor.ast.Language.Statement._
 import com.preprocessor.ast.Language.Term.Variable
 import com.preprocessor.ast.Language.Type.TypeAlias
 import com.preprocessor.ast.Language.{Type, Value, ValueSymbolDeclaration}
-import com.preprocessor.ast.Symbol.{RuleContextSymbol, PropertySymbol, TypeSymbol, ValueSymbol}
-import com.preprocessor.ast.{PropertyRecord, RuleContext, ValueRecord}
+import com.preprocessor.ast.Symbol.{PropertySymbol, TypeSymbol, ValueSymbol}
+import com.preprocessor.ast.{PropertyRecord, ValueRecord}
 import com.preprocessor.error.ProgramError
 
 import scala.util.{Failure, Success}
@@ -110,21 +110,6 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		assertThrows[ProgramError](run(
 			Property(Value.String("width"), Value.Tuple2(Value.Percentage(80), Value.Percentage(80))))
 		)
-	}
-
-	it should "correctly interpret rules" in {
-		val newState = run(Rule(Seq(Left(".class")), Block(Sequence(
-			Property(Value.String("line-height"), Value.Scalar(1.6)),
-			Property(Value.String("width"), Value.Percentage(80))
-		))))
-		val ruleEnvironment = newState.environment.subEnvironments.head
-
-		// TODO
-		//assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleContext.RawRuleHead(List(Right(".class"))))
-		assert(ruleEnvironment.lookupCurrent(PropertySymbol).get === List(
-			PropertyRecord("width", "80%"),
-			PropertyRecord("line-height", "1.6")
-		))
 	}
 
 	it should "correctly run a no-op" in {
