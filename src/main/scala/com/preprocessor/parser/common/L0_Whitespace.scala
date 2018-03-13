@@ -22,6 +22,14 @@ trait L0_Whitespace extends org.parboiled2.Parser {
 		oneOrMore(SingleLineWhitespaceChar)
 	}
 
+	def MultiLineWhitespace: Rule0 = rule {
+		quiet(zeroOrMore(MultiLineWhitespaceChar))
+	}
+
+	def MandatoryMultiLineWhitespace: Rule0 = rule {
+		oneOrMore(MultiLineWhitespaceChar)
+	}
+
 	def EndOfLine: Rule0 = rule {
 		SingleLineWhitespace ~ End
 	}
@@ -61,5 +69,6 @@ object L0_Whitespace {
 
 	private val End: CharPredicate = CharPredicate('\n') ++ Characters.EOI
 	private val SingleLineWhitespaceChar = CharPredicate(" \f\r\t")
-	private val AnyWhiteSpaceChar: CharPredicate = SingleLineWhitespaceChar ++ CharPredicate(s"\n$INDENT$DEDENT")
+	private val MultiLineWhitespaceChar: CharPredicate = SingleLineWhitespaceChar ++ "\n"
+	private val AnyWhiteSpaceChar: CharPredicate = MultiLineWhitespaceChar ++ CharPredicate(s"$INDENT$DEDENT")
 }
