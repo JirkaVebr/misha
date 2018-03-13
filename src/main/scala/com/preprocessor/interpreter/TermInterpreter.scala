@@ -45,7 +45,7 @@ object TermInterpreter {
 	private def runMagicSymbol(symbol: MagicSymbol)(implicit state: EvalState): Try[EvalState] = symbol match {
 		case ParentSelector => state.environment.lookupContext() match {
 			case Some(context) => state.evaluatedTo(Value.String(
-				RuleHeadEmitter.emit(StringBuilder.newBuilder, context).mkString
+				RuleHeadEmitter.emit(context)(StringBuilder.newBuilder).mkString
 			))
 			case None => state.evaluatedTo(Value.String("")) // throw error?
 		}

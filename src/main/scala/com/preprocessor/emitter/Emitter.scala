@@ -8,39 +8,41 @@ class Emitter(val finalEnvironment: Environment) {
 
 
 	def emit(): StringBuilder =
-		emitEnvironment(StringBuilder.newBuilder, finalEnvironment)
+		emitEnvironment(finalEnvironment)(StringBuilder.newBuilder)
 
-	private def emitEnvironment(builder: StringBuilder, environment: Environment): StringBuilder = {
+	private def emitEnvironment(environment: Environment)(implicit builder: StringBuilder): StringBuilder = {
 		val properties = environment.lookupCurrent(PropertySymbol).getOrElse(List.empty)
 		val ruleContextSymbol = environment.lookupCurrent(RuleContextSymbol)
 
 		if (ruleContextSymbol.nonEmpty)
-			emitRuleStart(builder, ruleContextSymbol.get)
+			emitRuleStart(ruleContextSymbol.get)
 
-		emitProperties(builder, properties)
+		emitProperties(properties)
 
 		if (environment.subEnvironments.nonEmpty)
-			emitSubEnvironments(builder, environment)
+			emitSubEnvironments(environment)
 
 		if (ruleContextSymbol.nonEmpty)
-			emitRuleEnd(builder, ruleContextSymbol.get)
+			emitRuleEnd(ruleContextSymbol.get)
 		else
 			builder
 	}
 
-	private def emitRuleStart(builder: StringBuilder, head: RuleContextSymbol.Value): StringBuilder =
-		RuleHeadEmitter.emit(builder, head).append(" {\n")
+	private def emitRuleStart(head: RuleContextSymbol.Value)(implicit builder: StringBuilder): StringBuilder =
+		RuleHeadEmitter.emit(head).append(" {\n")
 
-	private def emitRuleEnd(builder: StringBuilder, head: RuleContextSymbol.Value): StringBuilder =
+	private def emitRuleEnd(head: RuleContextSymbol.Value)(implicit builder: StringBuilder): StringBuilder =
 		builder.append("}\n")
 
-	private def emitProperties(builder: StringBuilder, properties: List[PropertyRecord]): StringBuilder =
+	private def emitProperties(properties: List[PropertyRecord])(implicit builder: StringBuilder): StringBuilder =
 		properties.reverse.map((property: PropertyRecord) =>
 			'\t' + property.name + ": " + property.value + ";\n" // TODO handle flags
 		).foldLeft(builder)(_.append(_))
 
-	private def emitSubEnvironments(builder: StringBuilder, environment: Environment): StringBuilder =
-		environment.subEnvironments.foldLeft(builder)(emitEnvironment)
+	private def emitSubEnvironments(environment: Environment)(implicit builder: StringBuilder): StringBuilder =
+		environment.subEnvironments.foldLeft(builder)((builder, environment: Environment) =>
+			emitEnvironment(environment)(builder)
+		)
 
 	//private def
 
