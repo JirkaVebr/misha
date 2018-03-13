@@ -166,13 +166,13 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def subExpression: Rule1[Expression] = rule {
-		AnyWhitespaceAround("(") ~ Expression ~ ')'
+		SingleLineWhitespace ~ '(' ~ AnyWhitespace ~ Expression ~ AnyWhitespace ~ ')'
 	}
 
 	private def conditional: Rule1[Conditional] = rule {
 		// The error is just IntelliJ being dumb.
-		(Token("@if") ~!~ subExpression ~ SingleLineWhitespace ~ Expression ~
-			optional(WhitespaceAround("@else") ~!~ Expression)) ~> (
+		(Token("@if") ~!~ MandatoryMultiLineWhitespace ~ subExpression ~ SingleLineWhitespace ~ Expression ~
+			optional(MultiLineWhitespace ~ Token("@else") ~!~ (block | (MandatorySingleLineWhitespace ~ Expression)))) ~> (
 			(condition: Expression, consequent: Expression, alternative: Option[Expression]) => Conditional(
 				condition, consequent, alternative
 			)

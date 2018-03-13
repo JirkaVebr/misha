@@ -146,10 +146,17 @@ class ExpressionSpec extends BaseParserSpec {
 
 	it should "correctly parse a conditional spanning several liens" in {
 		assert(parse(
+			"""@if ($myVariable) 1
+				|@else
+				|	2
+				|""".stripMargin) ===
+			Conditional(Variable("myVariable"), Scalar(1), Some(Block(Scalar(2)))))
+		assert(parse(
 			"""@if ($myVariable)
 				|	1
 				|@else
-				|	2""".stripMargin) ===
+				|	2
+				|""".stripMargin) ===
 			Conditional(Variable("myVariable"), Block(Scalar(1)), Some(Block(Scalar(2)))))
 	}
 
