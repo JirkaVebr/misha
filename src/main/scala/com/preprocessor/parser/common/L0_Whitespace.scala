@@ -69,6 +69,6 @@ object L0_Whitespace {
 
 	private val End: CharPredicate = CharPredicate('\n') ++ Characters.EOI
 	private val SingleLineWhitespaceChar = CharPredicate(" \f\r\t")
-	private val MultiLineWhitespaceChar: CharPredicate = SingleLineWhitespaceChar ++ "\n"
+	private val MultiLineWhitespaceChar: CharPredicate = SingleLineWhitespaceChar ++ '\n'
 	private val AnyWhiteSpaceChar: CharPredicate = MultiLineWhitespaceChar ++ CharPredicate(s"$INDENT$DEDENT")
 }
