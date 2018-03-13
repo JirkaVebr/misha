@@ -25,9 +25,9 @@ object BinaryOperationInterpreter {
 				case Success((left :: right :: Nil, newState)) => binaryOperation.operator match {
 					case operator: NumericOperator => runNumericOperator(operator, left, right)(newState)
 					case operator: Comparison => runComparison(operator, left, right)(newState)
-					case _ => state.failFatally(CompilerError()) // TODO
+					case _ => state.failFatally(CompilerError("TODO")) // TODO
 				}
-				case _ => state.failFatally(CompilerError()) // TODO
+				case _ => state.failFatally(CompilerError("TODO")) // TODO
 			}
 	}
 

@@ -38,7 +38,7 @@ object TermInterpreter {
 			case Failure(reason) => Failure(reason)
 			case Success((first :: second :: Nil, finalState)) =>
 				finalState ~> Value.Tuple2(first.value, second.value)
-			case _ => state.failFatally(CompilerError()) // TODO
+			case _ => state.failFatally(CompilerError("TODO")) // TODO
 		}
 	}
 
