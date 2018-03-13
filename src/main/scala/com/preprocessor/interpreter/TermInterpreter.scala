@@ -4,6 +4,7 @@ import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Term._
 import com.preprocessor.ast.Language.Value._
 import com.preprocessor.ast.Language.{Term, Value}
+import com.preprocessor.ast.RuleContext.ProcessedRuleHead
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError.ReadingUndefinedVariable
 
@@ -20,9 +21,7 @@ object TermInterpreter {
 				case list: Value.List => runListValue(list)
 			}
 		}
-		case symbol: MagicSymbol => symbol match {
-			case ParentSelector => sys.error("todo") // TODO
-		}
+		case symbol: MagicSymbol => runMagicSymbol(symbol)
 		case variable: Variable => runVariable(variable)
 		case FunctionCall(function, arguments) => sys.error("todo") // TODO
 		case tuple: Term.Tuple2 => runTupleTerm(tuple)
@@ -39,6 +38,15 @@ object TermInterpreter {
 			case Success((first :: second :: Nil, finalState)) =>
 				finalState ~> Value.Tuple2(first.value, second.value)
 			case _ => state.failFatally(CompilerError()) // TODO
+		}
+	}
+
+	private def runMagicSymbol(symbol: MagicSymbol)(implicit state: EvalState): Try[EvalState] = symbol match {
+		case ParentSelector => state.environment.lookupContext() match {
+			case Some(context) => context match {
+				case processed: ProcessedRuleHead => state.evaluatedTo(Value.String(processed.originalHead))
+			}
+			case None => state.evaluatedTo(Value.String("")) // throw error?
 		}
 	}
 

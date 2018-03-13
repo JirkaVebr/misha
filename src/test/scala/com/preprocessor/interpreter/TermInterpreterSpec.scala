@@ -1,13 +1,13 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Expression.{LogicalNegation, UnaryOperation}
-import com.preprocessor.ast.Language.Term.{Term, Variable}
+import com.preprocessor.ast.Language.Term.{ParentSelector, Term, Variable}
 import com.preprocessor.ast.Language.{Term, Type, Value}
+import com.preprocessor.ast.RuleContext.RuleSelector
+import com.preprocessor.ast.Selector.Class
 import com.preprocessor.ast.Symbol.ValueSymbol
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
-
-import scala.util.{Failure, Success}
 
 class TermInterpreterSpec extends BaseInterpreterSpec {
 
@@ -33,6 +33,14 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		)).valueRecord.value === Value.Tuple2(
 			Value.Boolean(false), Value.String("foo")
 		))
+	}
+
+	it should "correctly interpret the parent selector magic symbol" in {
+		assert(run(ParentSelector).valueRecord.value === Value.String(""))
+
+		val originalRuleHead = ".myClass"
+		val newState = EvalState(testEnvironment.pushSubScope(RuleSelector(Class("myClass"), originalRuleHead)))
+		assert(run(ParentSelector)(newState).valueRecord.value === Value.String(originalRuleHead))
 	}
 
 	protected def run(term: Term)(implicit state: EvalState): EvalState =
