@@ -55,13 +55,13 @@ class SelectorSpec extends BaseParserSpec {
 	}
 
 	it should "correctly parse sub-selectors" in {
-		assert(parse(":matches(h1)") === SubSelector(PseudoClasses.Matches, Element(QualifiedElement(H1))))
-		assert(parse(":not(*)") === SubSelector(PseudoClasses.Not, Element(QualifiedElement(AnyElement))))
+		assert(parse(":matches(h1)") === RawSubSelector(PseudoClasses.Matches, Element(QualifiedElement(H1))))
+		assert(parse(":not(*)") === RawSubSelector(PseudoClasses.Not, Element(QualifiedElement(AnyElement))))
 	}
 
 	it should "correctly parse nth-* pseudo classes" in {
-		assert(parse(":nth-of-type(2n + 3)") === Nth(PseudoClasses.OfType, AnPlusB(2, 3)))
-		assert(parse(":nth-child(even of div)") === Nth(PseudoClasses.Child, AnPlusB(2, 0), Some(Element(QualifiedElement(Div)))))
+		assert(parse(":nth-of-type(2n + 3)") === RawNth(PseudoClasses.OfType, AnPlusB(2, 3)))
+		assert(parse(":nth-child(even of div)") === RawNth(PseudoClasses.Child, AnPlusB(2, 0), Some(Element(QualifiedElement(Div)))))
 
 		assertThrows[ParseError](parse(":nth-of-type(2nn)"))
 	}
@@ -95,10 +95,10 @@ class SelectorSpec extends BaseParserSpec {
 	}
 
 	it should "correctly parse complex selectors" in {
-		assert(parse("input:focus + .myLabel::before > h1") === Complex(NextSibling, RawCompound(Seq(
+		assert(parse("input:focus + .myLabel::before > h1") === RawComplex(NextSibling, RawCompound(Seq(
 			Element(QualifiedElement(Input)),
 			NonFunctional(PseudoClasses.NonFunctional.Focus)
-		)), Complex(Child, RawCompound(Seq(
+		)), RawComplex(Child, RawCompound(Seq(
 			Class("myLabel"),
 			PseudoElement(PseudoElements.Before)
 		)), Element(QualifiedElement(H1)))))
@@ -114,7 +114,7 @@ class SelectorSpec extends BaseParserSpec {
 				Element(QualifiedElement(H1)),
 				PseudoElement(PseudoElements.Before)
 			)),
-			Complex(NextSibling, Element(QualifiedElement(H2)), RawCompound(Seq(
+			RawComplex(NextSibling, Element(QualifiedElement(H2)), RawCompound(Seq(
 				Element(QualifiedElement(P)),
 				PseudoElement(PseudoElements.After)
 			))),

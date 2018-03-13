@@ -43,7 +43,7 @@ trait L5_Selector { this: org.parboiled2.Parser
 
 	private def complexSelector: Rule1[Selector] = rule { // Right associative
 		compoundSelector ~ zeroOrMore(combinator ~ complexSelector ~> (
-			(left: Selector, combinator: Combinator, right: Selector) => Complex(combinator, left, right)
+			(left: Selector, combinator: Combinator, right: Selector) => RawComplex(combinator, left, right)
 		))
 	}
 
@@ -59,13 +59,13 @@ trait L5_Selector { this: org.parboiled2.Parser
 		*/
 	private def compoundSelector: Rule1[Selector] = rule {
 		oneOrMore(simpleSelector) ~> (
-			(selectors: Seq[SimpleSelector]) =>
+			(selectors: Seq[Selector]) =>
 				if (selectors.lengthCompare(1) == 0) selectors.head
 				else RawCompound(selectors)
 		)
 	}
 
-	private def simpleSelector: Rule1[SimpleSelector] = rule {
+	private def simpleSelector: Rule1[Selector] = rule {
 		run {
 			(cursorChar: @switch) match {
 				case '#' => id
@@ -89,7 +89,7 @@ trait L5_Selector { this: org.parboiled2.Parser
 		QualifiedElementName ~> Element
 	}
 
-	private def pseudo: Rule1[SimpleSelector] = rule {
+	private def pseudo: Rule1[Selector] = rule {
 		':' ~!~ (pseudoElement | pseudoClass)
 	}
 
@@ -106,7 +106,7 @@ trait L5_Selector { this: org.parboiled2.Parser
 		)
 	}
 
-	private def pseudoClass: Rule1[PseudoClass] = rule {
+	private def pseudoClass: Rule1[Selector] = rule {
 		CssIdentifier ~ run {
 			(cursorChar: @switch) match {
 				case '(' => '(' ~!~ SingleLineWhitespace ~ functionalPseudoClass ~ SingleLineWhitespace ~ ')'
@@ -141,17 +141,17 @@ trait L5_Selector { this: org.parboiled2.Parser
 	}
 
 
-	private def functionalPseudoClass: Rule[CssIdentifier :: HNil, PseudoClass :: HNil] = rule {
+	private def functionalPseudoClass: Rule[CssIdentifier :: HNil, Selector :: HNil] = rule {
 		run((identifier: CssIdentifier) => {
 			val normalized = identifier.value.toLowerCase
 
 			PseudoClasses.subSelectors.get(normalized) match {
-				case Some(subSelector) => Selector ~> (SubSelector(subSelector, _))
+				case Some(subSelector) => Selector ~> (RawSubSelector(subSelector, _))
 				case None => PseudoClasses.nthPseudoClasses.get(normalized) match {
 					case Some(nth) =>
 						AnPlusB ~ optional(
 							MandatorySingleLineWhitespace ~ Token("of") ~ MandatorySingleLineWhitespace ~ Selector
-						) ~> (Nth(nth, _, _))
+						) ~> (RawNth(nth, _, _))
 					case None => normalized match {
 						case PseudoClasses.Dir.name => dirPseudoClass
 						case PseudoClasses.Drop.name => dropPseudoClass
