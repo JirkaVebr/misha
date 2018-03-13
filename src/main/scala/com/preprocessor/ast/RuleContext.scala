@@ -1,12 +1,12 @@
 package com.preprocessor.ast
 
-import com.preprocessor.ast.Selector.Selector
+import com.preprocessor.ast.Selector.NormalizedSelector
 
 object RuleContext {
 
 	sealed trait RuleContext
 
-	case class RuleSelector(selector: Selector) extends RuleContext
+	case class RuleSelector(selector: NormalizedSelector) extends RuleContext
 
 
 	sealed trait AtRule extends RuleContext
