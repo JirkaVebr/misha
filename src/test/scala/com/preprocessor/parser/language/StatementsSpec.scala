@@ -48,14 +48,14 @@ class StatementsSpec extends BaseParserSpec {
 		assert(parse(
 			"""d{i}v
 				|	123
-				|""".stripMargin) === Rule(Seq(Left("d"), Right(Value.String("i")), Left("v")), Block(Scalar(123))))
+				|""".stripMargin) === Rule(Seq(Left("d"), Right(Seq(Value.String("i"))), Left("v")), Block(Scalar(123))))
 		assert(parse(
 			"""*:first{"-" + "type"}
 				|	123
 				|""".stripMargin) ===
 			Rule(Seq(
 				Left("*:first"),
-				Right(BinaryOperation(Addition, Value.String("-"), Value.String("type")))
+				Right(Seq(BinaryOperation(Addition, Value.String("-"), Value.String("type"))))
 			), Block(Scalar(123))))
 	}
 

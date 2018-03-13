@@ -12,9 +12,9 @@ object RuleInterpreter {
 
 	def run(rule: Rule)(implicit state: EvalState): Try[EvalState] = {
 		val headExpressions = rule.head.foldRight(List.empty[Expression])({
-			case (component, expressions) => component match {
-				case Right(expression) => expression :: expressions
-				case _ => expressions
+			case (component, rest) => component match {
+				case Right(expressions) => expressions.toList ++ rest
+				case _ => rest
 			}
 		})
 		Interpreter.chainRun[Expression](

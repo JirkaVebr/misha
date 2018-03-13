@@ -259,9 +259,14 @@ trait L5_Expressions { this: org.parboiled2.Parser
 
 	private def ruleHead: Rule1[RuleHead] = rule {
 		oneOrMore(
-			('{' ~ SingleLineWhitespace ~ Expression ~ SingleLineWhitespace ~ '}' ~> (
-				(expression: Expression) => Right(expression)
-			)) | (
+			('{' ~ SingleLineWhitespace ~
+				(
+					(undelimitedListBody(anyWhitespaceSeparator) ~ SingleLineWhitespace ~ '}') |
+					(delimitedListBody ~ SingleLineWhitespace ~ '}')
+				) ~> (
+					(expressions: Seq[Expression]) => Right(expressions)
+				)
+			) | (
 				clearSB() ~ oneOrMore(
 					(!RuleHeadSpecialChars ~ ANY ~ appendSB()) |
 						('\\' ~ '{' ~ appendSB('{')) |
