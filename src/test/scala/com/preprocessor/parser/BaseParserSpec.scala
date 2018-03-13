@@ -23,8 +23,8 @@ class BaseParserSpec extends BaseSpec {
 		result match {
 			case Failure(exception) => exception match {
 				case e: ParseError =>
-					println(e.traces)
-					println(e.format(parser))
+					//println(e.traces)
+					//println(e.format(parser))
 					result
 				case _ => result
 			}
