@@ -30,8 +30,8 @@ object SelectorEmitter {
 			chainEmit(selectors)
 	}
 
-	private def emitElement(element: Element)(implicit builder: StringBuilder): StringBuilder =
-		element.element.namespace match {
+	private def emitElement(element: Element)(implicit builder: StringBuilder): StringBuilder = {
+		val withNamespace = element.element.namespace match {
 			case Some(namespace) => builder.append((namespace match {
 				case NamedNamespace(name) => name
 				case AnyNamespace => "*"
@@ -39,6 +39,8 @@ object SelectorEmitter {
 			}) + "|")
 			case None => builder
 		}
+		withNamespace.append(element.element.element.name)
+	}
 
 	private def emitPseudoElement(element: PseudoElement)(implicit builder: StringBuilder): StringBuilder =
 		builder.append("::" + element.element.name)
@@ -46,7 +48,7 @@ object SelectorEmitter {
 	private def emitAttribute(attribute: Attribute)(implicit builder: StringBuilder): StringBuilder =
 		builder.append("[" + (attribute.name.namespace match {
 			case NamedNamespace(name) => name + "|"
-			case AnyNamespace => "*"
+			case AnyNamespace => "*|"
 			case NoNamespace => ""
 		}) + attribute.name.name + (attribute.target match {
 			case Some(matchTarget) => matchTarget.matcher.symbol + matchTarget.value
