@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter.validators
 
 import com.preprocessor.ast.Selector._
-import com.preprocessor.error.SelectorError.{IllegalSelectorAfterPseudoElement, MultipleIdSelectors, MultiplePseudoElements, MultipleTypeSelectors}
+import com.preprocessor.error.SelectorError._
 import com.preprocessor.error.{CompilerError, SelectorError}
 import com.preprocessor.interpreter.Environment
 
@@ -22,31 +22,18 @@ object SelectorNormalizer {
 				}
 				case None => Success(Nth(kind, ab))
 			}
-			case rawCompound: RawCompound => normalizeRawCompound(rawCompound)
-			case rawComplex: RawComplex => normalizeRawComplex(rawComplex)
-			case RawSelectorList(selectors) => chainNormalize(selectors) match {
-				case Failure(exception) => Failure(exception)
-
-				// TODO compare length
-				case Success(normalizedSelectors) => Success(SelectorList(normalizedSelectors.toSet))
-			}
+			case rawCompound: RawCompound =>
+				normalizeRawCompound(rawCompound)
+			case rawComplex: RawComplex =>
+				normalizeRawComplex(rawComplex)
+			case rawSelectorList: RawSelectorList =>
+				normalizeSelectorList(rawSelectorList)
 		}
 		case normalized: NormalizedSelector => Success(normalized) // TODO validate
 	}
 
-	def chainNormalize(selectors: Seq[Selector])(implicit environment: Environment): Try[Seq[NormalizedSelector]] =
-		if (selectors.isEmpty) Success(Seq.empty[NormalizedSelector])
-		else {
-			normalize(selectors.head) match {
-				case Failure(exception) => Failure(exception)
-				case Success(normalizedHead) => chainNormalize(selectors.tail) match {
-					case Failure(exception) => Failure(exception)
-					case Success(normalizedTail) => Success(normalizedHead +: normalizedTail)
-				}
-			}
-		}
 
-	def normalizeRawCompound(rawCompound: RawCompound)(implicit environment: Environment): Try[Compound] = {
+	private def normalizeRawCompound(rawCompound: RawCompound)(implicit environment: Environment): Try[Compound] = {
 		chainNormalize(rawCompound.selectors) match {
 			case Failure(exception) => Failure(exception)
 			case Success(selectors) => // Assuming there are at least two selectors
@@ -110,13 +97,40 @@ object SelectorNormalizer {
 		}
 	}
 
+
 	// TODO validate illegal combinator use
-	def normalizeRawComplex(rawComplex: RawComplex)(implicit environment: Environment): Try[Complex] =
+	private def normalizeRawComplex(rawComplex: RawComplex)(implicit environment: Environment): Try[Complex] =
 		chainNormalize(rawComplex.left :: rawComplex.right :: Nil) match {
 			case Failure(exception) => Failure(exception)
 			case Success(normalizedLeft :: normalizedRight :: Nil) =>
 				Success(Complex(rawComplex.combinator, normalizedLeft, normalizedRight))
 			case _ => sys.error("this shouldn't happen") // TODO
+		}
+
+
+	private def normalizeSelectorList(list: RawSelectorList)(implicit environment: Environment): Try[SelectorList] =
+		chainNormalize(list.selectors) match {
+			case Failure(exception) => Failure(exception)
+			case Success(normalizedSelectors) =>
+				val normalizedSet = normalizedSelectors.toSet
+
+				if (list.selectors.lengthCompare(normalizedSet.size) > 0)
+					Failure(SelectorError(DuplicateSelectorInList))
+				else
+					Success(SelectorList(normalizedSet))
+		}
+
+
+	private def chainNormalize(selectors: Seq[Selector])(implicit environment: Environment): Try[Seq[NormalizedSelector]] =
+		if (selectors.isEmpty) Success(Seq.empty[NormalizedSelector])
+		else {
+			normalize(selectors.head) match {
+				case Failure(exception) => Failure(exception)
+				case Success(normalizedHead) => chainNormalize(selectors.tail) match {
+					case Failure(exception) => Failure(exception)
+					case Success(normalizedTail) => Success(normalizedHead +: normalizedTail)
+				}
+			}
 		}
 
 }
