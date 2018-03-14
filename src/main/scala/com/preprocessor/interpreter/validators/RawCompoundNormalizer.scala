@@ -10,57 +10,62 @@ import scala.util.{Failure, Success, Try}
 
 object RawCompoundNormalizer {
 
+	private case class Components(element: Option[Element], id: Option[Id], subClasses: Set[SimpleSelector],
+																pseudoElement: Option[PseudoElement], furtherPseudoClasses: Set[PseudoClass]) {
+
+		def withNewElement(element: Element): Success[Components] =
+			withNew(Components(Some(element), id, subClasses, pseudoElement, furtherPseudoClasses))
+
+		def withNewId(id: Id): Success[Components] =
+			withNew(Components(element, Some(id), subClasses, pseudoElement, furtherPseudoClasses))
+
+		def withNewSubClass(subClass: SimpleSelector): Success[Components] =
+			withNew(Components(element, id, subClasses + subClass, pseudoElement, furtherPseudoClasses))
+
+		def withNewPseudoElement(pseudoElement: PseudoElement): Success[Components] =
+			withNew(Components(element, id, subClasses, Some(pseudoElement), furtherPseudoClasses))
+
+		def withNewFurtherPseudoClass(pseudoClass: PseudoClass): Success[Components] =
+			withNew(Components(element, id, subClasses, pseudoElement, furtherPseudoClasses + pseudoClass))
+
+		private def withNew(components: Components): Success[Components] =
+			Success(components)
+
+	}
+
+	private type Accumulator = Try[Components]
+
+
 	def normalize(rawCompound: RawCompound)(implicit environment: Environment): Try[Compound] = {
 		chainNormalize(rawCompound.selectors) match {
 			case Failure(exception) => Failure(exception)
 			case Success(selectors) => // Assuming there are at least two selectors
-				type Components = (Option[Element], Option[Id], Set[SimpleSelector], Option[PseudoElement], Set[PseudoClass])
-				type Accumulator = Try[Components]
-				val initialValue: Accumulator = Success((None, None, Set.empty[SimpleSelector], None, Set.empty[PseudoClass]))
+				val initialValue: Accumulator =
+					Success(Components(None, None, Set.empty[SimpleSelector], None, Set.empty[PseudoClass]))
 
 				val result: Accumulator = selectors.foldLeft[Accumulator](initialValue)(
 					(accumulator: Accumulator, selector: NormalizedSelector) => accumulator match {
 						case Failure(exception) =>
 							Failure(exception)
-						case Success((element, id, subClasses, pseudoElement, furtherPseudoClasses)) => selector match {
+						case Success(components) => selector match {
 							case simple: SimpleSelector => simple match {
-								case Element(anotherElement) => element match { // TODO check everything else is empty
-									case Some(_) =>
-										Failure(SelectorError(MultipleTypeSelectors))
-									case None => pseudoElement match {
-										case Some(_) =>
-											Failure(SelectorError(IllegalSelectorAfterPseudoElement))
-										case None =>
-											/*anotherElement.element match { TODO check the env for custom element name
-												case CustomElement(name) =>
-												case _ =>
-											}*/
-											Success(Some(Element(anotherElement)), id, subClasses, pseudoElement, furtherPseudoClasses)
-									}
-								}
-								case PseudoElement(anotherPseudoElement) => pseudoElement match {
-									case Some(_) =>
-										Failure(SelectorError(MultiplePseudoElements))
-									case None =>
-										/*anotherPseudoElement match { TODO check the env for custom pseudo element name
-											case CustomPseudoElement(name) =>
-											case _ =>
-										}*/
-										Success(element, id, subClasses, Some(PseudoElement(anotherPseudoElement)), furtherPseudoClasses)
-								}
-								case anotherId: Id => id match {
+								case anotherElement: Element =>
+									normalizeElement(anotherElement, components)
+								case pseudoElement: PseudoElement =>
+									normalizePseudoElement(pseudoElement, components)
+								case anotherId: Id => components.id match {
 									case Some(_) =>
 										Failure(SelectorError(MultipleIdSelectors))
 									case None =>
-										Success(element, Some(anotherId), subClasses, pseudoElement, furtherPseudoClasses)
+										components.withNewId(anotherId)
 								}
 								case Attribute(_, _, _) | Class(_) =>
-									Success(element, id, subClasses + simple, pseudoElement, furtherPseudoClasses)
-								case pseudo: PseudoClass => pseudoElement match {
+									components.withNewSubClass(simple)
+								case pseudo: PseudoClass => components.pseudoElement match {
 									case Some(_) =>
-										Success(element, id, subClasses, pseudoElement, furtherPseudoClasses + pseudo)
+										components.withNewFurtherPseudoClass(pseudo)
 									case None =>
-										Success(element, id, subClasses + pseudo, pseudoElement, furtherPseudoClasses)
+										components.withNewSubClass(pseudo)
 								}
 							}
 							case _ =>
@@ -73,7 +78,7 @@ object RawCompoundNormalizer {
 				result match {
 					case Failure(exception) =>
 						Failure(exception)
-					case Success((element, id, subClasses, pseudoElement, furtherPseudoClasses)) =>
+					case Success(Components(element, id, subClasses, pseudoElement, furtherPseudoClasses)) =>
 						val allSubClasses = id match {
 							case Some(idSelector) => subClasses + idSelector
 							case None => subClasses
@@ -82,5 +87,36 @@ object RawCompoundNormalizer {
 				}
 		}
 	}
+
+
+	private def normalizeElement(element: Element, components: Components)(implicit environment: Environment): Accumulator =
+		components.element match { // TODO check everything else is empty
+			case Some(_) =>
+				Failure(SelectorError(MultipleTypeSelectors))
+			case None => components.pseudoElement match {
+				case Some(_) =>
+					Failure(SelectorError(IllegalSelectorAfterPseudoElement))
+				case None =>
+					/*anotherElement.element match { TODO check the env for custom element name
+						case CustomElement(name) =>
+						case _ =>
+					}*/
+					components.withNewElement(element)
+			}
+		}
+
+
+	private def normalizePseudoElement(pseudoElement: PseudoElement, components: Components)(implicit environment: Environment): Accumulator =
+		components.pseudoElement match {
+			case Some(_) =>
+				Failure(SelectorError(MultiplePseudoElements))
+			case None =>
+				/*anotherPseudoElement match { TODO check the env for custom pseudo element name
+					case CustomPseudoElement(name) =>
+					case _ =>
+				}*/
+				components.withNewPseudoElement(pseudoElement)
+		}
+
 
 }
