@@ -1,12 +1,12 @@
 package com.preprocessor.emitter
 
 import com.preprocessor.ast.Namespace.{AnyNamespace, NamedNamespace, NoNamespace}
-import com.preprocessor.ast.{MatchTarget, QualifiedAttribute, QualifiedElement}
+import com.preprocessor.ast.{MatchTarget, QualifiedAttribute, QualifiedElement, Selector}
 import com.preprocessor.ast.Selector._
 import com.preprocessor.spec.AttributeSelector.Equals
 import com.preprocessor.spec.HtmlElements.Div
-import com.preprocessor.spec.PseudoClasses.NonFunctional.FirstChild
-import com.preprocessor.spec.PseudoElements.Before
+import com.preprocessor.spec.PseudoClasses.NonFunctional.{FirstChild, Focus, Hover}
+import com.preprocessor.spec.PseudoElements.{After, Before}
 
 class SelectorEmitterSpec extends BaseEmitterSpec {
 
@@ -52,6 +52,37 @@ class SelectorEmitterSpec extends BaseEmitterSpec {
 
 	it should "emit non-functional pseudo-classes" in {
 		assert(emit(NonFunctional(FirstChild)) === ":first-child")
+	}
+
+	it should "emit compound selectors" in {
+		val element = Element(QualifiedElement(Div))
+		val class1 = Class("myClass1")
+		val class2 = Class("myClass2")
+		val id = Id("myId")
+		val focus = NonFunctional(Focus)
+		val hover = NonFunctional(Hover)
+		val after = Selector.PseudoElement(After)
+
+		assert(emit(Compound(
+			Some(element),
+			Set(class1, class2, id, focus),
+			Some(after),
+			Set(hover)
+		)) === "div.myClass1.myClass2#myId:focus::after:hover")
+
+		assert(emit(Compound(
+			None,
+			Set(class1, class2, id, focus),
+			Some(after),
+			Set(hover)
+		)) === ".myClass1.myClass2#myId:focus::after:hover")
+
+		assert(emit(Compound(
+			Some(element),
+			Set(class1, class2, id, focus),
+			None,
+			Set(hover)
+		)) === "div.myClass1.myClass2#myId:focus:hover")
 	}
 
 
