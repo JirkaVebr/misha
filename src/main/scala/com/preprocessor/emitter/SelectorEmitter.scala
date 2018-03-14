@@ -12,7 +12,8 @@ object SelectorEmitter {
 				emitElement(element)
 			case element: PseudoElement =>
 				emitPseudoElement(element)
-			case Attribute(name, target, modifier) => ???
+			case attribute: Attribute =>
+				emitAttribute(attribute)
 			case Id(name) => builder.append("#" + name)
 			case Class(name) => builder.append("." + name)
 			case pseudoClass: PseudoClass => pseudoClass match {
@@ -48,6 +49,20 @@ object SelectorEmitter {
 
 	private def emitPseudoElement(element: PseudoElement)(implicit builder: StringBuilder): StringBuilder =
 		builder.append("::" + element.element.name)
+
+	private def emitAttribute(attribute: Attribute)(implicit builder: StringBuilder): StringBuilder =
+		builder.append("[" + (attribute.name.namespace match {
+			case NamedNamespace(name) => name + "|"
+			case AnyNamespace => "*"
+			case NoNamespace => ""
+		}) + attribute.name.name + (attribute.target match {
+			case Some(matchTarget) => matchTarget.matcher.symbol + matchTarget.value
+			case None => ""
+		}) + (attribute.modifier match {
+			case Some(modifier) => " " + modifier.name
+			case None => ""
+		}) + "]")
+
 
 	private def emitCompound(compound: Compound)(implicit builder: StringBuilder): StringBuilder = {
 		val withElement = compound.element match {
