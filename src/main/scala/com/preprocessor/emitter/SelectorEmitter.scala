@@ -26,8 +26,8 @@ object SelectorEmitter {
 			emitCompound(compound)
 		case complex: Complex =>
 			emitComplex(complex)
-		case SelectorList(selectors) =>
-			chainEmit(selectors)
+		case selectorList: SelectorList =>
+			emitSelectorList(selectorList)
 	}
 
 	private def emitElement(element: Element)(implicit builder: StringBuilder): StringBuilder = {
@@ -101,6 +101,14 @@ object SelectorEmitter {
 
 	private def emitComplex(complex: Complex)(implicit builder: StringBuilder): StringBuilder =
 		emit(complex.right)(emit(complex.left)(builder).append(complex.combinator.emit))
+
+
+	private def emitSelectorList(list: SelectorList)(implicit builder: StringBuilder): StringBuilder =
+		// Assuming there are always at least two elements
+		list.selectors.tail.foldLeft(emit(list.selectors.head)){
+			case (intermediateBuilder, ruleHead) => emit(ruleHead)(intermediateBuilder.append(", "))
+		}
+
 
 	private def chainEmit(ruleHeads: Iterable[NormalizedSelector])(implicit builder: StringBuilder): StringBuilder =
 		ruleHeads.foldLeft(builder){

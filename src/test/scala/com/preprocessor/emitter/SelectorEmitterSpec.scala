@@ -7,6 +7,7 @@ import com.preprocessor.spec.AttributeSelector.Equals
 import com.preprocessor.spec.HtmlElements.Div
 import com.preprocessor.spec.PseudoClasses.NonFunctional.{FirstChild, Focus, Hover}
 import com.preprocessor.spec.PseudoElements.{After, Before}
+import com.preprocessor.spec.SelectorCombinator.{Descendant, NextSibling}
 
 class SelectorEmitterSpec extends BaseEmitterSpec {
 
@@ -83,6 +84,26 @@ class SelectorEmitterSpec extends BaseEmitterSpec {
 			None,
 			Set(hover)
 		)) === "div.myClass1.myClass2#myId:focus:hover")
+	}
+
+	it should "emit complex selectors" in {
+		assert(emit(Complex(
+			Descendant,
+			Element(QualifiedElement(Div)),
+			Complex(
+				NextSibling,
+				Class("myClass1"),
+				Class("myClass2")
+			)
+		)) === "div .myClass1 + .myClass2")
+	}
+
+	it should "emit selector lists" in {
+		assert(emit(SelectorList(Set(
+			Class("myClass1"),
+			Class("myClass2"),
+			Element(QualifiedElement(Div))
+		))) === ".myClass1, .myClass2, div")
 	}
 
 
