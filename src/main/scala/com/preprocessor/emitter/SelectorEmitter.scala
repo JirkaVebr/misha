@@ -3,6 +3,7 @@ package com.preprocessor.emitter
 import com.preprocessor.ast.Namespace.{AnyNamespace, NamedNamespace, NoNamespace}
 import com.preprocessor.ast.Selector._
 import com.preprocessor.spec.PseudoClasses
+import com.preprocessor.spec.PseudoClasses.AnPlusB
 
 object SelectorEmitter {
 
@@ -25,7 +26,8 @@ object SelectorEmitter {
 			emitCompound(compound)
 		case complex: Complex =>
 			emitComplex(complex)
-		case SelectorList(selectors) => ???
+		case SelectorList(selectors) =>
+			chainEmit(selectors)
 	}
 
 	private def emitElement(element: Element)(implicit builder: StringBuilder): StringBuilder =
@@ -66,7 +68,19 @@ object SelectorEmitter {
 				builder.append(":" + PseudoClasses.Lang.name + "(" + ranges.map(_.value).mkString(", ") + ")")
 			case SubSelector(kind, subSelector) =>
 				emit(subSelector)(builder.append(":" + kind.name + "(")).append(")")
-			case Nth(kind, ab, of) => ???
+			case Nth(kind, ab, of) =>
+				val base = builder.append(":" + kind.name + "(" + (ab match {
+					case AnPlusB(2, 1) => "odd" // Shorter than "2n+1"
+					// Assuming a and b aren't both zero
+					case AnPlusB(a, 0) => a.toString + "n" // "2n" is shorter than "even"
+					case AnPlusB(0, b) => b.toString
+					case AnPlusB(a, b) => a.toString + "n" + (if (b < 0) "" else "+") + b.toString
+				}))
+				val withOf = of match {
+					case Some(selector) => emit(selector)(base.append(" of "))
+					case None => base
+				}
+				withOf.append(")")
 		}
 
 
