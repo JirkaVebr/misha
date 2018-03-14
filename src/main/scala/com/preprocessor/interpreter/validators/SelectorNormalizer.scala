@@ -5,7 +5,6 @@ import com.preprocessor.error.SelectorError.{IllegalSelectorAfterPseudoElement, 
 import com.preprocessor.error.{CompilerError, SelectorError}
 import com.preprocessor.interpreter.Environment
 
-import scala.collection.immutable.SortedSet
 import scala.util.{Failure, Success, Try}
 
 object SelectorNormalizer {
@@ -32,7 +31,7 @@ object SelectorNormalizer {
 				case Success(normalizedSelectors) => Success(SelectorList(normalizedSelectors.toSet))
 			}
 		}
-		case normalized: NormalizedSelector => Success(normalized)
+		case normalized: NormalizedSelector => Success(normalized) // TODO validate
 	}
 
 	def chainNormalize(selectors: Seq[Selector])(implicit environment: Environment): Try[Seq[NormalizedSelector]] =
