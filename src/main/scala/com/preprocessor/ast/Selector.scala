@@ -40,7 +40,15 @@ object Selector {
 	case class RawNth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[Selector] = None) extends RawSelector
 
 
-	case class Compound(selectors: Set[SimpleSelector]) extends NormalizedSelector
+	/**
+		* According to the spec, there can be up to one type-element (@see https://drafts.csswg.org/selectors-4/#compound).
+		* According to the current spec, there can be up to one pseudo-element (@see https://www.w3.org/TR/selectors-3/#pseudo-elements).
+		* However, it also says that a future spec may allow for more, which si what the Level 4 grammar does
+		* (@see https://drafts.csswg.org/selectors-4/#typedef-compound-selector). Nevertheless, it doesn't specify more,
+		* and so we're just disregarding that here.
+		*/
+	case class Compound(element: Option[Element], subClassSelectors: Set[SimpleSelector],
+											pseudoElement: Option[PseudoElement], furtherPseudoClasses: Set[PseudoClass]) extends NormalizedSelector
 	case class RawCompound(selectors: Seq[Selector]) extends RawSelector
 
 	case class Complex(combinator: Combinator, left: NormalizedSelector, right: NormalizedSelector) extends NormalizedSelector

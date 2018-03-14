@@ -4,6 +4,7 @@ import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Statement.Rule
 import com.preprocessor.ast.RuleContext.RuleSelector
 import com.preprocessor.interpreter.ops.StringOps
+import com.preprocessor.interpreter.validators.SelectorNormalizer
 import com.preprocessor.parser.selector.SelectorParser
 
 import scala.util.{Failure, Success, Try}
