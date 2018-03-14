@@ -32,8 +32,8 @@ object SelectorEmitter {
 		}
 		case compound: Compound =>
 			emitCompound(compound)
-		case Complex(combinator, left, right) =>
-			emit(right)(emit(left)(builder).append(combinator.emit))
+		case complex: Complex =>
+			emitComplex(complex)
 		case SelectorList(selectors) => ???
 	}
 
@@ -76,6 +76,9 @@ object SelectorEmitter {
 		}
 		chainEmit(compound.furtherPseudoClasses)(withPseudoElement)
 	}
+
+	private def emitComplex(complex: Complex)(implicit builder: StringBuilder): StringBuilder =
+		emit(complex.right)(emit(complex.left)(builder).append(complex.combinator.emit))
 
 	private def chainEmit(ruleHeads: Iterable[NormalizedSelector])(implicit builder: StringBuilder): StringBuilder =
 		ruleHeads.foldLeft(builder){
