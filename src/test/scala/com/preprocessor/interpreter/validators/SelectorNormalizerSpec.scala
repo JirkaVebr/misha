@@ -18,8 +18,8 @@ class SelectorNormalizerSpec extends BaseInterpreterSpec {
 
 	it should "normalize valid compound selectors" in {
 		val element = Element(QualifiedElement(Div))
-		val class1 = Class(".myClass1")
-		val class2 = Class(".myClass2")
+		val class1 = Class("myClass1")
+		val class2 = Class("myClass2")
 		val id = Id("myId")
 		val focus = NonFunctional(Focus)
 		val hover = NonFunctional(Hover)
