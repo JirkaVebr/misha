@@ -45,6 +45,26 @@ class SelectorNormalizerSpec extends BaseInterpreterSpec {
 		))))
 	}
 
+	it should "normalize selector lists" in {
+		val element = Element(QualifiedElement(Div))
+		val class1 = Class("myClass1")
+
+		assert(normalize(RawSelectorList(Seq(
+			element, class1
+		))) === SelectorList(Set(
+			element, class1
+		)))
+	}
+
+	it should "reject selector lists with duplicates" in {
+		val element = Element(QualifiedElement(Div))
+		val class1 = Class("myClass1")
+
+		assertThrows[SelectorError](normalize(RawSelectorList(Seq(
+			element, class1, class1
+		))))
+	}
+
 
 	private def normalize(selector: Selector): NormalizedSelector =
 		SelectorNormalizer.normalize(selector) match {
