@@ -2,10 +2,22 @@ package com.preprocessor.spec
 
 object SelectorCombinator {
 
-	sealed trait Combinator
+	sealed trait Combinator {
+		def symbol: String
+		def emit: String = " " + symbol + " "
+	}
 
-	case object Descendant extends Combinator // A B
-	case object Child extends Combinator // A > B
-	case object NextSibling extends Combinator // A + B
-	case object SubsequentSibling extends Combinator // A ~ B
+	case object Descendant extends Combinator {
+		override def symbol: String = " "
+		override def emit: String = symbol
+	}
+	case object Child extends Combinator {
+		override def symbol: String = ">"
+	}
+	case object NextSibling extends Combinator {
+		override def symbol: String = "+"
+	}
+	case object SubsequentSibling extends Combinator {
+		override def symbol: String = "~"
+	}
 }
