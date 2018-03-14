@@ -39,6 +39,12 @@ class SelectorNormalizerSpec extends BaseInterpreterSpec {
 		assertThrows[SelectorError](normalize(RawCompound(Seq(Id("id1"), Class("myClass"), Id("id2")))))
 	}
 
+	/* TODO
+	it should "reject illegal selectors after a pseudo-element" in {
+		assertThrows[SelectorError](normalize(RawCompound(Seq(Class("myClass"), Selector.PseudoElement(After), Id("id2")))))
+		assertThrows[SelectorError](normalize(RawCompound(Seq(Class("myClass"), Selector.PseudoElement(After), Class("myClass2")))))
+	}*/
+
 	it should "reject duplicate type selectors within compound selectors" in {
 		assertThrows[SelectorError](normalize(RawCompound(Seq(
 			Element(QualifiedElement(Div)),
