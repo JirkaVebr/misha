@@ -55,6 +55,8 @@ class SelectorEmitterSpec extends BaseEmitterSpec {
 		assert(emit(NonFunctional(FirstChild)) === ":first-child")
 	}
 
+	// TODO test functional pseudo classes
+
 	it should "emit compound selectors" in {
 		val element = Element(QualifiedElement(Div))
 		val class1 = Class("myClass1")
