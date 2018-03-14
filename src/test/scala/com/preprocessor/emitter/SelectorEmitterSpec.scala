@@ -5,6 +5,7 @@ import com.preprocessor.ast.{MatchTarget, QualifiedAttribute, QualifiedElement}
 import com.preprocessor.ast.Selector._
 import com.preprocessor.spec.AttributeSelector.Equals
 import com.preprocessor.spec.HtmlElements.Div
+import com.preprocessor.spec.PseudoClasses.NonFunctional.FirstChild
 import com.preprocessor.spec.PseudoElements.Before
 
 class SelectorEmitterSpec extends BaseEmitterSpec {
@@ -39,6 +40,18 @@ class SelectorEmitterSpec extends BaseEmitterSpec {
 
 		// TODO attribute values can be quoted strings
 		// TODO match targets allow [href i]
+	}
+
+	it should "emit ids" in {
+		assert(emit(Id("myId")) === "#myId")
+	}
+
+	it should "emit classes" in {
+		assert(emit(Class("myClass")) === ".myClass")
+	}
+
+	it should "emit non-functional pseudo-classes" in {
+		assert(emit(NonFunctional(FirstChild)) === ":first-child")
 	}
 
 
