@@ -7,6 +7,7 @@ import com.preprocessor.interpreter.{BaseInterpreterSpec, Environment}
 import com.preprocessor.spec.HtmlElements.{Div, Span}
 import com.preprocessor.spec.PseudoClasses.NonFunctional.{Focus, Hover}
 import com.preprocessor.spec.PseudoElements.After
+import com.preprocessor.spec.SelectorCombinator.{NextSibling, SubsequentSibling}
 
 import scala.util.{Failure, Success}
 
@@ -43,6 +44,30 @@ class SelectorNormalizerSpec extends BaseInterpreterSpec {
 			Element(QualifiedElement(Div)),
 			Element(QualifiedElement(Span))
 		))))
+	}
+
+	it should "normalize complex selectors" in {
+		val element = Element(QualifiedElement(Div))
+		val class1 = Class("myClass1")
+		val class2 = Class("myClass2")
+
+		assert(normalize(RawComplex(
+			NextSibling,
+			element,
+			RawComplex(
+				SubsequentSibling,
+				class1,
+				class2
+			)
+		)) === Complex(
+			NextSibling,
+			element,
+			Complex(
+				SubsequentSibling,
+				class1,
+				class2
+			)
+		))
 	}
 
 	it should "normalize selector lists" in {

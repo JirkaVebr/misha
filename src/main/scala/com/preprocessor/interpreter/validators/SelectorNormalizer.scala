@@ -43,13 +43,16 @@ object SelectorNormalizer {
 
 				val result: Accumulator = selectors.foldLeft[Accumulator](initialValue)(
 					(accumulator: Accumulator, selector: NormalizedSelector) => accumulator match {
-						case Failure(exception) => Failure(exception)
+						case Failure(exception) =>
+							Failure(exception)
 						case Success((element, id, subClasses, pseudoElement, furtherPseudoClasses)) => selector match {
 							case simple: SimpleSelector => simple match {
 								case Element(anotherElement) => element match { // TODO check everything else is empty
-									case Some(_) => Failure(SelectorError(MultipleTypeSelectors))
+									case Some(_) =>
+										Failure(SelectorError(MultipleTypeSelectors))
 									case None => pseudoElement match {
-										case Some(_) => Failure(SelectorError(IllegalSelectorAfterPseudoElement))
+										case Some(_) =>
+											Failure(SelectorError(IllegalSelectorAfterPseudoElement))
 										case None =>
 											/*anotherElement.element match { TODO check the env for custom element name
 												case CustomElement(name) =>
@@ -59,7 +62,8 @@ object SelectorNormalizer {
 									}
 								}
 								case PseudoElement(anotherPseudoElement) => pseudoElement match {
-									case Some(_) => Failure(SelectorError(MultiplePseudoElements))
+									case Some(_) =>
+										Failure(SelectorError(MultiplePseudoElements))
 									case None =>
 										/*anotherPseudoElement match { TODO check the env for custom pseudo element name
 											case CustomPseudoElement(name) =>
@@ -68,14 +72,18 @@ object SelectorNormalizer {
 										Success(element, id, subClasses, Some(PseudoElement(anotherPseudoElement)), furtherPseudoClasses)
 								}
 								case anotherId: Id => id match {
-									case Some(_) => Failure(SelectorError(MultipleIdSelectors))
-									case None => Success(element, Some(anotherId), subClasses, pseudoElement, furtherPseudoClasses)
+									case Some(_) =>
+										Failure(SelectorError(MultipleIdSelectors))
+									case None =>
+										Success(element, Some(anotherId), subClasses, pseudoElement, furtherPseudoClasses)
 								}
 								case Attribute(_, _, _) | Class(_) =>
 									Success(element, id, subClasses + simple, pseudoElement, furtherPseudoClasses)
 								case pseudo: PseudoClass => pseudoElement match {
-									case Some(_) => Success(element, id, subClasses, pseudoElement, furtherPseudoClasses + pseudo)
-									case None => Success(element, id, subClasses + pseudo, pseudoElement, furtherPseudoClasses)
+									case Some(_) =>
+										Success(element, id, subClasses, pseudoElement, furtherPseudoClasses + pseudo)
+									case None =>
+										Success(element, id, subClasses + pseudo, pseudoElement, furtherPseudoClasses)
 								}
 							}
 							case _ =>
@@ -86,7 +94,8 @@ object SelectorNormalizer {
 				)
 
 				result match {
-					case Failure(exception) => Failure(exception)
+					case Failure(exception) =>
+						Failure(exception)
 					case Success((element, id, subClasses, pseudoElement, furtherPseudoClasses)) =>
 						val allSubClasses = id match {
 							case Some(idSelector) => subClasses + idSelector
@@ -101,7 +110,8 @@ object SelectorNormalizer {
 	// TODO validate illegal combinator use
 	private def normalizeRawComplex(rawComplex: RawComplex)(implicit environment: Environment): Try[Complex] =
 		chainNormalize(rawComplex.left :: rawComplex.right :: Nil) match {
-			case Failure(exception) => Failure(exception)
+			case Failure(exception) =>
+				Failure(exception)
 			case Success(normalizedLeft :: normalizedRight :: Nil) =>
 				Success(Complex(rawComplex.combinator, normalizedLeft, normalizedRight))
 			case _ => sys.error("this shouldn't happen") // TODO
