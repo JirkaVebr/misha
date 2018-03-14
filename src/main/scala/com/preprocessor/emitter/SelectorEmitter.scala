@@ -14,21 +14,12 @@ object SelectorEmitter {
 				emitPseudoElement(element)
 			case attribute: Attribute =>
 				emitAttribute(attribute)
-			case Id(name) => builder.append("#" + name)
-			case Class(name) => builder.append("." + name)
-			case pseudoClass: PseudoClass => pseudoClass match {
-				case NonFunctional(nonFunctional) =>
-					builder.append(":" + nonFunctional.name)
-				case Dir(directionality) =>
-					builder.append(":" + PseudoClasses.Dir.name + "(" + directionality.value + ")")
-				case Drop(filter) =>
-					builder.append(":" + PseudoClasses.Drop.name + "(" + filter.map(_.value).mkString(" ") + ")")
-				case Lang(ranges) =>
-					builder.append(":" + PseudoClasses.Lang.name + "(" + ranges.map(_.value).mkString(", ") + ")")
-				case SubSelector(kind, subSelector) =>
-					emit(subSelector)(builder.append(":" + kind.name + "(")).append(")")
-				case Nth(kind, ab, of) => ???
-			}
+			case Id(name) =>
+				builder.append("#" + name)
+			case Class(name) =>
+				builder.append("." + name)
+			case pseudoClass: PseudoClass =>
+				emitPseudoClass(pseudoClass)
 		}
 		case compound: Compound =>
 			emitCompound(compound)
@@ -62,6 +53,21 @@ object SelectorEmitter {
 			case Some(modifier) => " " + modifier.name
 			case None => ""
 		}) + "]")
+
+	private def emitPseudoClass(pseudoClass: PseudoClass)(implicit builder: StringBuilder): StringBuilder =
+		pseudoClass match {
+			case NonFunctional(nonFunctional) =>
+				builder.append(":" + nonFunctional.name)
+			case Dir(directionality) =>
+				builder.append(":" + PseudoClasses.Dir.name + "(" + directionality.value + ")")
+			case Drop(filter) =>
+				builder.append(":" + PseudoClasses.Drop.name + "(" + filter.map(_.value).mkString(" ") + ")")
+			case Lang(ranges) =>
+				builder.append(":" + PseudoClasses.Lang.name + "(" + ranges.map(_.value).mkString(", ") + ")")
+			case SubSelector(kind, subSelector) =>
+				emit(subSelector)(builder.append(":" + kind.name + "(")).append(")")
+			case Nth(kind, ab, of) => ???
+		}
 
 
 	private def emitCompound(compound: Compound)(implicit builder: StringBuilder): StringBuilder = {
