@@ -1,6 +1,9 @@
 package com.preprocessor.spec.types
-import com.preprocessor.ast.Language.{Type, Value}
+import com.preprocessor.ast.Language.Type
 
+/**
+	* @see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animated_properties
+	*/
 object Animatable extends Type {
 
 	override def name: String = "Animatable"
@@ -119,6 +122,6 @@ object Animatable extends Type {
 			Type.Literal("visibility"),
 			Type.Literal("width"),
 			Type.Literal("word-spacing"),
-			Type.Literal("z-index"))
+			Type.Literal("z-index")
 	))
 }
