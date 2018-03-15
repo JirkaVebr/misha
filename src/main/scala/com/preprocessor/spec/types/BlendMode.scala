@@ -9,22 +9,22 @@ object BlendMode extends Type {
 	override def name: String = "BlendMode"
 
 	override def apply(): Symbol.TypeSymbol#Value = Union(Set(
-		Literal(Value.String("color")),
-		Literal(Value.String("color-burn")),
-		Literal(Value.String("color-dodge")),
-		Literal(Value.String("darken")),
-		Literal(Value.String("difference")),
-		Literal(Value.String("exclusion")),
-		Literal(Value.String("hard-light")),
-		Literal(Value.String("hue")),
-		Literal(Value.String("lighten")),
-		Literal(Value.String("luminosity")),
-		Literal(Value.String("multiply")),
-		Literal(Value.String("normal")),
-		Literal(Value.String("overlay")),
-		Literal(Value.String("saturation")),
-		Literal(Value.String("screen")),
-		Literal(Value.String("soft-light"))
+		Literal("color"),
+		Literal("color-burn"),
+		Literal("color-dodge"),
+		Literal("darken"),
+		Literal("difference"),
+		Literal("exclusion"),
+		Literal("hard-light"),
+		Literal("hue"),
+		Literal("lighten"),
+		Literal("luminosity"),
+		Literal("multiply"),
+		Literal("normal"),
+		Literal("overlay"),
+		Literal("saturation"),
+		Literal("screen"),
+		Literal("soft-light")
 	))
 
 }
