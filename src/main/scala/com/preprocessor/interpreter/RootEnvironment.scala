@@ -2,6 +2,7 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Symbol.{PropertySymbol, RuleContextSymbol, TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.{Language, Symbol}
+import com.preprocessor.spec.types._
 
 class RootEnvironment extends Environment {
 
@@ -29,5 +30,5 @@ object RootEnvironment {
 		"Scalar" -> Language.Type.Scalar,
 		"String" -> Language.Type.String,
 		"Unit" -> Language.Type.Unit
-	)
+	) ++ specTypes
 }

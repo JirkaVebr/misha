@@ -4,7 +4,7 @@ import com.preprocessor.ast.Symbol
 
 package object types {
 
-	val preDefinedTypes: Map[String, Symbol.TypeSymbol#Value] = Map(
+	val specTypes: Map[String, Symbol.TypeSymbol#Value] = Map(
 		BlendMode.name -> BlendMode()
 	)
 
