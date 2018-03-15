@@ -4,7 +4,9 @@ import com.preprocessor.ast.Language.Expression.Block
 import com.preprocessor.ast.Language.Statement.{Property, Rule, Sequence}
 import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.PropertyRecord
-import com.preprocessor.ast.Symbol.PropertySymbol
+import com.preprocessor.ast.RuleContext.RuleSelector
+import com.preprocessor.ast.Selector.Class
+import com.preprocessor.ast.Symbol.{PropertySymbol, RuleContextSymbol}
 
 class RuleInterpreterSpec extends BaseInterpreterSpec {
 
@@ -18,7 +20,7 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 		val ruleEnvironment = newState.environment.subEnvironments.head
 
 		// TODO
-		//assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleContext.RawRuleHead(List(Right(".class"))))
+		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleSelector(Class("class")))
 		assert(ruleEnvironment.lookupCurrent(PropertySymbol).get === List(
 			PropertyRecord("width", "80%"),
 			PropertyRecord("line-height", "1.6")
