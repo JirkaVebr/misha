@@ -1,4 +1,4 @@
-package com.preprocessor.parser.selector
+package com.preprocessor.parser.ruleHead
 
 import com.preprocessor.parser.common.{L0_Whitespace, L1_AstNode, L2_Strings, L3_Numbers}
 import com.preprocessor.spec.PseudoClasses.{AnPlusB => AnB}

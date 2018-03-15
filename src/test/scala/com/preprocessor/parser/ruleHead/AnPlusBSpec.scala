@@ -1,4 +1,4 @@
-package com.preprocessor.parser.selector
+package com.preprocessor.parser.ruleHead
 
 import com.preprocessor.parser.BaseParserSpec
 import com.preprocessor.spec.PseudoClasses.AnPlusB

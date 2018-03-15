@@ -2,7 +2,7 @@ package com.preprocessor.parser
 
 import com.preprocessor.BaseSpec
 import com.preprocessor.parser.language.LanguageParser
-import com.preprocessor.parser.selector.SelectorParser
+import com.preprocessor.parser.ruleHead.SelectorParser
 import org.parboiled2.{ParseError, Rule1}
 
 import scala.util.{Failure, Success, Try}

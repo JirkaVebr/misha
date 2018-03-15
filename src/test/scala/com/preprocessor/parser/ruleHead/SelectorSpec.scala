@@ -1,4 +1,4 @@
-package com.preprocessor.parser.selector
+package com.preprocessor.parser.ruleHead
 
 import com.preprocessor.ast.Namespace.{AnyNamespace, NamedNamespace}
 import com.preprocessor.ast.{MatchTarget, QualifiedAttribute, QualifiedElement}

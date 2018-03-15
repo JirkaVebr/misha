@@ -9,7 +9,7 @@ import com.preprocessor.ast.{PropertyRecord, ValueRecord}
 import com.preprocessor.error.ProgramError._
 import com.preprocessor.interpreter.ops.StringOps
 import com.preprocessor.interpreter.typing.{Inference, Subtype}
-import com.preprocessor.parser.selector.SelectorParser
+import com.preprocessor.parser.ruleHead.SelectorParser
 
 import scala.util.{Failure, Success, Try}
 
