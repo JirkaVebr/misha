@@ -8,7 +8,7 @@ import com.preprocessor.spec.HtmlElements
 import com.preprocessor.spec.HtmlElements.{AnyElement, CustomElement}
 import org.parboiled2._
 
-trait L3_Basics { this: org.parboiled2.Parser
+trait L4_Basics { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace
 	with L1_AstNode

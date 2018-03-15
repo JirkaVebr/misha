@@ -4,15 +4,15 @@ import com.preprocessor.parser.common.{L0_Whitespace, L1_AstNode, L2_Strings, L3
 import com.preprocessor.spec.PseudoClasses.{AnPlusB => AnB}
 import org.parboiled2._
 
-trait L4_AnPlusB { this: org.parboiled2.Parser
+trait L5_AnPlusB { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace
 	with L1_AstNode
 	with L2_Strings
 	with L3_Numbers
-	with L3_Basics =>
+	with L4_Basics =>
 
-	import L4_AnPlusB._
+	import L5_AnPlusB._
 
 
 	def AnPlusB: Rule1[AnB] = rule {
@@ -35,6 +35,6 @@ trait L4_AnPlusB { this: org.parboiled2.Parser
 
 }
 
-object L4_AnPlusB {
+object L5_AnPlusB {
 	private val computeValue: (Int, Int) => Int = _ * _
 }

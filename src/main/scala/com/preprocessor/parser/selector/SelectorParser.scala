@@ -14,9 +14,9 @@ class SelectorParser(val input: ParserInput) extends Parser
 	with L1_AstNode
 	with L2_Strings
 	with L3_Numbers
-	with L3_Basics
-	with L4_AnPlusB
-	with L5_Selector {
+	with L4_Basics
+	with L5_AnPlusB
+	with L6_Selector {
 
 }
 

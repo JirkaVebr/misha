@@ -20,14 +20,14 @@ import scala.annotation.switch
 	* TODO special char escaping
 	* @see https://drafts.csswg.org/selectors-4/#case-sensitive
 	*/
-trait L5_Selector { this: org.parboiled2.Parser
+trait L6_Selector { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace
 	with L1_AstNode
 	with L2_Strings
 	with L3_Numbers
-	with L3_Basics
-	with L4_AnPlusB =>
+	with L4_Basics
+	with L5_AnPlusB =>
 
 	def Selector: Rule1[Selector] = rule {
 		selectorList
