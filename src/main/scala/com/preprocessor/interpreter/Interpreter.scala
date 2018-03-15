@@ -13,7 +13,7 @@ class Interpreter(val program: Program) {
 		StatementInterpreter.run(program.program)(EvalState(rootEnvironment))
 
 	private def createRootEnvironment(): RootEnvironment =
-		new RootEnvironment // TODO, this may get more involved
+		RootEnvironment()
 }
 
 

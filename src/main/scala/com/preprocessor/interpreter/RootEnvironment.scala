@@ -16,6 +16,10 @@ class RootEnvironment extends Environment {
 }
 
 object RootEnvironment {
+
+	def apply(): RootEnvironment =
+		new RootEnvironment
+
 	val preDefinedTypes: Map[String, Symbol.TypeSymbol#Value] = Map(
 		"Any" -> Language.Type.Any,
 		"Color" -> Language.Type.Color,
