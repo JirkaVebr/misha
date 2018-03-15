@@ -1,6 +1,6 @@
 package com.preprocessor.parser.language
 
-import com.preprocessor.ast.{Language, RuleHead}
+import com.preprocessor.ast.{Language, RuleHead, RuleHeadComponent}
 import com.preprocessor.ast.Language.Expression._
 import com.preprocessor.ast.Language.Statement._
 import com.preprocessor.ast.Language.Term._
@@ -265,7 +265,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 					(undelimitedListBody(anyWhitespaceSeparator) ~ SingleLineWhitespace ~ '}') |
 					(delimitedListBody ~ SingleLineWhitespace ~ '}')
 				) ~> (
-					(expressions: Seq[Expression]) => Right(expressions)
+					(expressions: Seq[Expression]) => Right(expressions.toVector)
 				)
 			) | (
 				clearSB() ~ oneOrMore(
@@ -277,6 +277,9 @@ trait L5_Expressions { this: org.parboiled2.Parser
 						)
 				) ~ push(Left(sb.toString))
 			)
+		) ~> (
+			(ruleHeadComponents: Seq[RuleHeadComponent]) =>
+				push(ruleHeadComponents.toVector)
 		)
 	}
 

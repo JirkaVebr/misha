@@ -25,14 +25,14 @@ class StatementsSpec extends BaseParserSpec {
 		assert(parse(
 			"""div a strong
 				|	123
-				|""".stripMargin) === Rule(Seq(Left("div a strong")), Block(Scalar(123))))
+				|""".stripMargin) === Rule(Vector(Left("div a strong")), Block(Scalar(123))))
 	}
 
 	it should "not get confused by at-rules" in {
 		assert(parse(
 			"""@keyframes foo
 				|	123
-				|""".stripMargin) === Rule(Seq(Left("@keyframes foo")), Block(Scalar(123))))
+				|""".stripMargin) === Rule(Vector(Left("@keyframes foo")), Block(Scalar(123))))
 	}
 
 	it should "allow multi-line selectors if separated by commas" in {
@@ -41,21 +41,21 @@ class StatementsSpec extends BaseParserSpec {
 				|a strong,
 				|.foo
 				|	123
-				|""".stripMargin) === Rule(Seq(Left("div,\na strong,\n.foo")), Block(Scalar(123))))
+				|""".stripMargin) === Rule(Vector(Left("div,\na strong,\n.foo")), Block(Scalar(123))))
 	}
 
 	it should "correctly parse explicit expression interpolation within selectors" in {
 		assert(parse(
 			"""d{i}v
 				|	123
-				|""".stripMargin) === Rule(Seq(Left("d"), Right(Seq(Value.String("i"))), Left("v")), Block(Scalar(123))))
+				|""".stripMargin) === Rule(Vector(Left("d"), Right(Vector(Value.String("i"))), Left("v")), Block(Scalar(123))))
 		assert(parse(
 			"""*:first{"-" + "type"}
 				|	123
 				|""".stripMargin) ===
-			Rule(Seq(
+			Rule(Vector(
 				Left("*:first"),
-				Right(Seq(BinaryOperation(Addition, Value.String("-"), Value.String("type"))))
+				Right(Vector(BinaryOperation(Addition, Value.String("-"), Value.String("type"))))
 			), Block(Scalar(123))))
 	}
 
