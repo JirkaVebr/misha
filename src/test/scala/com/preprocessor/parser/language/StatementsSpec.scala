@@ -44,6 +44,19 @@ class StatementsSpec extends BaseParserSpec {
 				|""".stripMargin) === Rule(Vector(Left("div,\na strong,\n.foo")), Block(Scalar(123))))
 	}
 
+	it should "correctly pares implicit expression interpolation within selectors" in {
+		assert(parse(
+			"""& &-active
+				|	123
+				|""".stripMargin) ===
+			Rule(Vector(
+				Right(Vector(ParentSelector)),
+				Left(" "),
+				Right(Vector(ParentSelector)),
+				Left("-active")
+			), Block(Scalar(123))))
+	}
+
 	it should "correctly parse explicit expression interpolation within selectors" in {
 		assert(parse(
 			"""d{i}v

@@ -268,6 +268,8 @@ trait L5_Expressions { this: org.parboiled2.Parser
 					(expressions: Seq[Expression]) => Right(expressions.toVector)
 				)
 			) | (
+				'&' ~ push(Right(Vector(ParentSelector)))
+			) | (
 				clearSB() ~ oneOrMore(
 					(!RuleHeadSpecialChars ~ ANY ~ appendSB()) |
 						('\\' ~ '{' ~ appendSB('{')) |
@@ -289,5 +291,5 @@ trait L5_Expressions { this: org.parboiled2.Parser
 object L5_Expressions {
 	import Characters._
 
-	val RuleHeadSpecialChars: CharPredicate = CharPredicate(s",\\{\n$INDENT$DEDENT")
+	val RuleHeadSpecialChars: CharPredicate = CharPredicate(s"&,\\{\n$INDENT$DEDENT")
 }
