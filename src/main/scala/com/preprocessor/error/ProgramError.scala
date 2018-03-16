@@ -35,6 +35,7 @@ object ProgramError {
 	case object NonBooleanCondition extends SimpleError("Non-boolean condition value")
 	case object NonNarrowingTypeAlias extends SimpleError("New value for an existing type name is not a subtype of the existing value")
 	case object NonStringPropertyName extends SimpleError("The name of a property must be a string")
+	case object NonStringSelectorExpression extends SimpleError("Expression used as a part of a selector cannot be cast to string")
 	case object ReadingUndefinedVariable extends SimpleError("Reading of an undefined variable")
 	case object TypeAnnotationMismatch extends SimpleError("Assigned value doesn't match the declared type annotation")
 	case object UndefinedType extends SimpleError("Using an undefined type")
