@@ -2,7 +2,7 @@ package com.preprocessor.ast
 
 import com.preprocessor.ast.Language.Expression.{Block, Expression}
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
-import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
+import com.preprocessor.interpreter.Symbol.{TypeSymbol, ValueSymbol}
 import com.preprocessor.interpreter.typing.Typing
 
 import scala.collection.immutable.{Map => SMap}

@@ -1,6 +1,6 @@
 package com
 
-import com.preprocessor.ast.Symbol.{TypeSymbol, ValueSymbol}
+import com.preprocessor.interpreter.Symbol.{TypeSymbol, ValueSymbol}
 
 package object preprocessor {
 

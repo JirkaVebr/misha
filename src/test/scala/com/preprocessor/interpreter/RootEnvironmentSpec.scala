@@ -2,7 +2,7 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Type
 import com.preprocessor.ast.Language.Type.Literal
-import com.preprocessor.ast.Symbol.TypeSymbol
+import Symbol.TypeSymbol
 
 class RootEnvironmentSpec extends BaseInterpreterSpec {
 

@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Symbol._
+import Symbol._
 
 
 class Environment private

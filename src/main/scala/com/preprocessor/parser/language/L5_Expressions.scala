@@ -5,7 +5,7 @@ import com.preprocessor.ast.Language.Expression._
 import com.preprocessor.ast.Language.Statement._
 import com.preprocessor.ast.Language.Term._
 import com.preprocessor.ast.Language._
-import com.preprocessor.ast.Symbol.ValueSymbol
+import com.preprocessor.interpreter.Symbol.ValueSymbol
 import com.preprocessor.parser._
 import com.preprocessor.parser.common.{L0_Whitespace, L1_AstNode, L2_Strings, L3_Numbers}
 import org.parboiled2._

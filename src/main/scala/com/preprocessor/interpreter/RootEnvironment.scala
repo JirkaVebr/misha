@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Symbol.{PropertySymbol, RuleContextSymbol, TypeSymbol, ValueSymbol}
-import com.preprocessor.ast.{Language, Symbol}
+import Symbol.{PropertySymbol, RuleContextSymbol, TypeSymbol, ValueSymbol}
+import com.preprocessor.ast.Language
 import com.preprocessor.spec.types._
 
 class RootEnvironment extends Environment {

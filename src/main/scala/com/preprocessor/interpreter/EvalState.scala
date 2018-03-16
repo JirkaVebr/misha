@@ -2,7 +2,7 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.{Language, ValueRecord}
 import com.preprocessor.ast.Language.{Type, Value}
-import com.preprocessor.ast.Symbol.Symbol
+import Symbol.Symbol
 import com.preprocessor.error.ProgramError.ProgramErrorCode
 import com.preprocessor.error.{Error, ProgramError}
 

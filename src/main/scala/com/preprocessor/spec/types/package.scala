@@ -1,6 +1,6 @@
 package com.preprocessor.spec
 
-import com.preprocessor.ast.Symbol
+import com.preprocessor.interpreter.Symbol
 
 package object types {
 

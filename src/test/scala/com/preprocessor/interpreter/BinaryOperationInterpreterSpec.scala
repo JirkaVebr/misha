@@ -3,7 +3,7 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Language.Expression._
 import com.preprocessor.ast.Language.Value.{Percentage, Rgba, Scalar}
 import com.preprocessor.ast.Language.{Term, Type, Value}
-import com.preprocessor.ast.Symbol.ValueSymbol
+import Symbol.ValueSymbol
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
 import com.preprocessor.interpreter.ops.{ColorOps, StringOps}

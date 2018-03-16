@@ -2,9 +2,9 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Type.Color
 import com.preprocessor.ast.Language.{Type, Value}
-import com.preprocessor.ast.RuleContext.RuleSelector
+import RuleContext.RuleSelector
 import com.preprocessor.ast.Selector.Class
-import com.preprocessor.ast.Symbol.{RuleContextSymbol, TypeSymbol, ValueSymbol}
+import Symbol.{RuleContextSymbol, TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.ValueRecord
 
 class EnvironmentSpec extends BaseInterpreterSpec {

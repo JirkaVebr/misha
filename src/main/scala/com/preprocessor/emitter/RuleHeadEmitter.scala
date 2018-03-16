@@ -1,7 +1,7 @@
 package com.preprocessor.emitter
 
-import com.preprocessor.ast.RuleContext.RuleSelector
-import com.preprocessor.ast.Symbol.RuleContextSymbol
+import com.preprocessor.interpreter.RuleContext.RuleSelector
+import com.preprocessor.interpreter.Symbol.RuleContextSymbol
 
 object RuleHeadEmitter {
 

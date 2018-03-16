@@ -5,7 +5,7 @@ import com.preprocessor.ast.Language.Statement._
 import com.preprocessor.ast.Language.Term.Variable
 import com.preprocessor.ast.Language.Type.TypeAlias
 import com.preprocessor.ast.Language.{Type, Value, ValueSymbolDeclaration}
-import com.preprocessor.ast.Symbol.{PropertySymbol, TypeSymbol, ValueSymbol}
+import Symbol.{PropertySymbol, TypeSymbol, ValueSymbol}
 import com.preprocessor.ast.{PropertyRecord, ValueRecord}
 import com.preprocessor.error.ProgramError
 

@@ -1,7 +1,7 @@
 package com.preprocessor.emitter
 
 import com.preprocessor.ast.PropertyRecord
-import com.preprocessor.ast.Symbol.{PropertySymbol, RuleContextSymbol}
+import com.preprocessor.interpreter.Symbol.{PropertySymbol, RuleContextSymbol}
 import com.preprocessor.interpreter.Environment
 
 class EmitterSpec extends BaseEmitterSpec {

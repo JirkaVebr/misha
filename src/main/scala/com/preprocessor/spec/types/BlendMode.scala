@@ -2,7 +2,7 @@ package com.preprocessor.spec.types
 
 import com.preprocessor.ast.Language.Type.{Literal, Union}
 import com.preprocessor.ast.Language.Value
-import com.preprocessor.ast.Symbol
+import com.preprocessor.interpreter.Symbol
 
 object BlendMode extends Type {
 

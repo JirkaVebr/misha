@@ -1,6 +1,6 @@
 package com.preprocessor.spec.types
 
-import com.preprocessor.ast.Symbol
+import com.preprocessor.interpreter.Symbol
 
 trait Type {
 

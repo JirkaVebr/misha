@@ -3,9 +3,9 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Language.Expression.{LogicalNegation, UnaryOperation}
 import com.preprocessor.ast.Language.Term.{ParentSelector, Term, Variable}
 import com.preprocessor.ast.Language.{Term, Type, Value}
-import com.preprocessor.ast.RuleContext.RuleSelector
+import RuleContext.RuleSelector
 import com.preprocessor.ast.Selector.Class
-import com.preprocessor.ast.Symbol.ValueSymbol
+import Symbol.ValueSymbol
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
 

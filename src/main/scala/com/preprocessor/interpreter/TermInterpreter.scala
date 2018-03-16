@@ -4,7 +4,7 @@ import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Term._
 import com.preprocessor.ast.Language.Value._
 import com.preprocessor.ast.Language.{Term, Value}
-import com.preprocessor.ast.RuleContext.{AtRule, RuleSelector}
+import RuleContext.{AtRule, RuleSelector}
 import com.preprocessor.emitter.RuleHeadEmitter
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError.ReadingUndefinedVariable

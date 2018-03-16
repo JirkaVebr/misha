@@ -3,8 +3,8 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Statement._
 import com.preprocessor.ast.Language.{Statement, Value}
-import com.preprocessor.ast.RuleContext.RuleSelector
-import com.preprocessor.ast.Symbol.PropertySymbol
+import RuleContext.RuleSelector
+import Symbol.PropertySymbol
 import com.preprocessor.ast.{PropertyRecord, ValueRecord}
 import com.preprocessor.error.ProgramError._
 import com.preprocessor.interpreter.ops.StringOps
