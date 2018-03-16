@@ -42,6 +42,7 @@ object TermInterpreter {
 		}
 	}
 
+	// TODO this should actually just evaluate to a list of parent selector strings
 	private def runMagicSymbol(symbol: MagicSymbol)(implicit state: EvalState): Try[EvalState] = symbol match {
 		case ParentSelector => state.environment.lookupContext() match {
 			case Some(context) => state.evaluatedTo(Value.String(
