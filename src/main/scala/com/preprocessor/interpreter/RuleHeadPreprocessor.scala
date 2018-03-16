@@ -1,5 +1,10 @@
 package com.preprocessor.interpreter
 
+import RuleContext.{AtRule, RuleSelector}
+import com.preprocessor.ast.Selector.SelectorList
+import Symbol.RuleContextSymbol
+import com.preprocessor.emitter.SelectorEmitter
+
 
 /**
 	* A rule head can look something like this:
@@ -7,23 +12,49 @@ package com.preprocessor.interpreter
 	* Which, in the end, should generate
 	*     .foo-2-bar, .foo-6-bar
 	*
-	*
-	* Warning:
-	*
+	* @param rawRuleHead Normalized, meaning that there are no sequences of Left(string)
 	*/
-object RuleHeadPreprocessor {
+class RuleHeadPreprocessor(val rawRuleHead: RawRuleHead, val environment: Environment) {
+
+	val context: Option[RuleContextSymbol.Value] = environment.lookupContext()
+	val contextVector: Option[Vector[String]] = initializeContextVector()
 
 
-	/**
-		* @param rawRuleHead Normalized, meaning that there are no sequences of Left(string)
-		* @return trimmed String to be parsed later
-		*/
-	def preProcess(rawRuleHead: RawRuleHead): String = // TODO
-		rawRuleHead.foldLeft(StringBuilder.newBuilder)({
-			case (builder, component) => component match {
-				case Left(string) => builder.append(string)
-				case Right(strings) => builder.append(strings.map(_.value).mkString(","))
+	def preProcess(): String = {
+		def rec(ruleHead: Vector[RawRuleHeadComponent]): Vector[String] =
+			if (ruleHead.isEmpty)
+				Vector.empty
+			else {
+				val (head, rest) = (ruleHead.head, rec(ruleHead.tail))
+				head match {
+					case Left(string) =>
+						if (rest.isEmpty) Vector(string)
+						else rest.map(string + _)
+					case Right(values) =>
+						values.flatMap(
+							stringValue =>
+								if (rest.isEmpty) Vector(stringValue.value)
+								else rest.map(stringValue.value + _)
+						)
+				}
 			}
-		}).toString.trim
+
+		rec(rawRuleHead).mkString(",\n").trim
+	}
+
+
+	private def initializeContextVector(): Option[Vector[String]] = context match {
+		case Some(ruleContext) => ruleContext match {
+			case RuleSelector(selector) => selector match {
+				case SelectorList(selectors) => Some(
+					selectors.toVector.map(SelectorEmitter.emit(_)(StringBuilder.newBuilder).toString)
+				)
+				case _ => Some(Vector(SelectorEmitter.emit(selector)(StringBuilder.newBuilder).toString))
+			}
+			case _: AtRule => None // TODO
+			case _ => None // TODO
+		}
+		case None => None
+	}
 
 }
