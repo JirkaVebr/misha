@@ -14,12 +14,16 @@ package com.preprocessor.interpreter
 object RuleHeadPreprocessor {
 
 
+	/**
+		* @param rawRuleHead Normalized, meaning that there are no sequences of Left(string)
+		* @return trimmed String to be parsed later
+		*/
 	def preProcess(rawRuleHead: RawRuleHead): String = // TODO
 		rawRuleHead.foldLeft(StringBuilder.newBuilder)({
 			case (builder, component) => component match {
 				case Left(string) => builder.append(string)
 				case Right(strings) => builder.append(strings.map(_.value).mkString(","))
 			}
-		}).toString
+		}).toString.trim
 
 }

@@ -42,6 +42,7 @@ object RuleInterpreter {
 				case Success((rest, currentState)) => ruleHeadComponent match {
 					case Left(string) => rest.lastOption match {
 						case Some(last) => last match {
+							// Don't want several strings in a row
 							case Left(lastString) => Success(rest.dropRight(1) :+ Left(lastString + string), currentState)
 							case Right(_) => Success(rest :+ Left(string), currentState)
 						}
