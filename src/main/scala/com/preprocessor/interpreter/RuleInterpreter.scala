@@ -2,7 +2,6 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Statement.Rule
-import com.preprocessor.ast.Language.Term.ParentSelector
 import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
@@ -70,6 +69,7 @@ object RuleInterpreter {
 	}
 
 
+	// TODO this will fail once we implement correct evaluation of ParentSelector
 	private def mapToStrings(valueRecords: List[ValueRecord])(implicit state: EvalState) =
 		valueRecords.foldLeft[Try[Vector[Value.String]]](Success(Vector.empty[Value.String])) {
 			case (accumulator, valueRecord) => accumulator match {
