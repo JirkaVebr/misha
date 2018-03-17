@@ -34,6 +34,7 @@ object ProgramError {
 	case object NegatingNonNumeric extends SimpleError("Arithmetic negation of a non-numeric")
 	case object NonBooleanCondition extends SimpleError("Non-boolean condition value")
 	case object NonNarrowingTypeAlias extends SimpleError("New value for an existing type name is not a subtype of the existing value")
+	case object NonStringMemberCastFail extends SimpleError("Non string member name cannot be cast to string")
 	case object NonStringPropertyName extends SimpleError("The name of a property must be a string")
 	case object NonStringSelectorExpression extends SimpleError("Expression used as a part of a selector cannot be cast to string")
 	case object ReadingUndefinedVariable extends SimpleError("Reading of an undefined variable")

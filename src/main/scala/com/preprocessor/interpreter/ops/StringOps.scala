@@ -34,4 +34,19 @@ object StringOps {
 		Value.String(string.value * factor.value.toInt)
 
 
+
+	// Properties
+
+	def length(string: Value.String): Value.Scalar =
+		Value.Scalar(string.value.length)
+
+	def toLowerCase(string: Value.String): Value.String =
+		Value.String(string.value.toLowerCase)
+
+	def toUpperCase(string: Value.String): Value.String =
+		Value.String(string.value.toUpperCase)
+
+	def trim(string: Value.String): Value.String =
+		Value.String(string.value.trim)
+
 }
