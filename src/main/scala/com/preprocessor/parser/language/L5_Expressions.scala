@@ -273,9 +273,11 @@ trait L5_Expressions { this: org.parboiled2.Parser
 				clearSB() ~ oneOrMore(
 					(!RuleHeadSpecialChars ~ ANY ~ appendSB()) |
 						('\\' ~ '{' ~ appendSB('{')) |
-						(',' ~ appendSB(',') ~
-							(capture(SingleLineWhitespace ~ '\n') ~> ((endOfLine: String) =>
-								appendSB(endOfLine)))
+						(',' ~
+							((capture(SingleLineWhitespace ~ '\n') ~> ((endOfLine: String) =>
+								appendSB("," + endOfLine))) |
+								appendSB(',')
+							)
 						)
 				) ~ push(Left(sb.toString))
 			)

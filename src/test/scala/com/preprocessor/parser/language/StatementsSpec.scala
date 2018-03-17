@@ -35,6 +35,13 @@ class StatementsSpec extends BaseParserSpec {
 				|""".stripMargin) === Rule(Vector(Left("@keyframes foo")), Block(Scalar(123))))
 	}
 
+	it should "allow selector lists, separated by commas, on a single line" in {
+		assert(parse(
+			"""div, a strong, .foo
+				|	123
+				|""".stripMargin) === Rule(Vector(Left("div, a strong, .foo")), Block(Scalar(123))))
+	}
+
 	it should "allow multi-line selectors if separated by commas" in {
 		assert(parse(
 			"""div,
