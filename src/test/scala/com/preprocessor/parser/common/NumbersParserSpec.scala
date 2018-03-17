@@ -57,11 +57,18 @@ class NumbersParserSpec extends BaseParserSpec {
 		assert(parse("-7e2ms") === Value.Dimensioned(-700, UnitOfMeasure(Map("ms" -> 1))))
 	}
 
-	it should "parse a percentage" in {
+	it should "parse percentage as a number" in {
 		assert(parse("+0%") === Value.Percentage(0))
 		assert(parse("0%") === Value.Percentage(0))
 		assert(parse("123%") === Value.Percentage(123))
 		assert(parse("11.22%") === Value.Percentage(11.22))
+	}
+
+	it should "parse percentage as a dedicated rule" in {
+		assert(parsePercentage("+0%") === Value.Percentage(0))
+		assert(parsePercentage("0%") === Value.Percentage(0))
+		assert(parsePercentage("123%") === Value.Percentage(123))
+		assert(parsePercentage("11.22%") === Value.Percentage(11.22))
 	}
 
 	it should "parse number positioning" in {
@@ -72,6 +79,8 @@ class NumbersParserSpec extends BaseParserSpec {
 	}
 
 	protected def parse(input: String): Value.Value = parseLanguageRule(input, _.Number)
+
+	protected def parsePercentage(input: String): Value.Value = parseLanguageRule(input, _.Percentage)
 
 	protected def parseUnsignedInt(input: String): Int = parseLanguageRule(input, _.UnsignedInteger)
 

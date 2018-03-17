@@ -18,6 +18,13 @@ trait L3_Numbers { this: org.parboiled2.Parser
 		nodeStart ~ (atomic(base ~ optional(exponent) ~ optional(unitOfMeasure)) ~> (createNumber(_, _, _))) ~ nodeEnd
 	}
 
+	def Percentage: Rule1[Value.Percentage] = rule {
+		nodeStart ~ (atomic(base ~ optional(exponent) ~ percentageUnit) ~> (
+			(base: Double, exponent: Option[Double], unit: NumberUnit.Unit) =>
+				createNumber(base, exponent, Some(unit))
+		)) ~ nodeEnd
+	}
+
 	def UnsignedInteger: Rule1[Int] = rule {
 		digits ~> ((digits: String) => digits.toInt)
 	}
@@ -47,8 +54,12 @@ trait L3_Numbers { this: org.parboiled2.Parser
 		(Exponent ~ Sign ~ digits) ~> ((sign: Int, digits: String) => sign * digits.toDouble)
 	}
 
+	private def percentageUnit: Rule1[NumberUnit.Unit] = rule {
+		'%' ~ push(NumberUnit.Percentage)
+	}
+
 	private def unitOfMeasure: Rule1[NumberUnit.Unit] = rule {
-		('%' ~ push(NumberUnit.Percentage)) |
+		percentageUnit |
 			capture(oneOrMore(CharPredicate.Alpha)) ~> ((unitOfMeasure: String) => UnitOfMeasure(Map(unitOfMeasure -> 1)))
 	}
 
