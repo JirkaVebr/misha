@@ -1,9 +1,7 @@
 package com.preprocessor.interpreter
 
-import RuleContext.{AtRule, RuleSelector}
-import com.preprocessor.ast.Selector.SelectorList
-import Symbol.RuleContextSymbol
-import com.preprocessor.emitter.SelectorEmitter
+import com.preprocessor.ast.Language.Term.ParentSelector
+import com.preprocessor.ast.RuleHead
 
 
 /**
@@ -12,15 +10,10 @@ import com.preprocessor.emitter.SelectorEmitter
 	* Which, in the end, should generate
 	*     .foo-2-bar, .foo-6-bar
 	*
-	* @param rawRuleHead Normalized, meaning that there are no sequences of Left(string)
 	*/
-class RuleHeadPreprocessor(val rawRuleHead: RawRuleHead, val environment: Environment) {
+object RuleHeadPreprocessor {
 
-	val context: Option[RuleContextSymbol.Value] = environment.lookupContext()
-	val contextVector: Option[Vector[String]] = initializeContextVector()
-
-
-	def preProcess(): String = {
+	def explode(rawRuleHead: RawRuleHead): String = {
 		def rec(ruleHead: Vector[RawRuleHeadComponent]): Vector[String] =
 			if (ruleHead.isEmpty)
 				Vector.empty
@@ -43,18 +36,15 @@ class RuleHeadPreprocessor(val rawRuleHead: RawRuleHead, val environment: Enviro
 	}
 
 
-	private def initializeContextVector(): Option[Vector[String]] = context match {
-		case Some(ruleContext) => ruleContext match {
-			case RuleSelector(selector) => selector match {
-				case SelectorList(selectors) => Some(
-					selectors.toVector.map(SelectorEmitter.emit(_)(StringBuilder.newBuilder).toString)
-				)
-				case _ => Some(Vector(SelectorEmitter.emit(selector)(StringBuilder.newBuilder).toString))
-			}
-			case _: AtRule => None // TODO
-			case _ => None // TODO
+	def prependImplicitParent(ruleHead: RuleHead): RuleHead = {
+		lazy val implicitParent = Vector(Right(Vector(ParentSelector)), Left(" "))
+
+		ruleHead.head match {
+			case Left(_) => implicitParent ++ ruleHead
+			case Right(expressions) =>
+				if (expressions == Vector(ParentSelector)) ruleHead
+				else implicitParent ++ ruleHead
 		}
-		case None => None
 	}
 
 }

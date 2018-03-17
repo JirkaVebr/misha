@@ -2,11 +2,12 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Statement.Rule
+import com.preprocessor.ast.Language.Term.ParentSelector
 import com.preprocessor.ast.Language.Value
-import com.preprocessor.ast.RuleContext.RuleSelector
 import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
 import com.preprocessor.error.ProgramError.NonStringSelectorExpression
+import com.preprocessor.interpreter.RuleContext.RuleSelector
 import com.preprocessor.interpreter.ops.StringOps
 import com.preprocessor.interpreter.validators.SelectorNormalizer
 import com.preprocessor.parser.ruleHead.SelectorParser
@@ -20,7 +21,7 @@ object RuleInterpreter {
 		normalizeRuleHead(rule) match {
 			case Failure(exception) => Failure(exception)
 			case Success((rawRuleHead, stateAfterHead)) =>
-				val preProcessed = RuleHeadPreprocessor.preProcess(rawRuleHead)
+				val preProcessed = RuleHeadPreprocessor.explode(rawRuleHead)
 				val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(
 					SelectorNormalizer.normalize(SelectorParser(preProcessed).get)(state.environment).get
 				)) // TODO
@@ -34,8 +35,10 @@ object RuleInterpreter {
 	}
 
 
-	private def normalizeRuleHead(rule: Rule)(implicit state: EvalState) =
-		rule.head.foldLeft[Try[(RawRuleHead, EvalState)]](
+	private def normalizeRuleHead(rule: Rule)(implicit state: EvalState) = {
+		val withImplicitParent = RuleHeadPreprocessor.prependImplicitParent(rule.head)
+
+		withImplicitParent.foldLeft[Try[(RawRuleHead, EvalState)]](
 			Success((Vector.empty[RawRuleHeadComponent], state))) {
 			case (accumulator, ruleHeadComponent) => accumulator match {
 				case Failure(_) => accumulator
@@ -64,6 +67,7 @@ object RuleInterpreter {
 				}
 			}
 		}
+	}
 
 
 	private def mapToStrings(valueRecords: List[ValueRecord])(implicit state: EvalState) =

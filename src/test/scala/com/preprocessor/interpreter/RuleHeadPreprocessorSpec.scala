@@ -19,9 +19,8 @@ class RuleHeadPreprocessorSpec extends BaseInterpreterSpec {
 				Value.String("span")
 			))
 		)
-		val ruleHeadPreprocessor = new RuleHeadPreprocessor(rawRuleHead, testEnvironment)
 
-		assert(ruleHeadPreprocessor.preProcess() ===
+		assert(RuleHeadPreprocessor.explode(rawRuleHead) ===
 			""".myclass1 .mySubclass div,
 				|.myclass1 .mySubclass span,
 				|.myclass2 .mySubclass div,

@@ -6,8 +6,6 @@ object RuleContext {
 
 	sealed trait RuleContext
 
-	case class UnprocessedRuleHead(head: RawRuleHead) extends RuleContext
-
 	case class RuleSelector(selector: NormalizedSelector) extends RuleContext
 
 
