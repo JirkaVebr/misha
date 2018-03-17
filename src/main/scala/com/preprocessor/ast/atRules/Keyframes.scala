@@ -1,4 +1,4 @@
-package com.preprocessor.ast
+package com.preprocessor.ast.atRules
 
 import com.preprocessor.ast.Language.Value
 import com.preprocessor.interpreter.Symbol.ValueSymbol
