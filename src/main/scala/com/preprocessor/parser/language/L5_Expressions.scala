@@ -259,7 +259,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def ruleHead: Rule1[RuleHead] = rule {
-		oneOrMore(
+		SingleLineWhitespace ~ oneOrMore( // Consume leading whitespace
 			('{' ~ SingleLineWhitespace ~
 				(
 					(undelimitedListBody(anyWhitespaceSeparator) ~ SingleLineWhitespace ~ '}') |
