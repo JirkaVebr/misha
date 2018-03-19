@@ -2,6 +2,7 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Term.ParentSelector
 import com.preprocessor.ast.RuleHead
+import com.preprocessor.spec.SelectorCombinator
 
 
 /**
@@ -37,7 +38,7 @@ object RuleHeadPreprocessor {
 
 
 	def prependImplicitParent(ruleHead: RuleHead): RuleHead = {
-		lazy val implicitParent = Vector(Right(Vector(ParentSelector)), Left(" "))
+		lazy val implicitParent = Vector(Right(Vector(ParentSelector)), Left(SelectorCombinator.Descendant.symbol))
 
 		ruleHead.head match {
 			case Left(_) => implicitParent ++ ruleHead
