@@ -63,7 +63,7 @@ object Language {
 		sealed trait Function extends Composite
 		case class NativeFunctionCall(function: NativeFunction, arguments: Seq[Value], returnType: Type.Any) extends Function
 		case class Lambda(arguments: Seq[ValueSymbolDeclaration[Option[Expression]]], returnType: Option[Type.Any],
-											body: Expression, environment: Option[Environment] = None) extends Function
+											body: Expression, environment: Environment) extends Function
 		case class PolymorphicGroup(function: Seq[Function]) extends Function
 	}
 

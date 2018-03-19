@@ -18,15 +18,13 @@ object TermInterpreter {
 			case compositeValue: Composite => compositeValue match {
 				case tuple: Value.Tuple2 => runTupleValue(tuple)
 				case list: Value.List => runListValue(list)
-				// At this point the user has no way of creating a function value directly, and so we assume here that all its
-				// possible forms are well-formed.
-				case function: Value.Function => state ~> function
+				case function: Value.Function => runFunctionValue(function)
 			}
 		}
 		case symbol: MagicSymbol => runMagicSymbol(symbol)
 		case variable: Variable => runVariable(variable)
 		case FunctionCall(function, arguments) => sys.error("todo") // TODO
-		case function: Term.Function => sys.error("todo")
+		case function: Term.Function => runFunctionTerm(function)
 		case tuple: Term.Tuple2 => runTupleTerm(tuple)
 		case list: Term.List => runListTerm(list)
 		case memberAccess: MemberAccess => MemberAccessInterpreter.run(memberAccess)
@@ -75,5 +73,15 @@ object TermInterpreter {
 				runListValue(Value.List(newEnvironment.value))(EnvironmentWithValue(newEnvironment.environment))
 		}
 	}
+
+	private def runFunctionValue(function: Value.Function)(implicit state: EnvWithValue): Try[EnvWithValue] =
+		// At this point the user has no way of creating a function value directly, and so we assume here that all its
+		// possible forms are well-formed.
+		state ~> function
+
+	private def runFunctionTerm(function: Term.Function)(implicit state: EnvWithValue): Try[EnvWithValue] =
+		runFunctionValue(Value.Lambda(
+			function.arguments, function.returnType, function.body, state.environment
+		))
 
 }
