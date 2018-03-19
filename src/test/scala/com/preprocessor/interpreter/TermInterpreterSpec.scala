@@ -3,7 +3,7 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Language.Expression._
 import com.preprocessor.ast.Language.Term.{ParentSelector, Term, Variable}
 import com.preprocessor.ast.Language.{Term, Value}
-import com.preprocessor.ast.Selector.Class
+import com.preprocessor.ast.Selector.{Class, Id, SelectorList}
 import com.preprocessor.error.ProgramError
 import com.preprocessor.interpreter.RuleContext.RuleSelector
 import com.preprocessor.interpreter.Symbol.ValueSymbol
@@ -44,11 +44,11 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 	it should "correctly interpret the parent selector magic symbol" in {
-		assert(run(ParentSelector).value === Value.String(""))
+		assert(run(ParentSelector).value === Value.List(List.empty))
 
 		val originalRuleHead = ".myClass"
-		val newState = EnvironmentWithValue(testEnvironment.pushSubScope(RuleSelector(Class("myClass"))), Value.Unit)
-		assert(run(ParentSelector)(newState).value === Value.String(originalRuleHead))
+		val newState = EnvironmentWithValue(testEnvironment.pushSubScope(RuleSelector(Class("myClass"))))
+		assert(run(ParentSelector)(newState).value === Value.List(List(originalRuleHead)))
 	}
 
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =

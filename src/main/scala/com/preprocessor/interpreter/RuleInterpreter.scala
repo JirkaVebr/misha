@@ -58,7 +58,7 @@ object RuleInterpreter {
 								mapToStrings(newEnvironment.value) match {
 									case Failure(exception) => Failure(exception)
 									case Success(strings) => Success(
-										(rest :+ Right(strings), EnvironmentWithValue(newEnvironment.environment))
+										(if (strings.isEmpty) rest else rest :+ Right(strings), EnvironmentWithValue(newEnvironment.environment))
 									)
 								}
 						}
@@ -73,9 +73,16 @@ object RuleInterpreter {
 		valueRecords.foldLeft[Try[Vector[Value.String]]](Success(Vector.empty[Value.String])) {
 			case (accumulator, value) => accumulator match {
 				case Failure(_) => accumulator
-				case Success(strings) => StringOps.castToString(value) match {
-					case Some(string) => Success(strings :+ string)
-					case None => Failure(ProgramError(NonStringSelectorExpression, state, value))
+				case Success(strings) => value match {
+					case list: Value.List =>
+						if (list.values.forall(_.isInstanceOf[Value.String]))
+							Success(strings ++ list.values.asInstanceOf[List[Value.String]])
+						else
+							Failure(ProgramError(NonStringSelectorExpression, state, value))
+					case _ => StringOps.castToString(value) match {
+						case Some(string) => Success(strings :+ string)
+						case None => Failure(ProgramError(NonStringSelectorExpression, state, value))
+					}
 				}
 			}
 		}

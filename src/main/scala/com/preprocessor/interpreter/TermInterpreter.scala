@@ -4,8 +4,9 @@ import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Term._
 import com.preprocessor.ast.Language.Value._
 import com.preprocessor.ast.Language.{Term, Value}
-import com.preprocessor.emitter.RuleHeadEmitter
+import com.preprocessor.ast.Selector._
 import com.preprocessor.error.ProgramError.{InvokingANonFunction, NotEnoughArguments, ReadingUndefinedVariable}
+import com.preprocessor.interpreter.RuleContext.{AtRule, RuleSelector}
 
 import scala.util.{Failure, Success, Try}
 
@@ -42,13 +43,20 @@ object TermInterpreter {
 		}
 	}
 
-	// TODO this should actually just evaluate to a list of parent selector strings
 	private def runMagicSymbol(symbol: MagicSymbol)(implicit state: EnvWithValue): Try[EnvWithValue] = symbol match {
 		case ParentSelector => state.environment.lookupContext() match {
-			case Some(context) => state.~>(Value.String(
-				RuleHeadEmitter.emit(context)(StringBuilder.newBuilder).mkString
-			))
-			case None => state.~>(Value.String("")) // throw error?
+			case Some(context) => context match {
+				case RuleSelector(selector) => selector match {
+					case SelectorList(selectors) =>
+						state ~> Value.List(selectors.map((s: NormalizedSelector) => {
+							Value.String(s.toString)
+						}).toList)
+					case _ =>
+						state ~> Value.List(scala.List(Value.String(selector.toString)))
+				}
+				case _: AtRule => ???
+			}
+			case None => state ~> Value.List(scala.List())
 		}
 	}
 
