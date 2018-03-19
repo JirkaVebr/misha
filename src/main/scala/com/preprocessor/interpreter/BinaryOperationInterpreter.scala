@@ -53,6 +53,7 @@ object BinaryOperationInterpreter {
 				case Multiplication => sys.error("todo") // TODO Non-negative integer scalar
 				case _ => state.fail(IllegalNumericOperatorOperand, left, right)
 			}
+			case _: Value.Function => ??? // TODO
 		}
 	}
 
