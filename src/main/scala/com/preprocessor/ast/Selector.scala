@@ -1,5 +1,6 @@
 package com.preprocessor.ast
 
+import com.preprocessor.emitter.SelectorEmitter
 import com.preprocessor.spec.AttributeSelector.Modifier
 import com.preprocessor.spec.PseudoClasses.NonFunctional.NonFunctionalPseudoClass
 import com.preprocessor.spec.PseudoClasses.{AnPlusB, Directionality, DropFilter}
@@ -14,7 +15,9 @@ object Selector {
 		* Raw selectors exist because they can contain silly selectors such as "div#foo#bar.baz.baz::before span"
 		*/
 	sealed trait RawSelector extends Selector
-	sealed trait NormalizedSelector extends Selector
+	sealed trait NormalizedSelector extends Selector {
+		override lazy val toString: String = SelectorEmitter.emit(this)(StringBuilder.newBuilder).mkString
+	}
 
 
 	sealed trait SimpleSelector extends NormalizedSelector
