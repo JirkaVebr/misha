@@ -56,16 +56,17 @@ object Language {
 		case object Important extends Flag
 		case object Duplicate extends Flag
 
+		case class NativeFunctionCall(function: NativeFunction, arguments: Seq[Value], returnType: Type.Any) extends Primitive
+
 		// Composite types
 		case class Tuple2(first: Value, second: Value) extends Composite
 		case class List(values: Seq[Value]) extends Composite
 
 		sealed trait Function extends Composite
-		case class NativeFunctionCall(function: NativeFunction, arguments: Seq[Value], returnType: Type.Any) extends Function
 		case class Lambda(mandatoryArguments: Seq[ValueSymbolDeclaration[Unit]],
 											otherArguments: Seq[ValueSymbolDeclaration[Expression]],
 											returnType: Option[Type.Any], body: Expression, environment: Environment) extends Function
-		case class PolymorphicGroup(function: Seq[Function]) extends Function
+		case class PolymorphicGroup(lambdas: Seq[Lambda]) extends Function
 	}
 
 

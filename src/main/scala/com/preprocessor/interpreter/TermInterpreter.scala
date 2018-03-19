@@ -5,7 +5,7 @@ import com.preprocessor.ast.Language.Term._
 import com.preprocessor.ast.Language.Value._
 import com.preprocessor.ast.Language.{Term, Value}
 import com.preprocessor.emitter.RuleHeadEmitter
-import com.preprocessor.error.ProgramError.ReadingUndefinedVariable
+import com.preprocessor.error.ProgramError.{InvokingANonFunction, NotEnoughArguments, ReadingUndefinedVariable}
 
 import scala.util.{Failure, Success, Try}
 
@@ -84,10 +84,27 @@ object TermInterpreter {
 			function.mandatoryArguments, function.otherArguments, function.returnType, function.body, state.environment
 		))
 
-	private def runFunctionCall(function: Term.FunctionCall)(implicit state: EnvWithValue): Try[EnvWithValue] =
-		ExpressionInterpreter.run(function.function) match {
+	private def runFunctionCall(functionCall: Term.FunctionCall)(implicit state: EnvWithValue): Try[EnvWithValue] =
+		ExpressionInterpreter.run(functionCall.function) match {
 			case Failure(exception) => Failure(exception)
-			case Success(newEnv) => ???
+			case Success(newState) => newState.value match {
+				case function: Value.Function => function match {
+					case lambda: Lambda => callLambda(lambda, functionCall)
+					case PolymorphicGroup(lambdas) => ???
+				}
+				case _ => newState.fail(InvokingANonFunction, functionCall)
+			}
 		}
+
+	private def callLambda(lambda: Lambda, functionCall: FunctionCall)(implicit state: EnvWithValue): Try[EnvWithValue] = {
+		val lambdaMandatoryArity = lambda.mandatoryArguments.length
+		val lambdaFurtherArity = lambda.otherArguments.length
+		val suppliedArgumentsCount = functionCall.arguments.length
+
+		if (suppliedArgumentsCount < lambdaMandatoryArity) state.fail(NotEnoughArguments, lambda, functionCall)
+		else {
+			???
+		}
+	}
 
 }
