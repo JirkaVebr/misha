@@ -1,6 +1,6 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Language.Expression.{LogicalNegation, UnaryOperation}
+import com.preprocessor.ast.Language.Expression._
 import com.preprocessor.ast.Language.Term.{ParentSelector, Term, Variable}
 import com.preprocessor.ast.Language.{Term, Value}
 import com.preprocessor.ast.Selector.Class
@@ -31,6 +31,16 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		)).value === Value.Tuple2(
 			Value.Boolean(false), Value.String("foo")
 		))
+	}
+
+	it should "correctly interpret lists" in {
+		assert(run(Term.List(List(
+			BinaryOperation(Addition, Value.String("123"), Value.String("456")),
+			BinaryOperation(IsEqualTo, Value.Scalar(10), Value.Scalar(10))
+		))).value === Value.List(List(
+			Value.String("123456"),
+			Value.Boolean(true)
+		)))
 	}
 
 	it should "correctly interpret the parent selector magic symbol" in {

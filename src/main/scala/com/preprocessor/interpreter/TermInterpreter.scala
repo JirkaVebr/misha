@@ -59,18 +59,17 @@ object TermInterpreter {
 		}
 	}
 
-	private def runListValue(list: Value.List)(implicit state: EnvWithValue): Try[EnvWithValue] = {
-		sys.error("todo") // TODO find common supertype
-	}
+	private def runListValue(list: Value.List)(implicit state: EnvWithValue): Try[EnvWithValue] =
+		state ~> list
 
 	private def runListTerm(list: Term.List)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val chainResult = Interpreter.chainRun[Expression](list.items.toList, state, ExpressionInterpreter.run(_)(_))
 
-		sys.error("todo")
-		/*chainResult match {
+		chainResult match {
 			case Failure(exception) => Failure(exception)
-			case Success((items, finalState)) => runListValue(Value.List(items))(finalState)
-		}*/
+			case Success(newEnvironment) =>
+				runListValue(Value.List(newEnvironment.value))(EnvironmentWithValue(newEnvironment.environment))
+		}
 	}
 
 }
