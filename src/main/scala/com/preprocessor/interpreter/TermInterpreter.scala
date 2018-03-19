@@ -25,7 +25,7 @@ object TermInterpreter {
 		case FunctionCall(function, arguments) => sys.error("todo") // TODO
 		case tuple: Term.Tuple2 => runTupleTerm(tuple)
 		case list: Term.List => runListTerm(list)
-		case MemberAccess(container, name) => sys.error("todo") // TODO
+		case memberAccess: MemberAccess => MemberAccessInterpreter.run(memberAccess)
 	}
 
 	private def runTupleValue(tuple: Value.Tuple2)(implicit state: EnvWithValue): Try[EnvWithValue] =
