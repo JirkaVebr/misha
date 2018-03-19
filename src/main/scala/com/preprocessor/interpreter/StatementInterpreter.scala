@@ -27,7 +27,9 @@ object StatementInterpreter {
 	private def runSequence(sequence: Sequence)(implicit state: EnvWithValue): Try[EnvWithValue] =
 		Interpreter.chainRun[Statement](List(sequence.current, sequence.following), state, run(_)(_)) match {
 			case Failure(exception) => Failure(exception)
-			case Success((_, finalState)) => Success(finalState)
+			case Success(newEnvironment) =>
+				val (_ :: secondValue :: Nil) = newEnvironment.value
+				Success(EnvironmentWithValue(newEnvironment.environment, secondValue))
 		}
 
 	private def runTypeAliasDeclaration(typeAlias: TypeAliasDeclaration)(implicit state: EnvWithValue): Try[EnvWithValue] = {

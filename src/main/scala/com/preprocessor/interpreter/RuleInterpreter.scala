@@ -54,11 +54,11 @@ object RuleInterpreter {
 							expressions.toList, currentState, ExpressionInterpreter.run(_)(_)
 						) match {
 							case Failure(exception) => Failure(exception)
-							case Success((valueRecords, newState)) =>
-								mapToStrings(valueRecords) match {
+							case Success(newEnvironment) =>
+								mapToStrings(newEnvironment.value) match {
 									case Failure(exception) => Failure(exception)
 									case Success(strings) => Success(
-										(rest :+ Right(strings), newState)
+										(rest :+ Right(strings), EnvironmentWithValue(newEnvironment.environment))
 									)
 								}
 						}

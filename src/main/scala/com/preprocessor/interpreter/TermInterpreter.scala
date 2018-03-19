@@ -4,9 +4,7 @@ import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Term._
 import com.preprocessor.ast.Language.Value._
 import com.preprocessor.ast.Language.{Term, Value}
-import RuleContext.{AtRule, RuleSelector}
 import com.preprocessor.emitter.RuleHeadEmitter
-import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError.ReadingUndefinedVariable
 
 import scala.util.{Failure, Success, Try}
@@ -36,9 +34,9 @@ object TermInterpreter {
 	private def runTupleTerm(tuple: Term.Tuple2)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		Interpreter.chainRun[Expression](scala.List(tuple.first, tuple.second), state, ExpressionInterpreter.run(_)(_)) match {
 			case Failure(reason) => Failure(reason)
-			case Success((first :: second :: Nil, finalState)) =>
-				finalState ~> Value.Tuple2(first, second)
-			case _ => state.failFatally(CompilerError("TODO")) // TODO
+			case Success(newEnvironment) =>
+				val (first :: second :: Nil) = newEnvironment.value
+				Success(EnvironmentWithValue(newEnvironment.environment, Value.Tuple2(first, second)))
 		}
 	}
 

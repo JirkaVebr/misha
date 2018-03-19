@@ -21,12 +21,15 @@ object BinaryOperationInterpreter {
 
 			Interpreter.chainRun[Expression](chain, state, ExpressionInterpreter.run(_)(_)) match {
 				case Failure(exception) => Failure(exception)
-				case Success((left :: right :: Nil, newState)) => binaryOperation.operator match {
-					case operator: NumericOperator => runNumericOperator(operator, left, right)(newState)
-					case operator: Comparison => runComparison(operator, left, right)(newState)
-					case _ => state.failFatally(CompilerError("TODO")) // TODO
-				}
-				case _ => state.failFatally(CompilerError("TODO")) // TODO
+				case Success(newEnvironment) =>
+					val (left :: right :: Nil) = newEnvironment.value
+					val newState = EnvironmentWithValue(newEnvironment.environment)
+
+					binaryOperation.operator match {
+						case operator: NumericOperator => runNumericOperator(operator, left, right)(newState)
+						case operator: Comparison => runComparison(operator, left, right)(newState)
+						case _ => state.failFatally(CompilerError("TODO")) // TODO
+					}
 			}
 	}
 
