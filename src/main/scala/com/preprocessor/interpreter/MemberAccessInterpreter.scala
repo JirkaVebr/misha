@@ -3,7 +3,7 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Term.MemberAccess
 import com.preprocessor.ast.Language.Value
-import com.preprocessor.ast.Language.Value.{Boolean, Color, Composite, Flag, Number, Primitive, Unit}
+import com.preprocessor.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Flag, Number, Primitive, Rgba, Transparent, Unit}
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError.NonStringMemberCastFail
 import com.preprocessor.interpreter.ops.StringOps
@@ -12,13 +12,13 @@ import scala.util.{Failure, Success, Try}
 
 object MemberAccessInterpreter {
 
-	def run(memberAccess: MemberAccess)(implicit state: EvalState): Try[EvalState] =
+	def run(memberAccess: MemberAccess)(implicit state: EnvWithValue): Try[EnvWithValue] =
 		Interpreter.chainRun[Expression](List(
 			memberAccess.container, memberAccess.name
 		), state, ExpressionInterpreter.run(_)(_)) match {
 			case Failure(exception) => Failure(exception)
 			case Success((container :: name :: Nil, newState)) =>
-				val memberName: Option[String] = name.value match {
+				val memberName: Option[String] = name match {
 					case Value.String(member) => Some(member)
 					case key => StringOps.castToString(key) match {
 						case Some(stringMember) => Some(stringMember.value)
@@ -26,7 +26,7 @@ object MemberAccessInterpreter {
 					}
 				}
 				memberName match {
-					case Some(string) => container.value match {
+					case Some(string) => container match {
 						case Unit => ???
 						case primitive: Primitive => runPrimitive(primitive, string)(newState)
 						case _: Composite => ???
@@ -37,17 +37,17 @@ object MemberAccessInterpreter {
 		}
 
 
-	private def runPrimitive(primitive: Primitive, memberName: String)(implicit state: EvalState): Try[EvalState] =
+	private def runPrimitive(primitive: Primitive, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] =
 		primitive match {
 			case _: Number => ???
 			case Boolean(value) => ???
 			case string: Value.String => runString(string, memberName)
-			case _: Color => ???
+			case color: Color => ???
 			case _: Flag => ???
 		}
 
 
-	private def runString(string: Value.String, memberName: String)(implicit state: EvalState): Try[EvalState] = {
+	private def runString(string: Value.String, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val result = memberName match {
 			case "charAt" => ???
 			case "concat" => ???
@@ -63,7 +63,28 @@ object MemberAccessInterpreter {
 			case _ => None
 		}
 		result match {
-			case Some(x) => state.evaluatedTo(x)
+			case Some(x) => state ~> x
+			case None => ???
+		}
+	}
+
+
+	private def runColor(color: Value.Color, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] = {
+		val result = color match {
+			case Rgba(r, g, b, a) => memberName match {
+				case "alpha" => Some(Value.Scalar(a))
+				case "blue" => Some(Value.Scalar(b))
+				case "green" => Some(Value.Scalar(g))
+				case "hue" => ???
+				case "lightness" => ???
+				case "red" => Some(Value.Scalar(r))
+				case "saturation" => ???
+			}
+			case CurrentColor => None
+			case Transparent => ???
+		}
+		result match {
+			case Some(x) => state ~> x
 			case None => ???
 		}
 	}

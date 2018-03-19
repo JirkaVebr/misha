@@ -12,7 +12,7 @@ import scala.util.{Failure, Success, Try}
 
 object ExpressionInterpreter {
 
-	def run(expression: Expression)(implicit state: EvalState): Try[EvalState] = expression match {
+	def run(expression: Expression)(implicit state: EnvWithValue): Try[EnvWithValue] = expression match {
 		case binaryOperation: BinaryOperation => BinaryOperationInterpreter.run(binaryOperation)
 		case unaryOperation: UnaryOperation => runUnaryOperation(unaryOperation)
 		case conditional: Conditional => runConditional(conditional)
@@ -20,19 +20,19 @@ object ExpressionInterpreter {
 		case term: Term => TermInterpreter.run(term)
 	}
 
-	private def runUnaryOperation(unaryOperation: UnaryOperation)(implicit state: EvalState): Try[EvalState] = {
+	private def runUnaryOperation(unaryOperation: UnaryOperation)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val operator = unaryOperation.operator
 		val value = run(unaryOperation.value)
 
 		value match {
 			case Failure(_) => value
 			case Success(newState) => operator match {
-				case LogicalNegation => newState.valueRecord.value match {
-					case Value.Boolean(bool) => newState evaluatedTo Value.Boolean(!bool)
+				case LogicalNegation => newState.value match {
+					case Value.Boolean(bool) => newState ~> Value.Boolean(!bool)
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
-				case ArithmeticNegation => newState.valueRecord.value match {
-					case number: Value.Number =>  newState evaluatedTo (number match {
+				case ArithmeticNegation => newState.value match {
+					case number: Value.Number =>  newState ~> (number match {
 						case Dimensioned(magnitude, unit) => Dimensioned(-magnitude, unit)
 						case Scalar(magnitude) => Scalar(-magnitude)
 						case Percentage(magnitude) => Percentage(-magnitude)
@@ -43,45 +43,28 @@ object ExpressionInterpreter {
 		}
 	}
 
-	private def runConditional(conditional: Conditional)(implicit state: EvalState): Try[EvalState] = {
+	private def runConditional(conditional: Conditional)(implicit state: EnvWithValue): Try[EnvWithValue] =
 		run(conditional.condition) match {
 			case Failure(error) => Failure(error)
-			case Success(stateAfterCondition) => stateAfterCondition.valueRecord.value match {
+			case Success(stateAfterCondition) => stateAfterCondition.value match {
 				case Value.Boolean(conditionValue) =>
-					run(conditional.consequent)(stateAfterCondition) match {
-						case Failure(error) => Failure(error)
-						case Success(stateAfterConsequent) => conditional.alternative match {
-							case Some(alternative) =>
-								run(alternative)(stateAfterCondition) match {
-									case Failure(error) => Failure(error)
-									case Success(stateAfterAlternative) =>
-										if (Subtype.isEquivalentTo(
-											stateAfterConsequent.valueRecord.recordType, stateAfterAlternative.valueRecord.recordType
-										)) {
-											val superType =
-												Subtype.getLowestCommonSupertype(
-													stateAfterConsequent.valueRecord.recordType, stateAfterAlternative.valueRecord.recordType
-												)
-											if (conditionValue) stateAfterConsequent ~> superType
-											else stateAfterAlternative ~> superType
-										} else
-											stateAfterConsequent.fail(IllTypedConditionBranches)
-								}
-							case None =>
-								(if (conditionValue) stateAfterConsequent else stateAfterCondition) ~> Type.Unit
+					if (conditionValue)
+						run(conditional.consequent)(stateAfterCondition)
+					else
+						conditional.alternative match {
+							case Some(alternative) => run(alternative)(stateAfterCondition)
+							case None => Success(stateAfterCondition)
 						}
-					}
 				case _ => stateAfterCondition.fail(NonBooleanCondition)
 			}
 		}
-	}
 
-	private def runBlock(block: Block)(implicit state: EvalState): Try[EvalState] = {
+	private def runBlock(block: Block)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val newScope = state.environment.pushSubScope()
-		StatementInterpreter.run(block.content)(EvalState(newScope)) match {
-			case fail: Failure[EvalState] => fail
+		StatementInterpreter.run(block.content)(EnvironmentWithValue(newScope, Value.Unit)) match {
+			case fail: Failure[EnvWithValue] => fail
 			case Success(result) =>
-				Success(EvalState(result.environment.popSubScope().get, result.valueRecord))
+				Success(EnvironmentWithValue(result.environment.popSubScope().get, result.value))
 		}
 	}
 }

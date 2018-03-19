@@ -9,10 +9,10 @@ class BaseInterpreterSpec extends BaseSpec {
 
 	val testEnvironment: Environment = new Environment()
 
-	implicit val state: EvalState = EvalState(testEnvironment)
+	implicit val state: EnvWithValue = EnvironmentWithValue(testEnvironment)
 
 
-	protected def run[N <: Node](interpret: (N) => Try[EvalState], input: N): EvalState =
+	protected def run[N <: Node](interpret: (N) => Try[EnvWithValue], input: N): EnvWithValue =
 		interpret(input).get
 
 }

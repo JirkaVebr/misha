@@ -5,11 +5,9 @@ import com.preprocessor.ast.Language.Statement._
 import com.preprocessor.ast.Language.Term.Variable
 import com.preprocessor.ast.Language.Type.TypeAlias
 import com.preprocessor.ast.Language.{Type, Value, ValueSymbolDeclaration}
-import Symbol.{PropertySymbol, TypeSymbol, ValueSymbol}
-import com.preprocessor.ast.{PropertyRecord, ValueRecord}
+import com.preprocessor.ast.PropertyRecord
 import com.preprocessor.error.ProgramError
-
-import scala.util.{Failure, Success}
+import com.preprocessor.interpreter.Symbol.{PropertySymbol, TypeSymbol, ValueSymbol}
 
 class StatementInterpreterSpec extends BaseInterpreterSpec {
 
@@ -21,16 +19,15 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 
 		val newState = run(VariableDeclaration(ValueSymbolDeclaration(symbol, None, varValue)))
 		assert(newState.environment.isInCurrentScope(symbol))
-		assert(newState.environment.lookup(symbol).get.value === varValue)
+		assert(newState.environment.lookup(symbol).get === varValue)
 	}
 
 	it should "reject declaration of existing variables" in {
 		val symbol = ValueSymbol("myVar")
-		val varType = Type.Scalar
 		val varValue = Value.Scalar(123)
-		val newState = state.withNewSymbol(symbol)(ValueRecord(varValue, varType)).get
+		val newState = state.withNewSymbol(symbol)(varValue).get
 
-		assertThrows[ProgramError](run(VariableDeclaration(ValueSymbolDeclaration(symbol, None, varValue)))(newState))
+		assertThrows[ProgramError[_]](run(VariableDeclaration(ValueSymbolDeclaration(symbol, None, varValue)))(newState))
 	}
 
 	it should "reject declarations with wrong type annotations" in {
@@ -38,7 +35,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val varValue = Value.Scalar(123)
 		val varType = Type.Boolean // Deliberately wrong type … that's the point here
 
-		assertThrows[ProgramError](run(VariableDeclaration(ValueSymbolDeclaration(symbol, Some(varType), varValue))))
+		assertThrows[ProgramError[_]](run(VariableDeclaration(ValueSymbolDeclaration(symbol, Some(varType), varValue))))
 	}
 
 	it should "correctly run a sequence" in {
@@ -58,7 +55,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 				),
 				Variable(symbol2)
 			)
-		).valueRecord.value === consequent)
+		).value === consequent)
 	}
 
 	it should "correctly create a type alias" in {
@@ -85,7 +82,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val newState = state.withNewSymbol(symbol)(oldType).get
 		val newType = Type.Scalar
 
-		assertThrows[ProgramError](run(TypeAliasDeclaration(TypeAlias(symbol), newType))(newState))
+		assertThrows[ProgramError[_]](run(TypeAliasDeclaration(TypeAlias(symbol), newType))(newState))
 	}
 
 	it should "correctly add properties" in {
@@ -106,8 +103,8 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 	it should "reject properties illegal in terms of types" in {
-		assertThrows[ProgramError](run(Property(Value.Scalar(123), Value.Scalar(1.6))))
-		assertThrows[ProgramError](run(
+		assertThrows[ProgramError[_]](run(Property(Value.Scalar(123), Value.Scalar(1.6))))
+		assertThrows[ProgramError[_]](run(
 			Property(Value.String("width"), Value.Tuple2(Value.Percentage(80), Value.Percentage(80))))
 		)
 	}
@@ -117,6 +114,6 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 
-	protected def run(statement: Statement)(implicit state: EvalState): EvalState =
+	protected def run(statement: Statement)(implicit state: EnvWithValue): EnvWithValue =
 		super.run[Statement](StatementInterpreter.run(_), statement)
 }

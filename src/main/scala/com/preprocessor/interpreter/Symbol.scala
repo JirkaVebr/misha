@@ -1,7 +1,8 @@
 package com.preprocessor.interpreter
 
-import RuleContext.RuleContext
-import com.preprocessor.ast.{Language, PropertyRecord, ValueRecord}
+import com.preprocessor.ast.Language.Value
+import com.preprocessor.ast.{Language, PropertyRecord}
+import com.preprocessor.interpreter.RuleContext.RuleContext
 
 object Symbol {
 
@@ -14,7 +15,7 @@ object Symbol {
 	}
 
 	case class ValueSymbol(valueName: String) extends Symbol {
-		override type Value = ValueRecord
+		override type Value = Value.Value
 	}
 
 	case object PropertySymbol extends Symbol {

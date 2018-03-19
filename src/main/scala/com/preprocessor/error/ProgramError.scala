@@ -1,9 +1,10 @@
 package com.preprocessor.error
 
 import com.preprocessor.ast.Language
-import com.preprocessor.interpreter.EvalState
+import com.preprocessor.interpreter.AugmentedEnvironment
 
-class ProgramError(val errorCode: ProgramError.ProgramErrorCode, val evalState: EvalState, val nodes: Language.Node*) extends Error
+class ProgramError[T](val errorCode: ProgramError.ProgramErrorCode, val augmentedEnvironment: AugmentedEnvironment[T],
+											val nodes: Language.Node*) extends Error
 
 
 object ProgramError {
@@ -15,8 +16,8 @@ object ProgramError {
 		override def message(nodes: Language.Node*): String = message
 	}
 
-	def apply(errorCode: ProgramError.ProgramErrorCode, evalState: EvalState, nodes: Language.Node*): ProgramError =
-		new ProgramError(errorCode, evalState, nodes: _*)
+	def apply[T](errorCode: ProgramError.ProgramErrorCode, augmentedEnvironment: AugmentedEnvironment[T], nodes: Language.Node*): ProgramError[T] =
+		new ProgramError[T](errorCode, augmentedEnvironment, nodes: _*)
 
 	case object AssigningToNonVariable extends SimpleError("Assignment to a non-variable")
 	case object ComparingIncompatibleNumerics extends SimpleError("Numerical comparison of incompatible numerical values")

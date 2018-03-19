@@ -3,7 +3,6 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Statement.Rule
 import com.preprocessor.ast.Language.Value
-import com.preprocessor.ast.ValueRecord
 import com.preprocessor.error.ProgramError
 import com.preprocessor.error.ProgramError.NonStringSelectorExpression
 import com.preprocessor.interpreter.RuleContext.RuleSelector
@@ -15,7 +14,7 @@ import scala.util.{Failure, Success, Try}
 
 object RuleInterpreter {
 
-	def run(rule: Rule)(implicit state: EvalState): Try[EvalState] = {
+	def run(rule: Rule)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 
 		normalizeRuleHead(rule) match {
 			case Failure(exception) => Failure(exception)
@@ -25,19 +24,19 @@ object RuleInterpreter {
 					SelectorNormalizer.normalize(SelectorParser(preProcessed).get)(state.environment).get
 				)) // TODO
 
-				StatementInterpreter.run(rule.body.content)(EvalState(newScope)) match {
-					case fail: Failure[EvalState] => fail
+				StatementInterpreter.run(rule.body.content)(EnvironmentWithValue(newScope, Value.Unit)) match {
+					case fail: Failure[EnvWithValue] => fail
 					case Success(result) =>
-						Success(EvalState(result.environment.popSubScope().get, result.valueRecord))
+						Success(EnvironmentWithValue(result.environment.popSubScope().get, result.value))
 				}
 		}
 	}
 
 
-	private def normalizeRuleHead(rule: Rule)(implicit state: EvalState) = {
+	private def normalizeRuleHead(rule: Rule)(implicit state: EnvWithValue) = {
 		val withImplicitParent = RuleHeadPreprocessor.prependImplicitParent(rule.head)
 
-		withImplicitParent.foldLeft[Try[(RawRuleHead, EvalState)]](
+		withImplicitParent.foldLeft[Try[(RawRuleHead, EnvWithValue)]](
 			Success((Vector.empty[RawRuleHeadComponent], state))) {
 			case (accumulator, ruleHeadComponent) => accumulator match {
 				case Failure(_) => accumulator
@@ -70,13 +69,13 @@ object RuleInterpreter {
 
 
 	// TODO this will fail once we implement correct evaluation of ParentSelector
-	private def mapToStrings(valueRecords: List[ValueRecord])(implicit state: EvalState) =
+	private def mapToStrings(valueRecords: List[Value.Value])(implicit state: EnvWithValue) =
 		valueRecords.foldLeft[Try[Vector[Value.String]]](Success(Vector.empty[Value.String])) {
-			case (accumulator, valueRecord) => accumulator match {
+			case (accumulator, value) => accumulator match {
 				case Failure(_) => accumulator
-				case Success(strings) => StringOps.castToString(valueRecord.value) match {
+				case Success(strings) => StringOps.castToString(value) match {
 					case Some(string) => Success(strings :+ string)
-					case None => Failure(ProgramError(NonStringSelectorExpression, state, valueRecord.value))
+					case None => Failure(ProgramError(NonStringSelectorExpression, state, value))
 				}
 			}
 		}

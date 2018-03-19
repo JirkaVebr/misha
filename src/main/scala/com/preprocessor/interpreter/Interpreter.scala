@@ -1,7 +1,7 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Language.Program
-import com.preprocessor.ast.{Language, ValueRecord}
+import com.preprocessor.ast.Language
+import com.preprocessor.ast.Language.{Program, Value}
 
 import scala.util.{Failure, Success, Try}
 
@@ -9,8 +9,8 @@ class Interpreter(val program: Program) {
 
 	val rootEnvironment: RootEnvironment = createRootEnvironment()
 
-	def runProgram(): Try[EvalState] =
-		StatementInterpreter.run(program.program)(EvalState(rootEnvironment))
+	def runProgram(): Try[EnvWithValue] =
+		StatementInterpreter.run(program.program)(EnvironmentWithValue(rootEnvironment, Value.Unit))
 
 	private def createRootEnvironment(): RootEnvironment =
 		RootEnvironment()
@@ -20,20 +20,20 @@ class Interpreter(val program: Program) {
 object Interpreter {
 
 	// TODO this isn't tail recursive, and so for longer lists this will be a total nightmare
-	def chainRun[V <: Language.Node](items: scala.List[V], state: EvalState, evaluate: (V, EvalState) => Try[EvalState]):
-	Try[(scala.List[ValueRecord], EvalState)] =
+	def chainRun[V <: Language.Node](items: scala.List[V], state: EnvWithValue, evaluate: (V, EnvWithValue) => Try[EnvWithValue]):
+	Try[(scala.List[Value.Value], EnvWithValue)] =
 		items match {
-			case Nil => Success((scala.List[ValueRecord](), state))
+			case Nil => Success((scala.List[Value.Value](), state))
 			case expression :: tail =>
 				val evaluationResult = evaluate(expression, state)
 				evaluationResult match {
 					case Failure(reason) => Failure(reason)
-					case Success(newEvalState) =>
-						val subsequent = chainRun(tail, newEvalState, evaluate)
+					case Success(newValueEnvironment) =>
+						val subsequent = chainRun(tail, newValueEnvironment, evaluate)
 						subsequent match {
 							case Failure(exception) => Failure(exception)
 							case Success((valueRecords, latestState)) =>
-								Success((newEvalState.valueRecord :: valueRecords, latestState))
+								Success((newValueEnvironment.value :: valueRecords, latestState))
 						}
 				}
 		}

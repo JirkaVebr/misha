@@ -13,10 +13,10 @@ import scala.util.{Failure, Success, Try}
 
 object TermInterpreter {
 
-	def run(term: Term)(implicit state: EvalState): Try[EvalState] = term match {
+	def run(term: Term)(implicit state: EnvWithValue): Try[EnvWithValue] = term match {
 		case value: Value => value match {
-			case Value.Unit => state evaluatedTo Value.Unit
-			case primitiveValue: Primitive => state evaluatedTo primitiveValue
+			case Value.Unit => state ~> Value.Unit
+			case primitiveValue: Primitive => state ~> primitiveValue
 			case compositeValue: Composite => compositeValue match {
 				case tuple: Value.Tuple2 => runTupleValue(tuple)
 				case list: Value.List => runListValue(list)
@@ -30,42 +30,42 @@ object TermInterpreter {
 		case MemberAccess(container, name) => sys.error("todo") // TODO
 	}
 
-	private def runTupleValue(tuple: Value.Tuple2)(implicit state: EvalState): Try[EvalState] =
-		state evaluatedTo tuple
+	private def runTupleValue(tuple: Value.Tuple2)(implicit state: EnvWithValue): Try[EnvWithValue] =
+		state ~> tuple
 
-	private def runTupleTerm(tuple: Term.Tuple2)(implicit state: EvalState): Try[EvalState] = {
+	private def runTupleTerm(tuple: Term.Tuple2)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		Interpreter.chainRun[Expression](scala.List(tuple.first, tuple.second), state, ExpressionInterpreter.run(_)(_)) match {
 			case Failure(reason) => Failure(reason)
 			case Success((first :: second :: Nil, finalState)) =>
-				finalState ~> Value.Tuple2(first.value, second.value)
+				finalState ~> Value.Tuple2(first, second)
 			case _ => state.failFatally(CompilerError("TODO")) // TODO
 		}
 	}
 
 	// TODO this should actually just evaluate to a list of parent selector strings
-	private def runMagicSymbol(symbol: MagicSymbol)(implicit state: EvalState): Try[EvalState] = symbol match {
+	private def runMagicSymbol(symbol: MagicSymbol)(implicit state: EnvWithValue): Try[EnvWithValue] = symbol match {
 		case ParentSelector => state.environment.lookupContext() match {
-			case Some(context) => state.evaluatedTo(Value.String(
+			case Some(context) => state.~>(Value.String(
 				RuleHeadEmitter.emit(context)(StringBuilder.newBuilder).mkString
 			))
-			case None => state.evaluatedTo(Value.String("")) // throw error?
+			case None => state.~>(Value.String("")) // throw error?
 		}
 	}
 
-	private def runVariable(variable: Variable)(implicit state: EvalState): Try[EvalState] = {
+	private def runVariable(variable: Variable)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val variableValue = state.environment.lookup(variable.name)
 
 		variableValue match {
-			case Some(value) => state ~> value.value
+			case Some(value) => state ~> value
 			case None => state.fail(ReadingUndefinedVariable, variable)
 		}
 	}
 
-	private def runListValue(list: Value.List)(implicit state: EvalState): Try[EvalState] = {
+	private def runListValue(list: Value.List)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		sys.error("todo") // TODO find common supertype
 	}
 
-	private def runListTerm(list: Term.List)(implicit state: EvalState): Try[EvalState] = {
+	private def runListTerm(list: Term.List)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val chainResult = Interpreter.chainRun[Expression](list.items.toList, state, ExpressionInterpreter.run(_)(_))
 
 		sys.error("todo")
