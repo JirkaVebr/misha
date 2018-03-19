@@ -23,7 +23,7 @@ object TermInterpreter {
 		}
 		case symbol: MagicSymbol => runMagicSymbol(symbol)
 		case variable: Variable => runVariable(variable)
-		case FunctionCall(function, arguments) => sys.error("todo") // TODO
+		case functionCall: FunctionCall => runFunctionCall(functionCall)
 		case function: Term.Function => runFunctionTerm(function)
 		case tuple: Term.Tuple2 => runTupleTerm(tuple)
 		case list: Term.List => runListTerm(list)
@@ -80,8 +80,14 @@ object TermInterpreter {
 		state ~> function
 
 	private def runFunctionTerm(function: Term.Function)(implicit state: EnvWithValue): Try[EnvWithValue] =
-		runFunctionValue(Value.Lambda(
-			function.arguments, function.returnType, function.body, state.environment
+		runFunctionValue(Value.Lambda( // TODO check default argument positions
+			function.mandatoryArguments, function.otherArguments, function.returnType, function.body, state.environment
 		))
+
+	private def runFunctionCall(function: Term.FunctionCall)(implicit state: EnvWithValue): Try[EnvWithValue] =
+		ExpressionInterpreter.run(function.function) match {
+			case Failure(exception) => Failure(exception)
+			case Success(newEnv) => ???
+		}
 
 }

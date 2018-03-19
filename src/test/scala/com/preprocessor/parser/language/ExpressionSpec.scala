@@ -173,14 +173,14 @@ class ExpressionSpec extends BaseParserSpec {
 	}
 
 	it should "correctly parse anonymous functions" in {
-		assert(parse("() => 123") === Term.Function(scala.List(), None, Scalar(123)))
-		assert(parse("(): Unit => 123") === Term.Function(scala.List(), Some(Type.Unit), Scalar(123)))
+		assert(parse("() => 123") === Term.Function(scala.List(), scala.List(), None, Scalar(123)))
+		assert(parse("(): Unit => 123") === Term.Function(scala.List(), scala.List(), Some(Type.Unit), Scalar(123)))
 		assert(parse("($a): Unit => 123") ===
-			Term.Function(scala.List(ValueSymbolDeclaration("a", None, None)), Some(Type.Unit), Scalar(123)))
+			Term.Function(scala.List(ValueSymbolDeclaration("a", None, None)), scala.List(), Some(Type.Unit), Scalar(123)))
 		assert(parse("($a: Scalar): Unit => 123") ===
-			Term.Function(scala.List(ValueSymbolDeclaration("a", Some(Type.Scalar), None)), Some(Type.Unit), Scalar(123)))
+			Term.Function(scala.List(ValueSymbolDeclaration("a", Some(Type.Scalar), ())), scala.List(), Some(Type.Unit), Scalar(123)))
 		assert(parse("($a: Scalar = 1): Unit => 123") ===
-			Term.Function(scala.List(ValueSymbolDeclaration("a", Some(Type.Scalar), Some(Scalar(1)))), Some(Type.Unit), Scalar(123)))
+			Term.Function(scala.List(), scala.List(ValueSymbolDeclaration("a", Some(Type.Scalar), Scalar(1))), Some(Type.Unit), Scalar(123)))
 	}
 
 	it should "correctly parse complicated arithmetic expressions" in {
