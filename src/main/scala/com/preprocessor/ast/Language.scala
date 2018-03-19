@@ -2,8 +2,10 @@ package com.preprocessor.ast
 
 import com.preprocessor.ast.Language.Expression.{Block, Expression}
 import com.preprocessor.ast.NumberUnit.UnitOfMeasure
+import com.preprocessor.interpreter.Environment
 import com.preprocessor.interpreter.Symbol.{TypeSymbol, ValueSymbol}
 import com.preprocessor.interpreter.typing.Typing
+import com.preprocessor.spec.NativeFunction.NativeFunction
 
 import scala.collection.immutable.{Map => SMap}
 
@@ -57,8 +59,12 @@ object Language {
 		// Composite types
 		case class Tuple2(first: Value, second: Value) extends Composite
 		case class List(values: Seq[Value]) extends Composite
-		case class Function(arguments: Seq[ValueSymbolDeclaration[Option[Expression]]], returnType: Option[Type.Any], body: Expression)
-			extends Composite
+
+		sealed trait Function extends Composite
+		case class NativeFunctionCall(function: NativeFunction, arguments: Seq[Value], returnType: Type.Any) extends Function
+		case class Lambda(arguments: Seq[ValueSymbolDeclaration[Option[Expression]]], returnType: Option[Type.Any],
+											body: Expression, environment: Option[Environment] = None) extends Function
+		case class PolymorphicGroup(function: Seq[Function]) extends Function
 	}
 
 
@@ -160,6 +166,8 @@ object Language {
 
 		case class Variable(name: ValueSymbol) extends Term
 		case class FunctionCall(function: Expression, arguments: Seq[Expression] = scala.Vector.empty) extends Term
+		case class Function(arguments: Seq[ValueSymbolDeclaration[Option[Expression]]], returnType: Option[Type.Any],
+												body: Expression) extends Term
 		case class Tuple2(first: Expression, second: Expression) extends Term
 		case class List(items: Seq[Expression]) extends Term
 		case class MemberAccess(container: Expression, name: Expression) extends Term

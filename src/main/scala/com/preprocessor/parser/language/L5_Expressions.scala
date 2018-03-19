@@ -200,7 +200,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 					ValueSymbolDeclaration(name, typeAnnotation, value)
 			)
 		).separatedBy(AnyWhitespaceAround(",")) ~ optional(AnyWhitespace ~ ',') ~
-			AnyWhitespaceAround(")") ~ TypeAnnotation ~ AnyWhitespaceAround("=>") ~ Expression ~> Value.Function
+			AnyWhitespaceAround(")") ~ TypeAnnotation ~ AnyWhitespaceAround("=>") ~ Expression ~> Term.Function
 	}
 
 

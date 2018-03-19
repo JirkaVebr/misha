@@ -22,7 +22,7 @@ object Typing {
 		case composite: Composite => composite match {
 			case Tuple2(first, second) => Type.Tuple2(getType(first), getType(second))
 			case Value.List(values) =>  sys.error("todo") // TODO
-			case Function(arguments, returnType, body) =>  sys.error("todo") // TODO
+			case _ =>  sys.error("todo") // TODO
 		}
 	}
 }
