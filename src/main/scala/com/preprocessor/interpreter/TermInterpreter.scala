@@ -32,20 +32,20 @@ object TermInterpreter {
 	}
 
 
-	def runParentSelector()(implicit state: EnvWithValue): Value.List =
+	def runParentSelector()(implicit state: EnvWithValue): Vector[Value.String] =
 		state.environment.lookupContext() match {
 			case Some(context) => context match {
 				case RuleSelector(selector) => selector match {
 					case SelectorList(selectors) =>
-						Value.List(selectors.map((s: NormalizedSelector) => {
+						selectors.map((s: NormalizedSelector) => {
 							Value.String(s.toString)
-						}).toList)
+						}).toVector
 					case _ =>
-						Value.List(scala.List(Value.String(selector.toString)))
+						Vector(Value.String(selector.toString))
 				}
 				case _: AtRule => ???
 			}
-			case None => Value.List(scala.List())
+			case None => Vector()
 		}
 
 
@@ -62,7 +62,7 @@ object TermInterpreter {
 	}
 
 	private def runMagicSymbol(symbol: MagicSymbol)(implicit state: EnvWithValue): Try[EnvWithValue] = symbol match {
-		case ParentSelector => state ~> runParentSelector()
+		case ParentSelector => state ~> Value.List(runParentSelector().toList)
 	}
 
 	private def runVariable(variable: Variable)(implicit state: EnvWithValue): Try[EnvWithValue] = {

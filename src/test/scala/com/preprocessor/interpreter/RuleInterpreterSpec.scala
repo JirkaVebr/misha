@@ -3,7 +3,7 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Language.Expression.Block
 import com.preprocessor.ast.Language.Statement.{Property, Rule, Sequence}
 import com.preprocessor.ast.Language.Term.ParentSelector
-import com.preprocessor.ast.Language.Value
+import com.preprocessor.ast.Language.{Term, Value}
 import com.preprocessor.ast.PropertyRecord
 import com.preprocessor.ast.Selector.{Class, Complex, Id, SelectorList}
 import com.preprocessor.interpreter.RuleContext.RuleSelector
@@ -36,10 +36,10 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 		val newState = run(Rule(Vector(
 			Left(".m"),
 			Left("y"),
-			Right(Vector(
+			Right(Term.List(List(
 				Value.String("Class1"),
 				Value.String("Class2")
-			)),
+			))),
 			Left(" .mySubclass")
 		), Block(
 			Property(Value.String("width"), Value.Percentage(80))

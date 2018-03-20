@@ -268,17 +268,19 @@ trait L5_Expressions { this: org.parboiled2.Parser
 					(undelimitedListBody(anyWhitespaceSeparator) ~ SingleLineWhitespace ~ '}') |
 					(delimitedListBody ~ SingleLineWhitespace ~ '}')
 				) ~> (
-					(expressions: Seq[Expression]) => Right(expressions.toVector)
+					(expressions: Seq[Expression]) => Right(Term.List(expressions))
 				)
 			) | (
-				'&' ~ push(Right(Vector(ParentSelector)))
+				'&' ~ push(Right(ParentSelector))
 			) | (
 				clearSB() ~ oneOrMore(
 					(!RuleHeadSpecialChars ~ ANY ~ appendSB()) |
 						('\\' ~ '{' ~ appendSB('{')) |
 						(',' ~
-							((capture(SingleLineWhitespace ~ '\n') ~> ((endOfLine: String) =>
-								appendSB("," + endOfLine))) |
+							(
+								( // This subrule basically means that a newline can only appear after a comma.
+									capture(SingleLineWhitespace ~ '\n') ~> ((endOfLine: String) => appendSB("," + endOfLine))
+								) |
 								appendSB(',')
 							)
 						)

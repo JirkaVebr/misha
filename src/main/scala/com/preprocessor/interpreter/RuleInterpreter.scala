@@ -2,6 +2,7 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Statement.Rule
+import com.preprocessor.ast.Language.Term.ParentSelector
 import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.Selector.NormalizedSelector
 import com.preprocessor.error.ProgramError
@@ -55,10 +56,8 @@ object RuleInterpreter {
 						}
 						case None => Success(rest :+ Left(string), currentState)
 					}
-					case Right(expressions) =>
-						Interpreter.chainRun[Expression](
-							expressions.toList, currentState, ExpressionInterpreter.run(_)(_)
-						) match {
+					case Right(expression) =>
+						ExpressionInterpreter.run(expression)(currentState) match {
 							case Failure(exception) => Failure(exception)
 							case Success(newEnvironment) =>
 								mapToStrings(newEnvironment.value) match {
@@ -73,22 +72,25 @@ object RuleInterpreter {
 		}
 
 
-	private def mapToStrings(valueRecords: List[Value.Value])(implicit state: EnvWithValue) =
-		valueRecords.foldLeft[Try[Vector[Value.String]]](Success(Vector.empty[Value.String])) {
-			case (accumulator, value) => accumulator match {
-				case Failure(_) => accumulator
-				case Success(strings) => value match {
-					case list: Value.List =>
-						if (list.values.forall(_.isInstanceOf[Value.String]))
-							Success(strings ++ list.values.asInstanceOf[List[Value.String]])
-						else
-							Failure(ProgramError(NonStringSelectorExpression, state, value))
-					case _ => StringOps.castToString(value) match {
-						case Some(string) => Success(strings :+ string)
-						case None => Failure(ProgramError(NonStringSelectorExpression, state, value))
+	private def mapToStrings(hopefullyList: Value.Value)(implicit state: EnvWithValue) =
+		hopefullyList match {
+			case list: Value.List => list.values.foldLeft[Try[Vector[Value.String]]](Success(Vector.empty[Value.String])) {
+				case (accumulator, value) => accumulator match {
+					case Failure(_) => accumulator
+					case Success(strings) => value match {
+						case list: Value.List =>
+							if (list.values.forall(_.isInstanceOf[Value.String]))
+								Success(strings ++ list.values.asInstanceOf[List[Value.String]])
+							else
+								Failure(ProgramError(NonStringSelectorExpression, state, value))
+						case _ => StringOps.castToString(value) match {
+							case Some(string) => Success(strings :+ string)
+							case None => Failure(ProgramError(NonStringSelectorExpression, state, value))
+						}
 					}
 				}
 			}
+			case _ => Failure(ProgramError(NonStringSelectorExpression, state, hopefullyList))
 		}
 
 

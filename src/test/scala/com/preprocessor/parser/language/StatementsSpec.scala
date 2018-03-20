@@ -57,9 +57,9 @@ class StatementsSpec extends BaseParserSpec {
 				|	123
 				|""".stripMargin) ===
 			Rule(Vector(
-				Right(Vector(ParentSelector)),
+				Right(ParentSelector),
 				Left(" "),
-				Right(Vector(ParentSelector)),
+				Right(ParentSelector),
 				Left("-active")
 			), Block(Scalar(123))))
 	}
@@ -68,14 +68,14 @@ class StatementsSpec extends BaseParserSpec {
 		assert(parse(
 			"""d{i}v
 				|	123
-				|""".stripMargin) === Rule(Vector(Left("d"), Right(Vector(Value.String("i"))), Left("v")), Block(Scalar(123))))
+				|""".stripMargin) === Rule(Vector(Left("d"), Right(Term.List(Vector(Value.String("i")))), Left("v")), Block(Scalar(123))))
 		assert(parse(
 			"""*:first{"-" + "type"}
 				|	123
 				|""".stripMargin) ===
 			Rule(Vector(
 				Left("*:first"),
-				Right(Vector(BinaryOperation(Addition, Value.String("-"), Value.String("type"))))
+				Right(Term.List(Vector(BinaryOperation(Addition, Value.String("-"), Value.String("type")))))
 			), Block(Scalar(123))))
 	}
 

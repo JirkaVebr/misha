@@ -11,7 +11,7 @@ package object ast {
 	@inline implicit def string2Value(string: String): Value.String = Value.String(string)
 
 
-	type RuleHeadComponent = Either[String, Vector[Expression]]
+	type RuleHeadComponent = Either[String, Expression]
 	type RuleHead = Vector[RuleHeadComponent]
 
 

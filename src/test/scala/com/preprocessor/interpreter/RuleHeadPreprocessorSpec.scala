@@ -1,6 +1,5 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Language.Term.ParentSelector
 import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.Selector.{Class, Complex, SelectorList}
 import com.preprocessor.spec.SelectorCombinator.Descendant
@@ -24,10 +23,10 @@ class RuleHeadPreprocessorSpec extends BaseInterpreterSpec {
 		)
 
 		assert(RuleHeadPreprocessor.explode(rawRuleHead) ===
-			""".myclass1 .mySubclass div,
-				|.myclass1 .mySubclass span,
-				|.myclass2 .mySubclass div,
-				|.myclass2 .mySubclass span""".stripMargin)
+			".myclass1 .mySubclass div, " +
+			".myclass1 .mySubclass span, " +
+			".myclass2 .mySubclass div, " +
+			".myclass2 .mySubclass span")
 	}
 
 	it should "correctly prepend implicit parent selectors" in {

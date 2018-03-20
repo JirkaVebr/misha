@@ -43,7 +43,7 @@ object RuleHeadPreprocessor {
 		ruleHead.headOption match {
 			case Some(head) => head match {
 				case Left(_) => true
-				case Right(expressions) => expressions == Vector(ParentSelector)
+				case Right(expressions) => expressions == ParentSelector
 			}
 			case None => true // Somewhat arbitrary. Empty ruleHead won't make it past the parser anyway though.
 		}
