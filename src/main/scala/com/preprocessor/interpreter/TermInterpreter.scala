@@ -31,6 +31,24 @@ object TermInterpreter {
 		case memberAccess: MemberAccess => MemberAccessInterpreter.run(memberAccess)
 	}
 
+
+	def runParentSelector()(implicit state: EnvWithValue): Value.List =
+		state.environment.lookupContext() match {
+			case Some(context) => context match {
+				case RuleSelector(selector) => selector match {
+					case SelectorList(selectors) =>
+						Value.List(selectors.map((s: NormalizedSelector) => {
+							Value.String(s.toString)
+						}).toList)
+					case _ =>
+						Value.List(scala.List(Value.String(selector.toString)))
+				}
+				case _: AtRule => ???
+			}
+			case None => Value.List(scala.List())
+		}
+
+
 	private def runTupleValue(tuple: Value.Tuple2)(implicit state: EnvWithValue): Try[EnvWithValue] =
 		state ~> tuple
 
@@ -44,20 +62,7 @@ object TermInterpreter {
 	}
 
 	private def runMagicSymbol(symbol: MagicSymbol)(implicit state: EnvWithValue): Try[EnvWithValue] = symbol match {
-		case ParentSelector => state.environment.lookupContext() match {
-			case Some(context) => context match {
-				case RuleSelector(selector) => selector match {
-					case SelectorList(selectors) =>
-						state ~> Value.List(selectors.map((s: NormalizedSelector) => {
-							Value.String(s.toString)
-						}).toList)
-					case _ =>
-						state ~> Value.List(scala.List(Value.String(selector.toString)))
-				}
-				case _: AtRule => ???
-			}
-			case None => state ~> Value.List(scala.List())
-		}
+		case ParentSelector => state ~> runParentSelector()
 	}
 
 	private def runVariable(variable: Variable)(implicit state: EnvWithValue): Try[EnvWithValue] = {
