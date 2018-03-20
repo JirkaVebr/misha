@@ -35,7 +35,7 @@ object RuleHeadPreprocessor {
 				}
 			}
 
-		rec(rawRuleHead).mkString(",\n").trim
+		rec(rawRuleHead).mkString(", ").trim
 	}
 
 
