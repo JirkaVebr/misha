@@ -29,21 +29,21 @@ trait L6_Selector { this: org.parboiled2.Parser
 	with L4_Basics
 	with L5_AnPlusB =>
 
-	def Selector: Rule1[Selector] = rule {
+	def Selector: Rule1[RawSelector] = rule {
 		selectorList
 	}
 
-	private def selectorList: Rule1[Selector] = rule {
+	private def selectorList: Rule1[RawSelector] = rule {
 		oneOrMore(complexSelector).separatedBy(AnyWhitespaceAround(",")) ~> (
-			(selectors: Seq[Selector]) =>
+			(selectors: Seq[RawComplexComponent]) =>
 				if (selectors.lengthCompare(1) == 0) selectors.head
 				else RawSelectorList(selectors)
 		)
 	}
 
-	private def complexSelector: Rule1[Selector] = rule { // Right associative
+	private def complexSelector: Rule1[RawComplexComponent] = rule { // Right associative
 		compoundSelector ~ zeroOrMore(combinator ~ complexSelector ~> (
-			(left: Selector, combinator: Combinator, right: Selector) => RawComplex(combinator, left, right)
+			(left: RawComplexComponent, combinator: Combinator, right: RawComplexComponent) => RawComplex(combinator, left, right)
 		))
 	}
 
@@ -57,15 +57,15 @@ trait L6_Selector { this: org.parboiled2.Parser
 	/**
 		* @see https://drafts.csswg.org/selectors-4/#typedef-compound-selector
 		*/
-	private def compoundSelector: Rule1[Selector] = rule {
+	private def compoundSelector: Rule1[RawCompoundComponent] = rule {
 		oneOrMore(simpleSelector) ~> (
-			(selectors: Seq[Selector]) =>
+			(selectors: Seq[RawSimpleSelector]) =>
 				if (selectors.lengthCompare(1) == 0) selectors.head
 				else RawCompound(selectors)
 		)
 	}
 
-	private def simpleSelector: Rule1[Selector] = rule {
+	private def simpleSelector: Rule1[RawSimpleSelector] = rule {
 		run {
 			(cursorChar: @switch) match {
 				case '#' => id
@@ -89,7 +89,7 @@ trait L6_Selector { this: org.parboiled2.Parser
 		QualifiedElementName ~> Element
 	}
 
-	private def pseudo: Rule1[Selector] = rule {
+	private def pseudo: Rule1[RawSimpleSelector] = rule {
 		':' ~!~ (pseudoElement | pseudoClass)
 	}
 
@@ -106,7 +106,7 @@ trait L6_Selector { this: org.parboiled2.Parser
 		)
 	}
 
-	private def pseudoClass: Rule1[Selector] = rule {
+	private def pseudoClass: Rule1[RawPseudoClass] = rule {
 		CssIdentifier ~ run {
 			(cursorChar: @switch) match {
 				case '(' => '(' ~!~ SingleLineWhitespace ~ functionalPseudoClass ~ SingleLineWhitespace ~ ')'
@@ -141,7 +141,7 @@ trait L6_Selector { this: org.parboiled2.Parser
 	}
 
 
-	private def functionalPseudoClass: Rule[CssIdentifier :: HNil, Selector :: HNil] = rule {
+	private def functionalPseudoClass: Rule[CssIdentifier :: HNil, RawPseudoClass :: HNil] = rule {
 		run((identifier: CssIdentifier) => {
 			val normalized = identifier.value.toLowerCase
 
@@ -163,7 +163,7 @@ trait L6_Selector { this: org.parboiled2.Parser
 		})
 	}
 
-	private def dirPseudoClass: Rule1[PseudoClass] = rule {
+	private def dirPseudoClass: Rule1[RawPseudoClass] = rule {
 		CssIdentifier ~> (
 			(identifier: CssIdentifier) => PseudoClasses.directionality.get(identifier.value.toLowerCase) match {
 				case Some(directionality) => Dir(directionality)
@@ -172,7 +172,7 @@ trait L6_Selector { this: org.parboiled2.Parser
 		)
 	}
 
-	private def dropPseudoClass: Rule1[PseudoClass] = rule {
+	private def dropPseudoClass: Rule1[RawPseudoClass] = rule {
 		(oneOrMore(CssIdentifier).separatedBy(MandatorySingleLineWhitespace) ~> (
 			(identifiers: Seq[CssIdentifier]) => {
 				val normalized = identifiers.toSet
@@ -190,7 +190,7 @@ trait L6_Selector { this: org.parboiled2.Parser
 		)) | push(NonFunctional(PseudoClasses.NonFunctional.Drop))
 	}
 
-	private def langPseudoClass: Rule1[PseudoClass] = rule {
+	private def langPseudoClass: Rule1[RawPseudoClass] = rule {
 		oneOrMore(
 			CssIdentifier |
 			(QuotedString ~> ((string: Value.String) => push(ast.CssIdentifier(string.value))))

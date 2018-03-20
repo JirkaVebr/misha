@@ -11,36 +11,46 @@ import com.preprocessor.spec.{PseudoClasses, PseudoElements}
 object Selector {
 	sealed trait Selector
 
-	/**
-		* Raw selectors exist because they can contain silly selectors such as "div#foo#bar.baz.baz::before span"
-		*/
+	/** Raw selectors exist because they can contain silly selectors such as "div#foo#bar.baz.baz::before span" */
 	sealed trait RawSelector extends Selector
 	sealed trait NormalizedSelector extends Selector {
 		override lazy val toString: String = SelectorEmitter.emit(this)(StringBuilder.newBuilder).mkString
 	}
 
+	sealed trait ComplexComponent extends NormalizedSelector
+	sealed trait CompoundComponent extends ComplexComponent
 
-	sealed trait SimpleSelector extends NormalizedSelector
+	sealed trait RawComplexComponent extends RawSelector
+	sealed trait RawCompoundComponent extends RawComplexComponent
 
-	case class Element(element: QualifiedElement) extends SimpleSelector
-	case class PseudoElement(element: PseudoElements.PseudoElement) extends SimpleSelector
+
+	sealed trait SimpleSelector extends CompoundComponent
+	sealed trait RawSimpleSelector extends RawCompoundComponent
+
+	/** @see https://drafts.csswg.org/selectors-4/#typedef-subclass-selector */
+	sealed trait SubClass extends SimpleSelector
+	sealed trait RawSubClass extends RawSimpleSelector
+
+	case class Element(element: QualifiedElement) extends SimpleSelector with RawSimpleSelector
+	case class PseudoElement(element: PseudoElements.PseudoElement) extends SimpleSelector with RawSimpleSelector
 	case class Attribute(name: QualifiedAttribute, target: Option[MatchTarget] = None, modifier: Option[Modifier] = None)
-		extends SimpleSelector // target being None signifies checking just for attribute presence
-	case class Id(name: CssIdentifier) extends SimpleSelector
-	case class Class(name: CssIdentifier) extends SimpleSelector
+		extends SubClass with RawSubClass // target being None signifies checking just for attribute presence
+	case class Id(name: CssIdentifier) extends SubClass with RawSubClass
+	case class Class(name: CssIdentifier) extends SubClass with RawSubClass
 
-	sealed trait PseudoClass extends SimpleSelector
+	sealed trait PseudoClass extends SubClass
+	sealed trait RawPseudoClass extends RawSubClass
 
-	case class NonFunctional(pseudoClass: NonFunctionalPseudoClass) extends PseudoClass
-	case class Dir(directionality: Directionality) extends PseudoClass
-	case class Drop(filter: Set[DropFilter]) extends PseudoClass
-	case class Lang(ranges: Set[CssIdentifier]) extends PseudoClass // TODO add this to spec
+	case class NonFunctional(pseudoClass: NonFunctionalPseudoClass) extends PseudoClass with RawPseudoClass
+	case class Dir(directionality: Directionality) extends PseudoClass with RawPseudoClass
+	case class Drop(filter: Set[DropFilter]) extends PseudoClass with RawPseudoClass
+	case class Lang(ranges: Set[CssIdentifier]) extends PseudoClass with RawPseudoClass // TODO add this to spec
 
 	case class SubSelector(kind: PseudoClasses.SubSelector, subSelector: NormalizedSelector) extends PseudoClass
-	case class RawSubSelector(kind: PseudoClasses.SubSelector, subSelector: Selector) extends RawSelector
+	case class RawSubSelector(kind: PseudoClasses.SubSelector, subSelector: Selector) extends RawPseudoClass
 
 	case class Nth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[NormalizedSelector] = None) extends PseudoClass
-	case class RawNth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[Selector] = None) extends RawSelector
+	case class RawNth(kind: PseudoClasses.Nth, ab: AnPlusB, of: Option[Selector] = None) extends RawPseudoClass
 
 
 	/**
@@ -50,14 +60,14 @@ object Selector {
 		* (@see https://drafts.csswg.org/selectors-4/#typedef-compound-selector). Nevertheless, it doesn't specify more,
 		* and so we're just disregarding that here.
 		*/
-	case class Compound(element: Option[Element], subClassSelectors: Set[SimpleSelector],
-											pseudoElement: Option[PseudoElement], furtherPseudoClasses: Set[PseudoClass]) extends NormalizedSelector
-	case class RawCompound(selectors: Seq[Selector]) extends RawSelector
+	case class Compound(element: Option[Element], subClassSelectors: Set[SubClass],
+											pseudoElement: Option[PseudoElement], furtherPseudoClasses: Set[PseudoClass]) extends CompoundComponent
+	case class RawCompound(selectors: Seq[RawSimpleSelector]) extends RawCompoundComponent
 
-	case class Complex(combinator: Combinator, left: NormalizedSelector, right: NormalizedSelector) extends NormalizedSelector
-	case class RawComplex(combinator: Combinator, left: Selector, right: Selector) extends RawSelector
+	case class Complex(combinator: Combinator, left: ComplexComponent, right: ComplexComponent) extends ComplexComponent
+	case class RawComplex(combinator: Combinator, left: RawComplexComponent, right: RawComplexComponent) extends RawComplexComponent
 
-	case class SelectorList(selectors: Set[NormalizedSelector]) extends NormalizedSelector
-	case class RawSelectorList(selectors: Seq[Selector]) extends RawSelector
+	case class SelectorList(selectors: Set[ComplexComponent]) extends NormalizedSelector
+	case class RawSelectorList(selectors: Seq[RawComplexComponent]) extends RawSelector
 
 }

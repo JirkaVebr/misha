@@ -4,6 +4,7 @@ import com.preprocessor.ast.Selector._
 import com.preprocessor.error.SelectorError
 import com.preprocessor.error.SelectorError._
 import com.preprocessor.interpreter.Environment
+import shapeless.Poly1
 
 import scala.util.{Failure, Success, Try}
 
@@ -11,26 +12,50 @@ object SelectorNormalizer {
 
 	def normalize(selector: Selector)(implicit environment: Environment): Try[NormalizedSelector] = selector match {
 		case raw: RawSelector => raw match {
-			case RawSubSelector(kind, subSelector) => normalize(subSelector) match {
-				case Failure(exception) => Failure(exception)
-				case Success(normalized) => Success(SubSelector(kind, normalized))
-			}
-			case RawNth(kind, ab, of) => of match {
-				case Some(ofSelector) => normalize(ofSelector) match {
-					case Failure(exception) => Failure(exception)
-					case Success(normalizedSelector) => Success(Nth(kind, ab, Some(normalizedSelector)))
+			case rawSelectorList: RawSelectorList => normalizeSelectorList(rawSelectorList)
+			case complexComponent: RawComplexComponent => complexComponent match {
+				case rawComplex: RawComplex =>
+					normalizeRawComplex(rawComplex)
+				case compoundComponent: RawCompoundComponent => compoundComponent match {
+					case rawCompound: RawCompound =>
+						RawCompoundNormalizer.normalize(rawCompound)
+					case simple: RawSimpleSelector => simple match {
+						case subClass: RawSubClass => subClass match {
+							case pseudoClass: RawPseudoClass => pseudoClass match {
+								case RawSubSelector(kind, subSelector) => normalize(subSelector) match {
+									case Failure(exception) => Failure(exception)
+									case Success(normalized) => Success(SubSelector(kind, normalized))
+								}
+								case RawNth(kind, ab, of) => of match {
+									case Some(ofSelector) => normalize(ofSelector) match {
+										case Failure(exception) => Failure(exception)
+										case Success(normalizedSelector) => Success(Nth(kind, ab, Some(normalizedSelector)))
+									}
+									case None => Success(Nth(kind, ab))
+								}
+
+								// Silly compiler… Can't use "_"
+								case normalized: NonFunctional => normalizeNormalized(normalized)
+								case normalized: Dir => normalizeNormalized(normalized)
+								case normalized: Drop => normalizeNormalized(normalized)
+								case normalized: Lang => normalizeNormalized(normalized)
+							}
+							case normalized: Class => normalizeNormalized(normalized)
+							case normalized: Attribute => normalizeNormalized(normalized)
+							case normalized: Id => normalizeNormalized(normalized)
+						}
+						case normalized: Element => normalizeNormalized(normalized)
+						case normalized: PseudoElement => normalizeNormalized(normalized)
+					}
 				}
-				case None => Success(Nth(kind, ab))
 			}
-			case rawCompound: RawCompound =>
-				RawCompoundNormalizer.normalize(rawCompound)
-			case rawComplex: RawComplex =>
-				normalizeRawComplex(rawComplex)
-			case rawSelectorList: RawSelectorList =>
-				normalizeSelectorList(rawSelectorList)
 		}
-		case normalized: NormalizedSelector => Success(normalized) // TODO validate
+		case normalized: NormalizedSelector => Success(normalized)
 	}
+
+
+	private def normalizeNormalized(selector: NormalizedSelector)(implicit environment: Environment): Try[NormalizedSelector] =
+		Success(selector)
 
 
 	// TODO validate illegal combinator use
@@ -39,7 +64,8 @@ object SelectorNormalizer {
 			case Failure(exception) =>
 				Failure(exception)
 			case Success(normalizedLeft :: normalizedRight :: Nil) =>
-				Success(Complex(rawComplex.combinator, normalizedLeft, normalizedRight))
+				//Success(Complex(rawComplex.combinator, normalizedLeft, normalizedRight))
+				Success(Complex(rawComplex.combinator, Class(""), Class(""))) // TODO!!!!
 			case _ => sys.error("this shouldn't happen") // TODO
 		}
 
@@ -53,7 +79,8 @@ object SelectorNormalizer {
 				if (list.selectors.lengthCompare(normalizedSet.size) > 0)
 					Failure(SelectorError(DuplicateSelectorInList))
 				else
-					Success(SelectorList(normalizedSet))
+					//Success(SelectorList(normalizedSet))
+					Success(SelectorList(Set())) // TODO!!!
 		}
 
 
@@ -68,5 +95,10 @@ object SelectorNormalizer {
 				}
 			}
 		}
+
+
+	//object staticChainNormalize extends Poly1 {
+	//	implicit def caseRawComplex
+	//}
 
 }

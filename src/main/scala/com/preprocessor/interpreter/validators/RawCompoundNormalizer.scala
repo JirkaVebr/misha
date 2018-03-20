@@ -10,7 +10,7 @@ import scala.util.{Failure, Success, Try}
 
 object RawCompoundNormalizer {
 
-	private case class Components(element: Option[Element], id: Option[Id], subClasses: Set[SimpleSelector],
+	private case class Components(element: Option[Element], id: Option[Id], subClasses: Set[SubClass],
 																pseudoElement: Option[PseudoElement], furtherPseudoClasses: Set[PseudoClass]) {
 
 		def withNewElement(element: Element): Success[Components] =
@@ -19,7 +19,7 @@ object RawCompoundNormalizer {
 		def withNewId(id: Id): Success[Components] =
 			withNew(Components(element, Some(id), subClasses, pseudoElement, furtherPseudoClasses))
 
-		def withNewSubClass(subClass: SimpleSelector): Success[Components] =
+		def withNewSubClass(subClass: SubClass): Success[Components] =
 			withNew(Components(element, id, subClasses + subClass, pseudoElement, furtherPseudoClasses))
 
 		def withNewPseudoElement(pseudoElement: PseudoElement): Success[Components] =
@@ -41,7 +41,7 @@ object RawCompoundNormalizer {
 			case Failure(exception) => Failure(exception)
 			case Success(selectors) => // Assuming there are at least two selectors
 				val initialValue: Accumulator =
-					Success(Components(None, None, Set.empty[SimpleSelector], None, Set.empty[PseudoClass]))
+					Success(Components(None, None, Set.empty[SubClass], None, Set.empty[PseudoClass]))
 
 				val result: Accumulator = selectors.foldLeft[Accumulator](initialValue)(
 					(accumulator: Accumulator, selector: NormalizedSelector) => accumulator match {
@@ -59,8 +59,10 @@ object RawCompoundNormalizer {
 									case None =>
 										components.withNewId(anotherId)
 								}
-								case Attribute(_, _, _) | Class(_) =>
-									components.withNewSubClass(simple)
+								case attribute: Attribute =>
+									components.withNewSubClass(attribute)
+								case classSelector: Class =>
+									components.withNewSubClass(classSelector)
 								case pseudo: PseudoClass => components.pseudoElement match {
 									case Some(_) =>
 										components.withNewFurtherPseudoClass(pseudo)

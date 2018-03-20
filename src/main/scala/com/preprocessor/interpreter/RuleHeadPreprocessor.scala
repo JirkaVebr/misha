@@ -50,18 +50,18 @@ object RuleHeadPreprocessor {
 
 
 	def prependImplicitParent(parentSelector: NormalizedSelector, selector: NormalizedSelector): NormalizedSelector = {
-		def prependSingleSelector(nonListParent: NormalizedSelector): Set[NormalizedSelector] = {
+		def prependSingleSelector(nonListParent: ComplexComponent): Set[ComplexComponent] = {
 			selector match {
 				case SelectorList(childSelectors) => childSelectors.map(Complex(Descendant, nonListParent, _))
-				case _ => Set(Complex(Descendant, nonListParent, selector))
+				case complexComponent: ComplexComponent => Set(Complex(Descendant, nonListParent, complexComponent))
 			}
 		}
 
 		parentSelector match {
 			case SelectorList(selectors) =>
 				SelectorList(selectors.flatMap(prependSingleSelector))
-			case _ =>
-				val withParent = prependSingleSelector(parentSelector)
+			case complexComponent: ComplexComponent =>
+				val withParent = prependSingleSelector(complexComponent)
 				if (withParent.size == 1) withParent.head
 				else SelectorList(withParent)
 		}
