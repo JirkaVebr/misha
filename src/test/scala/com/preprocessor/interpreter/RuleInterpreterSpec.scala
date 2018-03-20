@@ -2,11 +2,12 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Expression.Block
 import com.preprocessor.ast.Language.Statement.{Property, Rule, Sequence}
+import com.preprocessor.ast.Language.Term.ParentSelector
 import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.PropertyRecord
-import RuleContext.RuleSelector
-import com.preprocessor.ast.Selector.{Class, Complex, SelectorList}
-import Symbol.{PropertySymbol, RuleContextSymbol}
+import com.preprocessor.ast.Selector.{Class, Complex, Id, SelectorList}
+import com.preprocessor.interpreter.RuleContext.RuleSelector
+import com.preprocessor.interpreter.Symbol.{PropertySymbol, RuleContextSymbol}
 import com.preprocessor.spec.SelectorCombinator.Descendant
 
 class RuleInterpreterSpec extends BaseInterpreterSpec {
@@ -27,7 +28,7 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 		))
 	}
 
-	it should "correctly interpret rulex with structured selectors" in {
+	it should "correctly interpret rules with structured selectors" in {
 		/*
 		.myClass1 .mySubclass,
 		.myClass1 .mySubclass
@@ -54,6 +55,22 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 		assert(ruleEnvironment.lookupCurrent(PropertySymbol).get === List(
 			PropertyRecord("width", "80%")
 		))
+	}
+
+	it should "correctly interpret rules with implicit parent selectors" in {
+		val newState = run(Rule(Vector(Left(".myClass")), Block(Rule(
+			Vector(Left("#myId, .anotherClass")), Block(
+				Property(Value.String("width"), Value.Percentage(80))
+			))
+		)))
+		val outerRuleEnvironment = newState.environment.subEnvironments.head
+		val innerRuleEnvironment = outerRuleEnvironment.subEnvironments.head
+
+		assert(outerRuleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleSelector(Class("myClass")))
+		assert(innerRuleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleSelector(SelectorList(Set(
+			Complex(Descendant, Class("myClass"), Id("myId")),
+			Complex(Descendant, Class("myClass"), Class("anotherClass"))
+		))))
 	}
 
 

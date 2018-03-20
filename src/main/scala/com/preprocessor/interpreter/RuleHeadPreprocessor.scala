@@ -2,7 +2,9 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Term.ParentSelector
 import com.preprocessor.ast.RuleHead
+import com.preprocessor.ast.Selector._
 import com.preprocessor.spec.SelectorCombinator
+import com.preprocessor.spec.SelectorCombinator.Descendant
 
 
 /**
@@ -37,14 +39,31 @@ object RuleHeadPreprocessor {
 	}
 
 
-	def prependImplicitParent(ruleHead: RuleHead): RuleHead = {
-		lazy val implicitParent = Vector(Right(Vector(ParentSelector)), Left(SelectorCombinator.Descendant.symbol))
+	def isParentImplicit(ruleHead: RuleHead): Boolean =
+		ruleHead.headOption match {
+			case Some(head) => head match {
+				case Left(_) => true
+				case Right(expressions) => expressions == Vector(ParentSelector)
+			}
+			case None => true // Somewhat arbitrary. Empty ruleHead won't make it past the parser anyway though.
+		}
 
-		ruleHead.head match {
-			case Left(_) => implicitParent ++ ruleHead
-			case Right(expressions) =>
-				if (expressions == Vector(ParentSelector)) ruleHead
-				else implicitParent ++ ruleHead
+
+	def prependImplicitParent(parentSelector: NormalizedSelector, selector: NormalizedSelector): NormalizedSelector = {
+		def prependSingleSelector(nonListParent: NormalizedSelector): Set[NormalizedSelector] = {
+			selector match {
+				case SelectorList(childSelectors) => childSelectors.map(Complex(Descendant, nonListParent, _))
+				case _ => Set(Complex(Descendant, nonListParent, selector))
+			}
+		}
+
+		parentSelector match {
+			case SelectorList(selectors) =>
+				SelectorList(selectors.flatMap(prependSingleSelector))
+			case _ =>
+				val withParent = prependSingleSelector(parentSelector)
+				if (withParent.size == 1) withParent.head
+				else SelectorList(withParent)
 		}
 	}
 

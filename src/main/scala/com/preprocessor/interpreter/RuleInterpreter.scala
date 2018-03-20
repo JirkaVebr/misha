@@ -3,9 +3,10 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Statement.Rule
 import com.preprocessor.ast.Language.Value
+import com.preprocessor.ast.Selector.NormalizedSelector
 import com.preprocessor.error.ProgramError
 import com.preprocessor.error.ProgramError.NonStringSelectorExpression
-import com.preprocessor.interpreter.RuleContext.RuleSelector
+import com.preprocessor.interpreter.RuleContext.{AtRule, RuleSelector}
 import com.preprocessor.interpreter.ops.StringOps
 import com.preprocessor.interpreter.validators.SelectorNormalizer
 import com.preprocessor.parser.ruleHead.SelectorParser
@@ -15,28 +16,33 @@ import scala.util.{Failure, Success, Try}
 object RuleInterpreter {
 
 	def run(rule: Rule)(implicit state: EnvWithValue): Try[EnvWithValue] = {
+		val isParentImplicit = RuleHeadPreprocessor.isParentImplicit(rule.head)
 
 		normalizeRuleHead(rule) match {
 			case Failure(exception) => Failure(exception)
 			case Success((rawRuleHead, stateAfterHead)) =>
 				val preProcessed = RuleHeadPreprocessor.explode(rawRuleHead)
-				val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(
-					SelectorNormalizer.normalize(SelectorParser(preProcessed).get)(state.environment).get
-				)) // TODO
 
-				StatementInterpreter.run(rule.body.content)(EnvironmentWithValue(newScope, Value.Unit)) match {
-					case fail: Failure[EnvWithValue] => fail
-					case Success(result) =>
-						Success(EnvironmentWithValue(result.environment.popSubScope().get, result.value))
+				SelectorNormalizer.normalize(SelectorParser(preProcessed).get)(state.environment) match {
+					case Failure(exception) => Failure(exception)
+					case Success(normalized) =>
+						val finalized = if (isParentImplicit) prependImplicitParent(normalized) else normalized
+
+						// TODO validate finalized
+						val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(finalized))
+
+						StatementInterpreter.run(rule.body.content)(EnvironmentWithValue(newScope, Value.Unit)) match {
+							case fail: Failure[EnvWithValue] => fail
+							case Success(result) =>
+								Success(EnvironmentWithValue(result.environment.popSubScope().get, result.value))
+						}
 				}
 		}
 	}
 
 
-	private def normalizeRuleHead(rule: Rule)(implicit state: EnvWithValue) = {
-		val withImplicitParent = RuleHeadPreprocessor.prependImplicitParent(rule.head)
-
-		withImplicitParent.foldLeft[Try[(RawRuleHead, EnvWithValue)]](
+	private def normalizeRuleHead(rule: Rule)(implicit state: EnvWithValue) =
+		rule.head.foldLeft[Try[(RawRuleHead, EnvWithValue)]](
 			Success((Vector.empty[RawRuleHeadComponent], state))) {
 			case (accumulator, ruleHeadComponent) => accumulator match {
 				case Failure(_) => accumulator
@@ -65,7 +71,6 @@ object RuleInterpreter {
 				}
 			}
 		}
-	}
 
 
 	private def mapToStrings(valueRecords: List[Value.Value])(implicit state: EnvWithValue) =
@@ -84,6 +89,16 @@ object RuleInterpreter {
 					}
 				}
 			}
+		}
+
+
+	private def prependImplicitParent(selector: NormalizedSelector)(implicit state: EnvWithValue): NormalizedSelector =
+		state.environment.lookupContext() match {
+			case Some(rule) => rule match {
+				case RuleSelector(parentSelector) => RuleHeadPreprocessor.prependImplicitParent(parentSelector, selector)
+				case _: AtRule => ???
+			}
+			case None => selector
 		}
 
 }
