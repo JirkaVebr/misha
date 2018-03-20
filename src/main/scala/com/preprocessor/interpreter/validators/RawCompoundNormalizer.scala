@@ -4,7 +4,7 @@ import com.preprocessor.ast.Selector._
 import com.preprocessor.error.{CompilerError, SelectorError}
 import com.preprocessor.error.SelectorError.{IllegalSelectorAfterPseudoElement, MultipleIdSelectors, MultiplePseudoElements, MultipleTypeSelectors}
 import com.preprocessor.interpreter.Environment
-import com.preprocessor.interpreter.validators.SelectorNormalizer.chainNormalize
+import com.preprocessor.interpreter.validators.SelectorNormalizer.chainNormalizeRawComplex
 
 import scala.util.{Failure, Success, Try}
 
@@ -37,7 +37,7 @@ object RawCompoundNormalizer {
 
 
 	def normalize(rawCompound: RawCompound)(implicit environment: Environment): Try[Compound] = {
-		chainNormalize(rawCompound.selectors) match {
+		chainNormalizeRawComplex(rawCompound.selectors) match {
 			case Failure(exception) => Failure(exception)
 			case Success(selectors) => // Assuming there are at least two selectors
 				val initialValue: Accumulator =
