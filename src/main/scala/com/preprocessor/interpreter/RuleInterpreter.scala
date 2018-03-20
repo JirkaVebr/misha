@@ -68,7 +68,6 @@ object RuleInterpreter {
 	}
 
 
-	// TODO this will fail once we implement correct evaluation of ParentSelector
 	private def mapToStrings(valueRecords: List[Value.Value])(implicit state: EnvWithValue) =
 		valueRecords.foldLeft[Try[Vector[Value.String]]](Success(Vector.empty[Value.String])) {
 			case (accumulator, value) => accumulator match {
