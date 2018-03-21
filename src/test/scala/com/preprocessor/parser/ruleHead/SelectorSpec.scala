@@ -7,7 +7,7 @@ import com.preprocessor.parser.BaseParserSpec
 import com.preprocessor.spec.AttributeSelector._
 import com.preprocessor.spec.HtmlElements._
 import com.preprocessor.spec.PseudoClasses.AnPlusB
-import com.preprocessor.spec.SelectorCombinator.{Child, NextSibling}
+import com.preprocessor.spec.SelectorSeparator.{Child, NextSibling}
 import com.preprocessor.spec.{PseudoClasses, PseudoElements}
 import org.parboiled2.ParseError
 

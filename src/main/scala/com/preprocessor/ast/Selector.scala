@@ -4,7 +4,7 @@ import com.preprocessor.emitter.SelectorEmitter
 import com.preprocessor.spec.AttributeSelector.Modifier
 import com.preprocessor.spec.PseudoClasses.NonFunctional.NonFunctionalPseudoClass
 import com.preprocessor.spec.PseudoClasses.{AnPlusB, Directionality, DropFilter}
-import com.preprocessor.spec.SelectorCombinator.Combinator
+import com.preprocessor.spec.SelectorSeparator.Combinator
 import com.preprocessor.spec.{PseudoClasses, PseudoElements}
 
 

@@ -4,6 +4,7 @@ import com.preprocessor.ast.Namespace.{AnyNamespace, NamedNamespace, NoNamespace
 import com.preprocessor.ast.Selector._
 import com.preprocessor.spec.PseudoClasses
 import com.preprocessor.spec.PseudoClasses.AnPlusB
+import com.preprocessor.spec.SelectorSeparator.SelectorListSeparator
 
 object SelectorEmitter {
 
@@ -106,7 +107,9 @@ object SelectorEmitter {
 	private def emitSelectorList(list: SelectorList)(implicit builder: StringBuilder): StringBuilder =
 		// Assuming there are always at least two elements
 		list.selectors.tail.foldLeft(emit(list.selectors.head)){
-			case (intermediateBuilder, ruleHead) => emit(ruleHead)(intermediateBuilder.append(", "))
+			case (intermediateBuilder, ruleHead) => emit(ruleHead)(
+				intermediateBuilder.append(SelectorListSeparator.symbol + " ")
+			)
 		}
 
 

@@ -8,7 +8,7 @@ import com.preprocessor.ast.PropertyRecord
 import com.preprocessor.ast.Selector.{Class, Complex, Id, SelectorList}
 import com.preprocessor.interpreter.RuleContext.RuleSelector
 import com.preprocessor.interpreter.Symbol.{PropertySymbol, RuleContextSymbol}
-import com.preprocessor.spec.SelectorCombinator.Descendant
+import com.preprocessor.spec.SelectorSeparator.Descendant
 
 class RuleInterpreterSpec extends BaseInterpreterSpec {
 

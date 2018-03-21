@@ -7,7 +7,7 @@ import com.preprocessor.interpreter.{BaseInterpreterSpec, Environment}
 import com.preprocessor.spec.HtmlElements.{Div, Span}
 import com.preprocessor.spec.PseudoClasses.NonFunctional.{Focus, Hover}
 import com.preprocessor.spec.PseudoElements.After
-import com.preprocessor.spec.SelectorCombinator.{NextSibling, SubsequentSibling}
+import com.preprocessor.spec.SelectorSeparator.{NextSibling, SubsequentSibling}
 
 import scala.util.{Failure, Success}
 

@@ -7,7 +7,7 @@ import com.preprocessor.spec.AttributeSelector.Equals
 import com.preprocessor.spec.HtmlElements.Div
 import com.preprocessor.spec.PseudoClasses.NonFunctional.{FirstChild, Focus, Hover}
 import com.preprocessor.spec.PseudoElements.{After, Before}
-import com.preprocessor.spec.SelectorCombinator.{Descendant, NextSibling}
+import com.preprocessor.spec.SelectorSeparator.{Descendant, NextSibling}
 
 class SelectorEmitterSpec extends BaseEmitterSpec {
 

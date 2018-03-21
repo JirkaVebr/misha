@@ -9,7 +9,7 @@ import com.preprocessor.spec.AttributeSelector.{Matcher, Modifier}
 import com.preprocessor.spec.PseudoClasses.NonFunctional.CustomPseudoClass
 import com.preprocessor.spec.PseudoClasses.UndefinedDirectionality
 import com.preprocessor.spec.PseudoElements.CustomPseudoElement
-import com.preprocessor.spec.SelectorCombinator._
+import com.preprocessor.spec.SelectorSeparator._
 import com.preprocessor.spec.{AttributeSelector, PseudoClasses, PseudoElements}
 import org.parboiled2.{StringBuilding, _}
 import shapeless.{::, HNil}

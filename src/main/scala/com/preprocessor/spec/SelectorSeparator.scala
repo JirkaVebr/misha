@@ -1,11 +1,13 @@
 package com.preprocessor.spec
 
-object SelectorCombinator {
+object SelectorSeparator {
 
-	sealed trait Combinator {
+	sealed trait SelectorSeparator {
 		def symbol: String
 		def emit: String = " " + symbol + " "
 	}
+
+	sealed trait Combinator extends SelectorSeparator
 
 	case object Descendant extends Combinator {
 		override def symbol: String = " "
@@ -19,5 +21,10 @@ object SelectorCombinator {
 	}
 	case object SubsequentSibling extends Combinator {
 		override def symbol: String = "~"
+	}
+
+
+	case object SelectorListSeparator extends SelectorSeparator {
+		override def symbol: String = ","
 	}
 }

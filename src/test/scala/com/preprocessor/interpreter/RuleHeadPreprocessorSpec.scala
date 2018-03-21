@@ -2,7 +2,7 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.Selector.{Class, Complex, SelectorList}
-import com.preprocessor.spec.SelectorCombinator.Descendant
+import com.preprocessor.spec.SelectorSeparator.Descendant
 
 class RuleHeadPreprocessorSpec extends BaseInterpreterSpec {
 
