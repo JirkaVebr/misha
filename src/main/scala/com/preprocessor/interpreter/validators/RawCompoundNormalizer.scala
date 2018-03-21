@@ -1,9 +1,8 @@
 package com.preprocessor.interpreter.validators
 
 import com.preprocessor.ast.Selector._
-import com.preprocessor.error.{CompilerError, SelectorError}
 import com.preprocessor.error.SelectorError.{IllegalSelectorAfterPseudoElement, MultipleIdSelectors, MultiplePseudoElements, MultipleTypeSelectors}
-import com.preprocessor.interpreter.Environment
+import com.preprocessor.error.{CompilerError, SelectorError}
 import com.preprocessor.interpreter.validators.SelectorNormalizer.chainNormalizeRawComplex
 
 import scala.util.{Failure, Success, Try}
@@ -99,10 +98,6 @@ object RawCompoundNormalizer {
 				case Some(_) =>
 					Failure(SelectorError(IllegalSelectorAfterPseudoElement))
 				case None =>
-					/*anotherElement.element match { TODO check the env for custom element name
-						case CustomElement(name) =>
-						case _ =>
-					}*/
 					components.withNewElement(element)
 			}
 		}
@@ -113,10 +108,6 @@ object RawCompoundNormalizer {
 			case Some(_) =>
 				Failure(SelectorError(MultiplePseudoElements))
 			case None =>
-				/*anotherPseudoElement match { TODO check the env for custom pseudo element name
-					case CustomPseudoElement(name) =>
-					case _ =>
-				}*/
 				components.withNewPseudoElement(pseudoElement)
 		}
 

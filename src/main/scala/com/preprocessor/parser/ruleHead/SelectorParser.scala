@@ -1,6 +1,6 @@
 package com.preprocessor.parser.ruleHead
 
-import com.preprocessor.ast.Selector.Selector
+import com.preprocessor.ast.Selector.RawSelector
 import com.preprocessor.parser.common.{L0_Whitespace, L1_AstNode, L2_Strings, L3_Numbers}
 import com.preprocessor.parser.{ParserFactory, ParserOf}
 import org.parboiled2.ParserInput.StringBasedParserInput
@@ -21,11 +21,11 @@ class SelectorParser(val input: ParserInput) extends Parser
 }
 
 object SelectorParser extends ParserFactory[SelectorParser]
-	with ParserOf[Selector] {
+	with ParserOf[RawSelector] {
 
 	override def create(input: String): SelectorParser =
 		new SelectorParser(new StringBasedParserInput(input))
 
-	override def apply(input: String): Try[Selector] =
+	override def apply(input: String): Try[RawSelector] =
 		create(input).Selector.run()
 }

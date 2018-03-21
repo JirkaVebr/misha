@@ -2,12 +2,12 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Statement.Rule
 import com.preprocessor.ast.Language.Value
-import com.preprocessor.error.ProgramError
 import com.preprocessor.error.ProgramError.NonStringSelectorExpression
+import com.preprocessor.error.{ProgramError, RuleHeadParseError}
 import com.preprocessor.interpreter.RuleContext.RuleSelector
 import com.preprocessor.interpreter.ops.StringOps
-import com.preprocessor.interpreter.validators.SelectorNormalizer
 import com.preprocessor.parser.ruleHead.SelectorParser
+import org.parboiled2.ParseError
 
 import scala.util.{Failure, Success, Try}
 
@@ -23,17 +23,22 @@ object RuleInterpreter {
 					rawRuleHead, TermInterpreter.runParentSelector()(stateAfterHead)
 				).preProcess()
 
-				SelectorNormalizer.normalize(SelectorParser(preProcessed).get) match {
-					case Failure(exception) =>
-						Failure(exception)
-					case Success(normalized) =>
-						// TODO validate normalized
-						val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(normalized))
+				SelectorParser(preProcessed) match {
+					case Failure(exception) => exception match {
+						case parseError: ParseError => Failure(RuleHeadParseError(parseError, state.environment))
+						case _ => Failure(exception)
+					}
+					case Success(rawSelector) =>
+						SelectorValidator.validateSelector(rawSelector)(state) match {
+							case Failure(exception) => Failure(exception)
+							case Success(validSelector) =>
+								val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(validSelector))
 
-						StatementInterpreter.run(rule.body.content)(EnvironmentWithValue(newScope, Value.Unit)) match {
-							case fail: Failure[EnvWithValue] => fail
-							case Success(result) =>
-								Success(EnvironmentWithValue(result.environment.popSubScope().get, result.value))
+								StatementInterpreter.run(rule.body.content)(EnvironmentWithValue(newScope, Value.Unit)) match {
+									case fail: Failure[EnvWithValue] => fail
+									case Success(result) =>
+										Success(EnvironmentWithValue(result.environment.popSubScope().get, result.value))
+								}
 						}
 				}
 		}
