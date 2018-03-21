@@ -17,20 +17,18 @@ import scala.util.{Failure, Success, Try}
 object RuleInterpreter {
 
 	def run(rule: Rule)(implicit state: EnvWithValue): Try[EnvWithValue] = {
-		val isParentImplicit = RuleHeadPreprocessor.isParentImplicit(rule.head)
-
 		normalizeRuleHead(rule) match {
 			case Failure(exception) => Failure(exception)
 			case Success((rawRuleHead, stateAfterHead)) =>
-				val preProcessed = RuleHeadPreprocessor.explode(rawRuleHead)
+				// TODO resolve the correct rule handling based on context
+
+				val preProcessed = new SelectorPreprocessor(rawRuleHead).preProcess()
 
 				SelectorNormalizer.normalize(SelectorParser(preProcessed).get) match {
 					case Failure(exception) => Failure(exception)
 					case Success(normalized) =>
-						val finalized = if (isParentImplicit) prependImplicitParent(normalized) else normalized
-
-						// TODO validate finalized
-						val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(finalized))
+						// TODO validate normalized
+						val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(normalized))
 
 						StatementInterpreter.run(rule.body.content)(EnvironmentWithValue(newScope, Value.Unit)) match {
 							case fail: Failure[EnvWithValue] => fail
@@ -91,16 +89,6 @@ object RuleInterpreter {
 				}
 			}
 			case _ => Failure(ProgramError(NonStringSelectorExpression, state, hopefullyList))
-		}
-
-
-	private def prependImplicitParent(selector: NormalizedSelector)(implicit state: EnvWithValue): NormalizedSelector =
-		state.environment.lookupContext() match {
-			case Some(rule) => rule match {
-				case RuleSelector(parentSelector) => RuleHeadPreprocessor.prependImplicitParent(parentSelector, selector)
-				case _: AtRule => ???
-			}
-			case None => selector
 		}
 
 }

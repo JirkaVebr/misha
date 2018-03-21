@@ -1,11 +1,5 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Language.Term.ParentSelector
-import com.preprocessor.ast.RuleHead
-import com.preprocessor.ast.Selector._
-import com.preprocessor.spec.SelectorCombinator
-import com.preprocessor.spec.SelectorCombinator.Descendant
-
 
 /**
 	* A rule head can look something like this:
@@ -16,7 +10,7 @@ import com.preprocessor.spec.SelectorCombinator.Descendant
 	*/
 object RuleHeadPreprocessor {
 
-	def explode(rawRuleHead: RawRuleHead): String = {
+	def explode(rawRuleHead: RawRuleHead, separator: String = ", "): String = {
 		def rec(ruleHead: Vector[RawRuleHeadComponent]): Vector[String] =
 			if (ruleHead.isEmpty)
 				Vector.empty
@@ -35,36 +29,7 @@ object RuleHeadPreprocessor {
 				}
 			}
 
-		rec(rawRuleHead).mkString(", ").trim
-	}
-
-
-	def isParentImplicit(ruleHead: RuleHead): Boolean =
-		ruleHead.headOption match {
-			case Some(head) => head match {
-				case Left(_) => true
-				case Right(expressions) => expressions == ParentSelector
-			}
-			case None => true // Somewhat arbitrary. Empty ruleHead won't make it past the parser anyway though.
-		}
-
-
-	def prependImplicitParent(parentSelector: NormalizedSelector, selector: NormalizedSelector): NormalizedSelector = {
-		def prependSingleSelector(nonListParent: ComplexComponent): Set[ComplexComponent] = {
-			selector match {
-				case SelectorList(childSelectors) => childSelectors.map(Complex(Descendant, nonListParent, _))
-				case complexComponent: ComplexComponent => Set(Complex(Descendant, nonListParent, complexComponent))
-			}
-		}
-
-		parentSelector match {
-			case SelectorList(selectors) =>
-				SelectorList(selectors.flatMap(prependSingleSelector))
-			case complexComponent: ComplexComponent =>
-				val withParent = prependSingleSelector(complexComponent)
-				if (withParent.size == 1) withParent.head
-				else SelectorList(withParent)
-		}
+		rec(rawRuleHead).mkString(separator).trim
 	}
 
 }

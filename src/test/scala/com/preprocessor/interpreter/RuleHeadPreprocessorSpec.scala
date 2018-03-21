@@ -29,25 +29,4 @@ class RuleHeadPreprocessorSpec extends BaseInterpreterSpec {
 			".myclass2 .mySubclass span")
 	}
 
-	it should "correctly prepend implicit parent selectors" in {
-		assert(RuleHeadPreprocessor.prependImplicitParent(
-			SelectorList(Set(
-				Class("myClass1"),
-				Class("myClass2")
-			)),
-			SelectorList(Set(
-				Class("myClass3"),
-				Class("myClass4"),
-				Class("myClass5")
-			))
-		) === SelectorList(Set(
-			Complex(Descendant, Class("myClass1"), Class("myClass3")),
-			Complex(Descendant, Class("myClass1"), Class("myClass4")),
-			Complex(Descendant, Class("myClass1"), Class("myClass5")),
-			Complex(Descendant, Class("myClass2"), Class("myClass3")),
-			Complex(Descendant, Class("myClass2"), Class("myClass4")),
-			Complex(Descendant, Class("myClass2"), Class("myClass5"))
-		)))
-	}
-
 }
