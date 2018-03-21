@@ -1,15 +1,15 @@
 package com.preprocessor.interpreter.validators
 
+import com.preprocessor.ast.Selector
 import com.preprocessor.ast.Selector._
 import com.preprocessor.error.SelectorError
 import com.preprocessor.error.SelectorError._
-import com.preprocessor.interpreter.Environment
 
 import scala.util.{Failure, Success, Try}
 
 object SelectorNormalizer {
 
-	def normalize(selector: Selector)(implicit environment: Environment): Try[NormalizedSelector] = selector match {
+	def normalize(selector: Selector): Try[NormalizedSelector] = selector match {
 		case raw: RawSelector => raw match {
 			case rawSelectorList: RawSelectorList => normalizeSelectorList(rawSelectorList)
 			case complexComponent: RawComplexComponent => normalizeRawComplexComponent(complexComponent)
@@ -18,8 +18,7 @@ object SelectorNormalizer {
 	}
 
 
-	private def normalizeRawComplexComponent(complexComponent: RawComplexComponent)
-																					(implicit environment: Environment): Try[ComplexComponent] =
+	private def normalizeRawComplexComponent(complexComponent: RawComplexComponent): Try[ComplexComponent] =
 		complexComponent match {
 			case rawComplex: RawComplex =>
 				normalizeRawComplex(rawComplex)
@@ -49,7 +48,7 @@ object SelectorNormalizer {
 						}
 						case normalized: Class => normalizeComplexComponent(normalized)
 						case normalized: Attribute => normalizeComplexComponent(normalized)
-						case normalized: Id => normalizeComplexComponent(normalized)
+						case normalized: Selector.Id => normalizeComplexComponent(normalized)
 					}
 					case normalized: Element => normalizeComplexComponent(normalized)
 					case normalized: PseudoElement => normalizeComplexComponent(normalized)
@@ -58,16 +57,16 @@ object SelectorNormalizer {
 		}
 
 
-	private def normalizeNormalized(selector: NormalizedSelector)(implicit environment: Environment): Try[NormalizedSelector] =
+	private def normalizeNormalized(selector: NormalizedSelector): Try[NormalizedSelector] =
 		Success(selector)
 
 
-	private def normalizeComplexComponent(selector: ComplexComponent)(implicit environment: Environment): Try[ComplexComponent] =
+	private def normalizeComplexComponent(selector: ComplexComponent): Try[ComplexComponent] =
 		Success(selector)
 
 
 	// TODO validate illegal combinator use
-	private def normalizeRawComplex(rawComplex: RawComplex)(implicit environment: Environment): Try[Complex] =
+	private def normalizeRawComplex(rawComplex: RawComplex): Try[Complex] =
 		chainNormalizeRawComplex(rawComplex.left :: rawComplex.right :: Nil) match {
 			case Failure(exception) =>
 				Failure(exception)
@@ -77,7 +76,7 @@ object SelectorNormalizer {
 		}
 
 
-	private def normalizeSelectorList(list: RawSelectorList)(implicit environment: Environment): Try[SelectorList] =
+	private def normalizeSelectorList(list: RawSelectorList): Try[SelectorList] =
 		chainNormalizeRawComplex(list.selectors) match {
 			case Failure(exception) => Failure(exception)
 			case Success(normalizedSelectors) =>
@@ -90,7 +89,7 @@ object SelectorNormalizer {
 		}
 
 
-	def chainNormalizeRawComplex(selectors: Seq[RawComplexComponent])(implicit environment: Environment): Try[Seq[ComplexComponent]] =
+	def chainNormalizeRawComplex(selectors: Seq[RawComplexComponent]): Try[Seq[ComplexComponent]] =
 		if (selectors.isEmpty) Success(Seq.empty[ComplexComponent])
 		else {
 			normalizeRawComplexComponent(selectors.head) match {

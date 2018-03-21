@@ -24,7 +24,7 @@ object RuleInterpreter {
 			case Success((rawRuleHead, stateAfterHead)) =>
 				val preProcessed = RuleHeadPreprocessor.explode(rawRuleHead)
 
-				SelectorNormalizer.normalize(SelectorParser(preProcessed).get)(state.environment) match {
+				SelectorNormalizer.normalize(SelectorParser(preProcessed).get) match {
 					case Failure(exception) => Failure(exception)
 					case Success(normalized) =>
 						val finalized = if (isParentImplicit) prependImplicitParent(normalized) else normalized

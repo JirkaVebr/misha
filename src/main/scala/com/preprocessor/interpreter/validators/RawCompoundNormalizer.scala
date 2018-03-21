@@ -36,7 +36,7 @@ object RawCompoundNormalizer {
 	private type Accumulator = Try[Components]
 
 
-	def normalize(rawCompound: RawCompound)(implicit environment: Environment): Try[Compound] = {
+	def normalize(rawCompound: RawCompound): Try[Compound] = {
 		chainNormalizeRawComplex(rawCompound.selectors) match {
 			case Failure(exception) => Failure(exception)
 			case Success(selectors) => // Assuming there are at least two selectors
@@ -91,7 +91,7 @@ object RawCompoundNormalizer {
 	}
 
 
-	private def normalizeElement(element: Element, components: Components)(implicit environment: Environment): Accumulator =
+	private def normalizeElement(element: Element, components: Components): Accumulator =
 		components.element match { // TODO check everything else is empty
 			case Some(_) =>
 				Failure(SelectorError(MultipleTypeSelectors))
@@ -108,7 +108,7 @@ object RawCompoundNormalizer {
 		}
 
 
-	private def normalizePseudoElement(pseudoElement: PseudoElement, components: Components)(implicit environment: Environment): Accumulator =
+	private def normalizePseudoElement(pseudoElement: PseudoElement, components: Components): Accumulator =
 		components.pseudoElement match {
 			case Some(_) =>
 				Failure(SelectorError(MultiplePseudoElements))
