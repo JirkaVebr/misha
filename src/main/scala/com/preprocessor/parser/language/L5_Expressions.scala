@@ -291,7 +291,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	private def ruleHeadString: Rule1[Left[String, Expression]] = rule {
 		clearSB() ~ oneOrMore(
 			(!RuleHeadSpecialChars ~ ANY ~ appendSB()) |
-				('\\' ~ '{' ~ appendSB('{')) |
+				('\\' ~ (('{' ~ appendSB('{')) | ('&' ~ appendSB('&')))) |
 				(',' ~
 					(
 						( // This subrule basically means that a newline can only appear after a comma.

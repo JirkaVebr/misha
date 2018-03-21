@@ -79,6 +79,13 @@ class StatementsSpec extends BaseParserSpec {
 			), Block(Scalar(123))))
 	}
 
+	it should "correctly parse escaped values" in {
+		assert(parse(
+			"""se\{lect\&or
+				|	123
+				|""".stripMargin) === Rule(Vector(Left("se{lect&or")), Block(Scalar(123))))
+	}
+
 	it should "correctly parse a type alias declaration" in {
 		assert(parse("@type NumOrString = Scalar | String") ===
 			TypeAliasDeclaration(Type.TypeAlias("NumOrString"), Type.Union(Set(Type.Scalar, Type.String))))
