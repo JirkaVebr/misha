@@ -8,6 +8,7 @@ import com.preprocessor.interpreter.typing.Typing
 import com.preprocessor.spec.NativeFunction.NativeFunction
 
 import scala.collection.immutable.{Map => SMap}
+import scala.util.Try
 
 
 /**
@@ -66,6 +67,7 @@ object Language {
 		case class Lambda(mandatoryArguments: Seq[ValueSymbolDeclaration[Unit]],
 											otherArguments: Seq[ValueSymbolDeclaration[Expression]],
 											returnType: Option[Type.Any], body: Block, environment: Environment) extends Function
+		case class Native(expectedType: Vector[Type.Any], implementation: (Vector[Value]) => Try[Value]) extends Function
 		case class PolymorphicGroup(lambdas: Seq[Lambda]) extends Function
 	}
 

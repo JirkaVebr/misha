@@ -5,8 +5,9 @@ import com.preprocessor.ast.Language.Term._
 import com.preprocessor.ast.Language.Value._
 import com.preprocessor.ast.Language.{Term, Value}
 import com.preprocessor.ast.Selector._
-import com.preprocessor.error.ProgramError.{InvokingANonFunction, NotEnoughArguments, ReadingUndefinedVariable}
+import com.preprocessor.error.ProgramError._
 import com.preprocessor.interpreter.RuleContext.{AtRule, RuleSelector}
+import com.preprocessor.interpreter.typing.{Subtype, Typing}
 
 import scala.util.{Failure, Success, Try}
 
@@ -101,13 +102,44 @@ object TermInterpreter {
 		ExpressionInterpreter.run(functionCall.function) match {
 			case Failure(exception) => Failure(exception)
 			case Success(newState) => newState.value match {
-				case function: Value.Function => function match {
-					case lambda: Lambda => callLambda(lambda, functionCall)
-					case PolymorphicGroup(lambdas) => ???
-				}
+				case function: Value.Function =>
+					Interpreter.chainRun[Expression](functionCall.arguments.toList, newState, ExpressionInterpreter.run(_)(_)) match {
+						case Failure(exception) => Failure(exception)
+						case Success(stateAfterArguments) =>
+							val newestState = EnvironmentWithValue(stateAfterArguments.environment)
+							function match {
+								case lambda: Lambda => callLambda(lambda, functionCall)(newestState)
+								case native: Native => callNative(native, functionCall, stateAfterArguments.value)(newestState)
+								case PolymorphicGroup(lambdas) => ???
+							}
+					}
 				case _ => newState.fail(InvokingANonFunction, functionCall)
 			}
 		}
+
+	private def callNative(native: Native, functionCall: FunctionCall, arguments: scala.List[Value])
+												(implicit state: EnvWithValue): Try[EnvWithValue] = {
+		val argVector = arguments.toVector
+		val arityComparison = argVector.length - native.expectedType.length
+
+		if (arityComparison == 0) {
+			val zipped = native.expectedType.zip(argVector)
+			val incorrectlyTyped = zipped.filterNot{
+				case (expectedType, value) => Subtype.isSubtypeOf(Typing.getType(value), expectedType)
+			}
+			if (incorrectlyTyped.isEmpty) {
+				native.implementation(argVector) match {
+					case Failure(exception) => Failure(exception)
+					case Success(value) => state ~> value
+				}
+			} else {
+				state.fail(IllTypedArgument, native, functionCall)
+			}
+		} else if (arityComparison < 0)
+			state.fail(NotEnoughArguments, native, functionCall)
+		else
+			state.fail(TooManyArguments, native, functionCall)
+	}
 
 	private def callLambda(lambda: Lambda, functionCall: FunctionCall)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val lambdaMandatoryArity = lambda.mandatoryArguments.length

@@ -1,12 +1,16 @@
 package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Expression._
-import com.preprocessor.ast.Language.Term.{ParentSelector, Term, Variable}
+import com.preprocessor.ast.Language.Term.{FunctionCall, ParentSelector, Term, Variable}
+import com.preprocessor.ast.Language.Type.Scalar
+import com.preprocessor.ast.Language.Value.{Native, Value}
 import com.preprocessor.ast.Language.{Term, Value}
 import com.preprocessor.ast.Selector.{Class, Id, SelectorList}
 import com.preprocessor.error.ProgramError
 import com.preprocessor.interpreter.RuleContext.RuleSelector
 import com.preprocessor.interpreter.Symbol.ValueSymbol
+
+import scala.util.Success
 
 class TermInterpreterSpec extends BaseInterpreterSpec {
 
@@ -49,6 +53,29 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		val originalRuleHead = ".myClass"
 		val newState = EnvironmentWithValue(testEnvironment.pushSubScope(RuleSelector(Class("myClass"))))
 		assert(run(ParentSelector)(newState).value === Value.List(List(originalRuleHead)))
+	}
+
+	it should "correctly invoke native functions" in {
+		val multiply = Native(Vector(Scalar, Scalar), (values: Vector[Value]) => {
+			val (a, b) = (values(0).asInstanceOf[Value.Scalar], values(1).asInstanceOf[Value.Scalar])
+			Success(Value.Scalar(a.value * b.value))
+		})
+
+		assert(run(FunctionCall(
+			multiply, Vector(Value.Scalar(3), Value.Scalar(5))
+		)).value === Value.Scalar(15))
+
+		assertThrows[ProgramError[_]](run(FunctionCall(
+			multiply, Vector(Value.Scalar(3))
+		)))
+
+		assertThrows[ProgramError[_]](run(FunctionCall(
+			multiply, Vector(Value.Scalar(3), Value.Scalar(3), Value.Scalar(3))
+		)))
+
+		assertThrows[ProgramError[_]](run(FunctionCall(
+			multiply, Vector(Value.Scalar(3), Value.String("bad type"))
+		)))
 	}
 
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =
