@@ -72,7 +72,7 @@ object RuleInterpreter {
 		}
 
 
-	private def mapToStrings(hopefullyList: Value.Value)(implicit state: EnvWithValue) =
+	private def mapToStrings(hopefullyList: Value.Value)(implicit state: EnvWithValue): Try[Vector[Value.String]] =
 		hopefullyList match {
 			case list: Value.List => list.values.foldLeft[Try[Vector[Value.String]]](Success(Vector.empty[Value.String])) {
 				case (accumulator, value) => accumulator match {
