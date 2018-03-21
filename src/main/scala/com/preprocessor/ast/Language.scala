@@ -65,7 +65,7 @@ object Language {
 		sealed trait Function extends Composite
 		case class Lambda(mandatoryArguments: Seq[ValueSymbolDeclaration[Unit]],
 											otherArguments: Seq[ValueSymbolDeclaration[Expression]],
-											returnType: Option[Type.Any], body: Expression, environment: Environment) extends Function
+											returnType: Option[Type.Any], body: Block, environment: Environment) extends Function
 		case class PolymorphicGroup(lambdas: Seq[Lambda]) extends Function
 	}
 
@@ -170,7 +170,7 @@ object Language {
 		case class FunctionCall(function: Expression, arguments: Seq[Expression] = scala.Vector.empty) extends Term
 		case class Function(mandatoryArguments: Seq[ValueSymbolDeclaration[Unit]],
 												otherArguments: Seq[ValueSymbolDeclaration[Expression]],
-												returnType: Option[Type.Any], body: Expression) extends Term
+												returnType: Option[Type.Any], body: Block) extends Term
 		case class Tuple2(first: Expression, second: Expression) extends Term
 		case class List(items: Seq[Expression]) extends Term
 		case class MemberAccess(container: Expression, name: Expression) extends Term
