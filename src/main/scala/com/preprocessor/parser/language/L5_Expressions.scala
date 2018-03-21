@@ -261,35 +261,46 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		(ruleHead ~ SingleLineWhitespace ~ block) ~> Language.Statement.Rule
 	}
 
+	sealed trait Paren
+	case class LParen() extends Paren
+	case class RParen() extends Paren
+
 	private def ruleHead: Rule1[RuleHead] = rule {
 		SingleLineWhitespace ~ oneOrMore( // Consume leading whitespace
-			('{' ~ SingleLineWhitespace ~
-				(
-					(undelimitedListBody(anyWhitespaceSeparator) ~ SingleLineWhitespace ~ '}') |
-					(delimitedListBody ~ SingleLineWhitespace ~ '}')
-				) ~> (
-					(expressions: Seq[Expression]) => Right(Term.List(expressions))
-				)
-			) | (
-				'&' ~ push(Right(ParentSelector))
-			) | (
-				clearSB() ~ oneOrMore(
-					(!RuleHeadSpecialChars ~ ANY ~ appendSB()) |
-						('\\' ~ '{' ~ appendSB('{')) |
-						(',' ~
-							(
-								( // This subrule basically means that a newline can only appear after a comma.
-									capture(SingleLineWhitespace ~ '\n') ~> ((endOfLine: String) => appendSB("," + endOfLine))
-								) |
-								appendSB(',')
-							)
-						)
-				) ~ push(Left(sb.toString))
-			)
+			ruleHeadExpression | ruleHeadString
 		) ~> (
 			(ruleHeadComponents: Seq[RuleHeadComponent]) =>
 				push(ruleHeadComponents.toVector)
 		)
+	}
+
+	private def ruleHeadExpression: Rule1[Right[String, Expression]] = rule {
+		(
+			'{' ~ SingleLineWhitespace ~
+			(
+				(undelimitedListBody(anyWhitespaceSeparator) ~ SingleLineWhitespace ~ '}') |
+				(delimitedListBody ~ SingleLineWhitespace ~ '}')
+			) ~> (
+				(expressions: Seq[Expression]) => Right(Term.List(expressions))
+			)
+		) | (
+			'&' ~ push(Right(ParentSelector))
+		)
+	}
+
+	private def ruleHeadString: Rule1[Left[String, Expression]] = rule {
+		clearSB() ~ oneOrMore(
+			(!RuleHeadSpecialChars ~ ANY ~ appendSB()) |
+				('\\' ~ '{' ~ appendSB('{')) |
+				(',' ~
+					(
+						( // This subrule basically means that a newline can only appear after a comma.
+							capture(SingleLineWhitespace ~ '\n') ~> ((endOfLine: String) => appendSB("," + endOfLine))
+						) |
+							appendSB(',')
+						)
+					)
+		) ~ push(Left(sb.toString))
 	}
 
 
