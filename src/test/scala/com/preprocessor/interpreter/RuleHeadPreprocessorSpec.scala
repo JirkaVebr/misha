@@ -8,7 +8,7 @@ class RuleHeadPreprocessorSpec extends BaseInterpreterSpec {
 
 	behavior of "Rule head preprocessor"
 
-	it should "correctly process raw rule heads" in {
+	it should "correctly explode raw rule heads" in {
 		val rawRuleHead: RawRuleHead = Vector(
 			Left(".my"),
 			Right(Vector(
@@ -27,6 +27,23 @@ class RuleHeadPreprocessorSpec extends BaseInterpreterSpec {
 			".myclass1 .mySubclass span, " +
 			".myclass2 .mySubclass div, " +
 			".myclass2 .mySubclass span")
+	}
+
+	it should "correctly perform single level explode" in {
+		val rawRuleHead: RawRuleHead = Vector(
+			Left(" .myClass "),
+			Right(Vector(
+				Value.String("div"),
+				Value.String("span")
+			))
+		)
+		assert(RuleHeadPreprocessor.singleLevelExplode(Right(Vector(
+			Value.String("class1"),
+			Value.String("class2")
+		)), rawRuleHead) === Vector(
+			Left("class1") +: rawRuleHead,
+			Left("class2") +: rawRuleHead
+		))
 	}
 
 }

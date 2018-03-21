@@ -1,5 +1,7 @@
 package com.preprocessor.interpreter
 
+import com.preprocessor.ast.Language.Value
+
 
 /**
 	* A rule head can look something like this:
@@ -31,5 +33,16 @@ object RuleHeadPreprocessor {
 
 		rec(rawRuleHead).mkString(separator).trim
 	}
+
+	def singleLevelExplode(values: Vector[Value.String], rest: RawRuleHead): Vector[RawRuleHead] =
+		values.map(
+			stringValue =>
+				Left(stringValue.value) +: rest
+		)
+
+	def singleLevelExplode(values: Right[String, Vector[Value.String]], rest: RawRuleHead): Vector[RawRuleHead] =
+		singleLevelExplode(values.right.get, rest)
+
+
 
 }

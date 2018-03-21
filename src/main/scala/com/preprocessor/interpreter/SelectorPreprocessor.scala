@@ -5,7 +5,7 @@ class SelectorPreprocessor(val selector: RawRuleHead) {
 
 
 	def preProcess(): String = {
-		RuleHeadPreprocessor.explode(selector)
+		RuleHeadPreprocessor.explode(selector) // TODO
 	}
 
 }
