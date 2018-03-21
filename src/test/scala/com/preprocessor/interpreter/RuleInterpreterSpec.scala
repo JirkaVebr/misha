@@ -73,22 +73,20 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 		))))
 	}
 
-	// TODO This test isn't finished and at this point it would fail anyway
-	/*it should "correctly interpret rules with explicit parent selectors" in {
-		val newState = run(Rule(Vector(Left(".myClass1,.myClass2")), Block(Rule(
-			Vector(Left("#myId,"), Right(Vector(ParentSelector)), Left(":hover")), Block(
+	it should "correctly interpret rules with explicit parent selectors" in {
+		val newState = run(Rule(Vector(Left(".myClass1, .myClass2")), Block(Rule(
+			Vector(Right(ParentSelector), Left(" .anotherClass")), Block(
 				Property(Value.String("width"), Value.Percentage(80))
 			))
 		)))
 		val outerRuleEnvironment = newState.environment.subEnvironments.head
 		val innerRuleEnvironment = outerRuleEnvironment.subEnvironments.head
 
-		//assert(outerRuleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleSelector(Class("myClass")))
 		assert(innerRuleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleSelector(SelectorList(Set(
-			Complex(Descendant, Class("myClass"), Id("myId")),
-			Complex(Descendant, Class("myClass"), Class("anotherClass"))
+			Complex(Descendant, Class("myClass1"), Class("anotherClass")),
+			Complex(Descendant, Class("myClass2"), Class("anotherClass"))
 		))))
-	}*/
+	}
 
 
 	protected def run(rule: Rule)(implicit state: EnvWithValue): EnvWithValue =

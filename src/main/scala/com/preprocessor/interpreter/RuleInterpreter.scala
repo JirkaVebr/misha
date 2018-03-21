@@ -1,13 +1,10 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Statement.Rule
-import com.preprocessor.ast.Language.Term.ParentSelector
 import com.preprocessor.ast.Language.Value
-import com.preprocessor.ast.Selector.NormalizedSelector
 import com.preprocessor.error.ProgramError
 import com.preprocessor.error.ProgramError.NonStringSelectorExpression
-import com.preprocessor.interpreter.RuleContext.{AtRule, RuleSelector}
+import com.preprocessor.interpreter.RuleContext.RuleSelector
 import com.preprocessor.interpreter.ops.StringOps
 import com.preprocessor.interpreter.validators.SelectorNormalizer
 import com.preprocessor.parser.ruleHead.SelectorParser
@@ -22,10 +19,13 @@ object RuleInterpreter {
 			case Success((rawRuleHead, stateAfterHead)) =>
 				// TODO resolve the correct rule handling based on context
 
-				val preProcessed = new SelectorPreprocessor(rawRuleHead).preProcess()
+				val preProcessed = new SelectorPreprocessor(
+					rawRuleHead, TermInterpreter.runParentSelector()(stateAfterHead)
+				).preProcess()
 
 				SelectorNormalizer.normalize(SelectorParser(preProcessed).get) match {
-					case Failure(exception) => Failure(exception)
+					case Failure(exception) =>
+						Failure(exception)
 					case Success(normalized) =>
 						// TODO validate normalized
 						val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(normalized))
