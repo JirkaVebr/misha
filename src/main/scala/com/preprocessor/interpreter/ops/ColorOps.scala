@@ -116,4 +116,13 @@ object ColorOps {
 
 	def darken(color: Rgba, amount: Percentage): Rgba = adjustLightness(color, amount, _ - _)
 
+
+	// Properties
+
+	def complement(color: Rgba): Rgba = {
+		val hsla = toHsla(color)
+		val complement = hsla.copy(h = (hsla.h + 180) % 360)
+		hslaToRgba(complement)
+	}
+
 }

@@ -6,7 +6,7 @@ import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Dimensioned, Flag, NativeFunctionCall, Number, Percentage, Primitive, Rgba, Scalar, Transparent, Unit}
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError.NonStringMemberCastFail
-import com.preprocessor.interpreter.ops.StringOps
+import com.preprocessor.interpreter.ops.{ColorOps, StringOps}
 import com.preprocessor.interpreter.validators.NumberValidator
 
 import scala.util.{Failure, Success, Try}
@@ -46,7 +46,7 @@ object MemberAccessInterpreter {
 			case number: Number => runNumber(number, memberName)
 			case Boolean(value) => ???
 			case string: Value.String => runString(string, memberName)
-			case color: Color => ???
+			case color: Color => runColor(color, memberName)
 			case _: Flag => ???
 			case _: NativeFunctionCall => ???
 		}
@@ -103,21 +103,21 @@ object MemberAccessInterpreter {
 
 	private def runColor(color: Value.Color, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val result = color match {
-			case Rgba(r, g, b, a) => memberName match {
+			case rgba: Rgba => memberName match {
 				case "adjustHue" => ???
-				case "alpha" => Some(Value.Scalar(a))
-				case "blue" => Some(Value.Scalar(b))
-				case "complement" => ???
+				case "alpha" => Some(Value.Scalar(rgba.a))
+				case "blue" => Some(Value.Scalar(rgba.b))
+				case "complement" => Some(ColorOps.complement(rgba))
 				case "darken" => ???
 				case "desaturate" => ???
-				case "green" => Some(Value.Scalar(g))
+				case "green" => Some(Value.Scalar(rgba.g))
 				case "hue" => ???
 				case "inverted" => ???
 				case "isDark" => ???
 				case "isLight" => ???
 				case "lighten" => ???
 				case "lightness" => ???
-				case "red" => Some(Value.Scalar(r))
+				case "red" => Some(Value.Scalar(rgba.r))
 				case "saturate" => ???
 				case "saturation" => ???
 			}

@@ -94,6 +94,12 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		)
 	}
 
+	it should "interpret color members" in {
+		assert(
+			run(MemberAccess(Value.Rgba(253, 12, 199), Value.String("complement"))).value === Value.Rgba(12, 253, 66)
+		)
+	}
+
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =
 		super.run[Term](TermInterpreter.run(_), term)
 
