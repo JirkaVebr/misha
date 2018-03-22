@@ -169,7 +169,7 @@ class ExpressionSpec extends BaseParserSpec {
 		assert(parse("''.length") === MemberAccess(String(""), String("length")))
 		assert(parse("123.456.foo") === MemberAccess(Scalar(123.456), String("foo")))
 		assert(parse("1.2e3.bar") === MemberAccess(Scalar(1200), String("bar")))
-		// TODO fix precedence //assert(parse("1.2e3.bar()") === FunctionCall(MemberAccess(Scalar(1200), String("barr"))))
+		assert(parse("1.2e3.bar()") === FunctionCall(MemberAccess(Scalar(1200), String("bar"))))
 	}
 
 	it should "correctly parse anonymous functions" in {

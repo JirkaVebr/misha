@@ -94,9 +94,13 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def exponentiation: Rule1[Expression] = rule { // Right associative
-		computedMemberAccess ~ zeroOrMore(
+		expressionFunctionCall ~ zeroOrMore(
 			WhitespaceAround("^") ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Exponentiation, l, r))
 		)
+	}
+
+	private def expressionFunctionCall: Rule1[Expression] = rule {
+		computedMemberAccess ~ optional(argumentList ~> FunctionCall)
 	}
 
 	private def computedMemberAccess: Rule1[Expression] = rule {
@@ -110,7 +114,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def factor: Rule1[Expression] = rule {
-		functionCall | conditional | delimitedList | unaryOperation | Variable | anonymousFunction |
+		sugaredFunctionCall | conditional | delimitedList | unaryOperation | Variable | anonymousFunction |
 		subExpression | magicSymbol | Literal | block
 	}
 
@@ -153,17 +157,14 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		Identifier ~ AnyWhitespace ~> ValueSymbol
 	}
 
-	private def functionCall: Rule1[FunctionCall] = rule {
-		// The error is just IntelliJ being dumb.
-		(functionName ~ "(" ~ zeroOrMore(undelimitedList | Expression).separatedBy(",") ~ optional(",") ~ ")") ~> (
-			(function: Expression, arguments: Seq[Expression]) => FunctionCall(function, arguments)
-		)
+	private def argumentList: Rule1[Seq[Expression]] = rule {
+		"(" ~ zeroOrMore(undelimitedList | Expression).separatedBy(",") ~ optional(",") ~ ")"
 	}
 
-	private def functionName: Rule1[Expression] = rule {
-		subExpression | Variable | (variableName ~> (
-			(name: ValueSymbol) => Term.Variable(name)
-		))
+	private def sugaredFunctionCall: Rule1[FunctionCall] = rule {
+		(variableName ~> ((name: ValueSymbol) => Term.Variable(name)) ~ argumentList) ~> (
+			(function: Expression, arguments: Seq[Expression]) => FunctionCall(function, arguments)
+		)
 	}
 
 	private def subExpression: Rule1[Expression] = rule {
