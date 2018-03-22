@@ -112,7 +112,7 @@ object MemberAccessInterpreter {
 				case "desaturate" => ???
 				case "green" => Some(Value.Scalar(rgba.g))
 				case "hue" => Some(ColorOps.hue(rgba))
-				case "inverted" => ???
+				case "inverted" => Some(ColorOps.inverted(rgba))
 				case "isDark" => Some(ColorOps.isDark(rgba))
 				case "isLight" => Some(ColorOps.isLight(rgba))
 				case "lighten" => Some(ColorOps.getLighten(rgba))

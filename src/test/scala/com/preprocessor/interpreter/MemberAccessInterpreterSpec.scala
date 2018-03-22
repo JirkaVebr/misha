@@ -117,6 +117,9 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("isLight"))).value === Value.Boolean(true)
 		)
 		assert(
+			run(MemberAccess(Value.Rgba(214, 40, 100, 123), Value.String("inverted"))).value === Value.Rgba(41, 215, 155, 123)
+		)
+		assert(
 			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("lightness"))).value === Value.Percentage(51.961)
 		)
 		assert(

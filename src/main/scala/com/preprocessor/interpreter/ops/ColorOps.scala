@@ -142,6 +142,9 @@ object ColorOps {
 	def hue(color: Rgba): Value.Scalar =
 		Value.Scalar(toHsla(color).h.round)
 
+	def inverted(color: Rgba): Value.Rgba =
+		color.copy(r = 255 - color.r, g = 255 - color.g, b = 255 - color.b) // Preserving alpha
+
 	def isDark(color: Rgba): Value.Boolean =
 		Value.Boolean(toHsla(color).l < 0.5)
 
