@@ -12,7 +12,7 @@ class Environment private
 	val subEnvironments: Vector[Environment] = childEnvironments.map(environment => environment.cloneWithNewParent(this))
 
 	def this(parentEnvironment: Option[Environment] = None) =
-		this(parentEnvironment, Map.empty, Vector())
+		this(parentEnvironment, Map(), Vector())
 
 	def pushSubScope(): Environment =
 		new Environment(Some(this), Map[Symbol, Symbol#Value](), subEnvironments)
