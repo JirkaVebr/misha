@@ -6,13 +6,13 @@ import Symbol._
 class Environment private
 	(val parentEnvironment: Option[Environment],
 	 val symbolTable: Map[Symbol, Symbol#Value],
-	 childEnvironments: List[Environment]
+	 childEnvironments: Vector[Environment]
 	) {
 
-	val subEnvironments: List[Environment] = childEnvironments.map(environment => environment.cloneWithNewParent(this))
+	val subEnvironments: Vector[Environment] = childEnvironments.map(environment => environment.cloneWithNewParent(this))
 
 	def this(parentEnvironment: Option[Environment] = None) =
-		this(parentEnvironment, Map.empty, List[Environment]())
+		this(parentEnvironment, Map.empty, Vector())
 
 	def pushSubScope(): Environment =
 		new Environment(Some(this), Map[Symbol, Symbol#Value](), subEnvironments)
@@ -26,7 +26,7 @@ class Environment private
 				new Environment(
 					parent.parentEnvironment,
 					parent.symbolTable,
-					this :: parent.subEnvironments
+					parent.subEnvironments :+ this
 				)
 			else parent
 		)
