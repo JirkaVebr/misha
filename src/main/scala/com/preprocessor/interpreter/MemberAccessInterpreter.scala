@@ -6,8 +6,7 @@ import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Dimensioned, Flag, NativeFunctionCall, Number, Percentage, Primitive, Rgba, Scalar, Transparent, Unit}
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError.NonStringMemberCastFail
-import com.preprocessor.interpreter.ops.{ColorOps, StringOps}
-import com.preprocessor.interpreter.validators.NumberValidator
+import com.preprocessor.interpreter.ops.{ColorOps, NumberOps, StringOps}
 
 import scala.util.{Failure, Success, Try}
 
@@ -54,23 +53,26 @@ object MemberAccessInterpreter {
 
 	private def runNumber(number: Value.Number, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val commonResult = memberName match {
-			case "isEven" => Some(Value.Boolean(number.value % 2 == 0))
-			case "isNegative" => Some(Value.Boolean(number.value < 0))
-			case "isOdd" => Some(Value.Boolean(number.value % 2 != 0))
-			case "isPositive" => Some(Value.Boolean(number.value > 0))
-			case "isWhole" => Some(Value.Boolean(NumberValidator.isInteger(number.value)))
-			case "toPercentage" => Some(Value.Percentage(number.value))
-			case "toScalar" => Some(Value.Scalar(number.value))
+			case "isEven" => Some(NumberOps.isEven(number))
+			case "isNegative" => Some(NumberOps.isNegative(number))
+			case "isOdd" => Some(NumberOps.isOdd(number))
+			case "isPositive" => Some(NumberOps.isPositive(number))
+			case "isWhole" => Some(NumberOps.isWhole(number))
+			case "toPercentage" => Some(NumberOps.toPercentage(number))
+			case "toScalar" => Some(NumberOps.toScalar(number))
 			case "toString" => StringOps.castToString(number)
-			case _ => {
+			case _ =>
 				val newValue = memberName match { // TODO
 					case "abs" => number.value.abs
 					case "ceil" => number.value.ceil
 					case "floor" => number.value.floor
 					case "round" => number.value.round
 				}
-				None
-			}
+				number match { // Too bad is it impossible to just do number.copy(value = newValue). :/
+					case subClass: Dimensioned => Some(subClass.copy(value = newValue))
+					case subClass: Scalar => Some(subClass.copy(value = newValue))
+					case subClass: Percentage => Some(subClass.copy(value = newValue))
+				}
 		}
 		commonResult match {
 			case Some(x) => state ~> x
