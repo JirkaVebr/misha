@@ -95,7 +95,7 @@ object TermInterpreter {
 
 	private def runFunctionTerm(function: Term.Function)(implicit state: EnvWithValue): Try[EnvWithValue] =
 		runCallableValue(Value.Lambda(
-			function.mandatoryArguments, function.otherArguments, function.returnType, function.body, state.environment
+			function.mandatoryArguments, function.otherArguments, function.returnType, function.body, state.environment.scopeId
 		))
 
 	private def runFunctionCall(functionCall: Term.FunctionCall)(implicit state: EnvWithValue): Try[EnvWithValue] =

@@ -2,7 +2,7 @@ package com.mishaLang.ast
 
 import com.mishaLang.ast.Language.Expression.{Block, Expression}
 import com.mishaLang.ast.NumberUnit.UnitOfMeasure
-import com.mishaLang.interpreter.Environment
+import com.mishaLang.interpreter.ScopeId
 import com.mishaLang.interpreter.Symbol.{TypeSymbol, ValueSymbol}
 import com.mishaLang.interpreter.typing.Typing
 import com.mishaLang.spec.NativeFunction.NativeFunction
@@ -67,7 +67,7 @@ object Language {
 		sealed trait Function extends Callable
 		case class Lambda(mandatoryArguments: Seq[ValueSymbolDeclaration[Unit]],
 											otherArguments: Seq[ValueSymbolDeclaration[Expression]],
-											returnType: Option[Type.Any], body: Expression, environment: Environment) extends Function
+											returnType: Option[Type.Any], body: Expression, scopeId: ScopeId) extends Function
 		case class Native(expectedType: Vector[Type.Any], implementation: (Vector[Value]) => Try[Value]) extends Function
 		case class PolymorphicGroup(lambdas: Seq[Function]) extends Callable
 	}
