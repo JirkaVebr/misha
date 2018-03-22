@@ -2,11 +2,32 @@ package com.preprocessor.interpreter
 
 import com.preprocessor.ast.Language.Term.{FunctionCall, MemberAccess, Term}
 import com.preprocessor.ast.Language.Value
-import com.preprocessor.error.{NativeError, ProgramError}
+import com.preprocessor.error.NativeError
 
 class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 
 	behavior of "Member access interpreter"
+
+	it should "interpret common number members" in {
+		assert(
+			run(MemberAccess(Value.Scalar(12), Value.String("isEven"))).value === Value.Boolean(true)
+		)
+		assert(
+			run(MemberAccess(Value.Scalar(123), Value.String("isNegative"))).value === Value.Boolean(false)
+		)
+		assert(
+			run(MemberAccess(Value.Scalar(-123), Value.String("isOdd"))).value === Value.Boolean(true)
+		)
+		assert(
+			run(MemberAccess(Value.Scalar(-123), Value.String("isPositive"))).value === Value.Boolean(false)
+		)
+		assert(
+			run(MemberAccess(Value.Scalar(-123.4), Value.String("isWhole"))).value === Value.Boolean(false)
+		)
+		assert(
+			run(MemberAccess(Value.Scalar(-123), Value.String("toPercentage"))).value === Value.Percentage(-123)
+		)
+	}
 
 	it should "interpret string members" in {
 		assert(

@@ -3,10 +3,11 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Term.MemberAccess
 import com.preprocessor.ast.Language.Value
-import com.preprocessor.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Flag, NativeFunctionCall, Number, Primitive, Rgba, Transparent, Unit}
+import com.preprocessor.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Dimensioned, Flag, NativeFunctionCall, Number, Percentage, Primitive, Rgba, Scalar, Transparent, Unit}
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError.NonStringMemberCastFail
 import com.preprocessor.interpreter.ops.StringOps
+import com.preprocessor.interpreter.validators.NumberValidator
 
 import scala.util.{Failure, Success, Try}
 
@@ -42,13 +43,40 @@ object MemberAccessInterpreter {
 
 	private def runPrimitive(primitive: Primitive, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] =
 		primitive match {
-			case _: Number => ???
+			case number: Number => runNumber(number, memberName)
 			case Boolean(value) => ???
 			case string: Value.String => runString(string, memberName)
 			case color: Color => ???
 			case _: Flag => ???
 			case _: NativeFunctionCall => ???
 		}
+
+
+	private def runNumber(number: Value.Number, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] = {
+		val commonResult = memberName match {
+			case "isEven" => Some(Value.Boolean(number.value % 2 == 0))
+			case "isNegative" => Some(Value.Boolean(number.value < 0))
+			case "isOdd" => Some(Value.Boolean(number.value % 2 != 0))
+			case "isPositive" => Some(Value.Boolean(number.value > 0))
+			case "isWhole" => Some(Value.Boolean(NumberValidator.isInteger(number.value)))
+			case "toPercentage" => Some(Value.Percentage(number.value))
+			case "toScalar" => Some(Value.Scalar(number.value))
+			case "toString" => StringOps.castToString(number)
+			case _ => {
+				val newValue = memberName match { // TODO
+					case "abs" => number.value.abs
+					case "ceil" => number.value.ceil
+					case "floor" => number.value.floor
+					case "round" => number.value.round
+				}
+				None
+			}
+		}
+		commonResult match {
+			case Some(x) => state ~> x
+			case None => ???
+		}
+	}
 
 
 	private def runString(string: Value.String, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] = {
@@ -84,6 +112,7 @@ object MemberAccessInterpreter {
 				case "desaturate" => ???
 				case "green" => Some(Value.Scalar(g))
 				case "hue" => ???
+				case "inverted" => ???
 				case "isDark" => ???
 				case "isLight" => ???
 				case "lighten" => ???
