@@ -96,7 +96,19 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "interpret color members" in {
 		assert(
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("alpha"))).value === Value.Scalar(123)
+		)
+		assert(
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("blue"))).value === Value.Scalar(199)
+		)
+		assert(
 			run(MemberAccess(Value.Rgba(253, 12, 199), Value.String("complement"))).value === Value.Rgba(12, 253, 66)
+		)
+		assert(
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("green"))).value === Value.Scalar(12)
+		)
+		assert(
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("red"))).value === Value.Scalar(253)
 		)
 	}
 
