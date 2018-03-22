@@ -6,8 +6,10 @@ import Symbol._
 class Environment private
 	(val parentEnvironment: Option[Environment],
 	 val symbolTable: Map[Symbol, Symbol#Value],
-	 val subEnvironments: List[Environment]
+	 childEnvironments: List[Environment]
 	) {
+
+	val subEnvironments: List[Environment] = childEnvironments.map(environment => environment.cloneWithNewParent(this))
 
 	def this(parentEnvironment: Option[Environment] = None) =
 		this(parentEnvironment, Map.empty, List[Environment]())
