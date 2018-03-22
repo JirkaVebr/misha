@@ -3,7 +3,7 @@ package com.mishaLang.interpreter
 import com.mishaLang.ast.Language.Expression.Expression
 import com.mishaLang.ast.Language.Term.MemberAccess
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Dimensioned, Flag, Function, NativeFunctionCall, Number, Percentage, Primitive, Rgba, Scalar, Transparent, Tuple2, Unit}
+import com.mishaLang.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Dimensioned, Flag, Callable, NativeFunctionCall, Number, Percentage, Primitive, Rgba, Scalar, Transparent, Tuple2, Unit}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError.NonStringMemberCastFail
 import com.mishaLang.interpreter.ops.{ColorOps, ListOps, NumberOps, StringOps}
@@ -55,7 +55,7 @@ object MemberAccessInterpreter {
 		composite match {
 			case Tuple2(first, second) => ???
 			case list: Value.List => runList(list, memberName)
-			case _: Function => ???
+			case _: Callable => ???
 		}
 
 

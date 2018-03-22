@@ -63,12 +63,13 @@ object Language {
 		case class Tuple2(first: Value, second: Value) extends Composite
 		case class List(values: Seq[Value]) extends Composite
 
-		sealed trait Function extends Composite
+		sealed trait Callable extends Composite
+		sealed trait Function extends Callable
 		case class Lambda(mandatoryArguments: Seq[ValueSymbolDeclaration[Unit]],
 											otherArguments: Seq[ValueSymbolDeclaration[Expression]],
 											returnType: Option[Type.Any], body: Expression, environment: Environment) extends Function
 		case class Native(expectedType: Vector[Type.Any], implementation: (Vector[Value]) => Try[Value]) extends Function
-		case class PolymorphicGroup(lambdas: Seq[Lambda]) extends Function
+		case class PolymorphicGroup(lambdas: Seq[Function]) extends Callable
 	}
 
 

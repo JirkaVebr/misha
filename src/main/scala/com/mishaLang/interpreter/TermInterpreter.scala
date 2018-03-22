@@ -20,7 +20,7 @@ object TermInterpreter {
 			case compositeValue: Composite => compositeValue match {
 				case tuple: Value.Tuple2 => runTupleValue(tuple)
 				case list: Value.List => runListValue(list)
-				case function: Value.Function => runFunctionValue(function)
+				case callable: Value.Callable => runCallableValue(callable)
 			}
 		}
 		case symbol: MagicSymbol => runMagicSymbol(symbol)
@@ -88,13 +88,13 @@ object TermInterpreter {
 		}
 	}
 
-	private def runFunctionValue(function: Value.Function)(implicit state: EnvWithValue): Try[EnvWithValue] =
+	private def runCallableValue(callable: Value.Callable)(implicit state: EnvWithValue): Try[EnvWithValue] =
 		// At this point the user has no way of creating a function value directly, and so we assume here that all its
 		// possible forms are well-formed.
-		state ~> function
+		state ~> callable
 
 	private def runFunctionTerm(function: Term.Function)(implicit state: EnvWithValue): Try[EnvWithValue] =
-		runFunctionValue(Value.Lambda( // TODO check default argument positions
+		runCallableValue(Value.Lambda(
 			function.mandatoryArguments, function.otherArguments, function.returnType, function.body, state.environment
 		))
 
@@ -102,7 +102,7 @@ object TermInterpreter {
 		ExpressionInterpreter.run(functionCall.function) match {
 			case Failure(exception) => Failure(exception)
 			case Success(newState) => newState.value match {
-				case function: Value.Function =>
+				case function: Value.Callable =>
 					Interpreter.chainRun[Expression](functionCall.arguments.toList, newState, ExpressionInterpreter.run(_)(_)) match {
 						case Failure(exception) => Failure(exception)
 						case Success(stateAfterArguments) =>

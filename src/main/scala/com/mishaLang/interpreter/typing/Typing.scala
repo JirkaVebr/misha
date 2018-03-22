@@ -1,6 +1,6 @@
 package com.mishaLang.interpreter.typing
 
-import com.mishaLang.ast.Language.Value.{Boolean, Color, Composite, Dimensioned, Flag, Function, Number, Percentage, Primitive, Scalar, String, Tuple2, Unit}
+import com.mishaLang.ast.Language.Value.{Boolean, Color, Composite, Dimensioned, Flag, Callable, Number, Percentage, Primitive, Scalar, String, Tuple2, Unit}
 import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.interpreter.Environment
 
