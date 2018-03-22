@@ -3,10 +3,10 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Term.MemberAccess
 import com.preprocessor.ast.Language.Value
-import com.preprocessor.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Dimensioned, Flag, NativeFunctionCall, Number, Percentage, Primitive, Rgba, Scalar, Transparent, Unit}
+import com.preprocessor.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Dimensioned, Flag, Function, NativeFunctionCall, Number, Percentage, Primitive, Rgba, Scalar, Transparent, Tuple2, Unit}
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError.NonStringMemberCastFail
-import com.preprocessor.interpreter.ops.{ColorOps, NumberOps, StringOps}
+import com.preprocessor.interpreter.ops.{ColorOps, ListOps, NumberOps, StringOps}
 
 import scala.util.{Failure, Success, Try}
 
@@ -32,7 +32,7 @@ object MemberAccessInterpreter {
 					case Some(string) => container match {
 						case Unit => ???
 						case primitive: Primitive => runPrimitive(primitive, string)(newState)
-						case _: Composite => ???
+						case composite: Composite => runComposite(composite, string)(newState)
 					}
 					case None => state.fail(NonStringMemberCastFail, memberAccess)
 				}
@@ -48,6 +48,14 @@ object MemberAccessInterpreter {
 			case color: Color => runColor(color, memberName)
 			case _: Flag => ???
 			case _: NativeFunctionCall => ???
+		}
+
+
+	private def runComposite(composite: Composite, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] =
+		composite match {
+			case Tuple2(first, second) => ???
+			case list: Value.List => runList(list, memberName)
+			case _: Function => ???
 		}
 
 
@@ -125,6 +133,18 @@ object MemberAccessInterpreter {
 			}
 			case CurrentColor => None
 			case Transparent => ???
+		}
+		result match {
+			case Some(x) => state ~> x
+			case None => ???
+		}
+	}
+
+
+	private def runList(list: Value.List, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] = {
+		val result = memberName match {
+			case "length" => Some(ListOps.length(list))
+			case _ => None
 		}
 		result match {
 			case Some(x) => state ~> x
