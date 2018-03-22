@@ -7,7 +7,7 @@ import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.ast.Selector._
 import com.mishaLang.error.ProgramError._
 import com.mishaLang.interpreter.RuleContext.{AtRule, RuleSelector}
-import com.mishaLang.interpreter.typing.{Subtype, Typing}
+import com.mishaLang.interpreter.ops.FunctionOps
 
 import scala.util.{Failure, Success, Try}
 
@@ -108,8 +108,8 @@ object TermInterpreter {
 						case Success(stateAfterArguments) =>
 							val newestState = EnvironmentWithValue(stateAfterArguments.environment)
 							function match {
-								case lambda: Lambda => callLambda(lambda, functionCall)(newestState)
-								case native: Native => callNative(native, functionCall, stateAfterArguments.value)(newestState)
+								case lambda: Lambda => callLambda(lambda, functionCall, stateAfterArguments.value)(newestState)
+								case native: Native => callNative(native, functionCall, stateAfterArguments.value.toVector)(newestState)
 								case PolymorphicGroup(lambdas) => ???
 							}
 					}
@@ -117,31 +117,19 @@ object TermInterpreter {
 			}
 		}
 
-	private def callNative(native: Native, functionCall: FunctionCall, arguments: scala.List[Value])
+	private def callNative(native: Native, functionCall: FunctionCall, arguments: Vector[Value])
 												(implicit state: EnvWithValue): Try[EnvWithValue] = {
-		val argVector = arguments.toVector
-		val arityComparison = argVector.length - native.expectedType.length
-
-		if (arityComparison == 0) {
-			val zipped = native.expectedType.zip(argVector)
-			val incorrectlyTyped = zipped.filterNot{
-				case (expectedType, value) => Subtype.isSubtypeOf(Typing.getType(value), expectedType)
+		FunctionOps.getNativeApplicationError(native.expectedType, arguments) match {
+			case Some(errorCode) => state.fail(errorCode, native, functionCall)
+			case None => native.implementation(arguments) match {
+				case Failure(exception) => Failure(exception)
+				case Success(value) => state ~> value
 			}
-			if (incorrectlyTyped.isEmpty) {
-				native.implementation(argVector) match {
-					case Failure(exception) => Failure(exception)
-					case Success(value) => state ~> value
-				}
-			} else {
-				state.fail(IllTypedArgument, native, functionCall)
-			}
-		} else if (arityComparison < 0)
-			state.fail(NotEnoughArguments, native, functionCall)
-		else
-			state.fail(TooManyArguments, native, functionCall)
+		}
 	}
 
-	private def callLambda(lambda: Lambda, functionCall: FunctionCall)(implicit state: EnvWithValue): Try[EnvWithValue] = {
+	private def callLambda(lambda: Lambda, functionCall: FunctionCall, arguments: scala.List[Value])
+												(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val lambdaMandatoryArity = lambda.mandatoryArguments.length
 		val lambdaFurtherArity = lambda.otherArguments.length
 		val suppliedArgumentsCount = functionCall.arguments.length
