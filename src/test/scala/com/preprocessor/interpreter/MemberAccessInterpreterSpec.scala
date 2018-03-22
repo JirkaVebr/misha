@@ -52,6 +52,27 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		)
 	}
 
+	it should "interpret string.endsWith" in {
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("abc"), Value.String("endsWith")),
+				Vector(Value.String("bc")))
+			).value === Value.Boolean(true)
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("abc"), Value.String("endsWith")),
+				Vector(Value.String("")))
+			).value === Value.Boolean(true)
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("abc"), Value.String("endsWith")),
+				Vector(Value.String("abcdef")))
+			).value === Value.Boolean(false)
+		)
+	}
+
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =
 		super.run[Term](TermInterpreter.run(_), term)
 

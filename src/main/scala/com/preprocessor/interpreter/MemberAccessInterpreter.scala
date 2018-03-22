@@ -54,7 +54,7 @@ object MemberAccessInterpreter {
 		val result = memberName match {
 			case "charAt" => Some(StringOps.getCharAt(string))
 			case "concat" => Some(StringOps.getConcat(string))
-			case "endsWith" => ???
+			case "endsWith" => Some(StringOps.getEndsWith(string))
 			case "indexOf" => ???
 			case "length" => Some(StringOps.length(string))
 			case "split" => ???

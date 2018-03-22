@@ -73,4 +73,11 @@ object StringOps {
 			Success(concatenate(string, otherString))
 		})
 
+	def getEndsWith(string: Value.String): Native =
+		Native(Vector(Type.String), (arguments: Vector[Value]) => {
+			val otherString = arguments(0).asInstanceOf[Value.String].value
+
+			Success(Value.Boolean(string.value.endsWith(otherString)))
+		})
+
 }
