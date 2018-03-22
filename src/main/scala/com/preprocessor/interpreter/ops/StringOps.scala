@@ -1,8 +1,12 @@
 package com.preprocessor.interpreter.ops
 
-import com.preprocessor.ast.Language.Value
-import com.preprocessor.ast.Language.Value.{Dimensioned, Number, Percentage, Primitive, Scalar}
+import com.preprocessor.ast.Language.{Type, Value}
+import com.preprocessor.ast.Language.Value.{Dimensioned, Native, Number, Percentage, Primitive, Scalar, Value}
+import com.preprocessor.error.NativeError
+import com.preprocessor.error.NativeError.StringIndexOutOfBounds
 import com.preprocessor.interpreter.validators.NumberValidator
+
+import scala.util.{Failure, Success}
 
 object StringOps {
 
@@ -48,5 +52,18 @@ object StringOps {
 
 	def trim(string: Value.String): Value.String =
 		Value.String(string.value.trim)
+
+
+	// Method generators
+
+	def getCharAt(string: Value.String): Native =
+		Native(Vector(Type.Scalar), (arguments: Vector[Value]) => {
+			val position = arguments(0).asInstanceOf[Scalar].value
+
+			if (position >= string.value.length || position < 0)
+				Failure(NativeError(StringIndexOutOfBounds))
+			else
+				Success(Value.String(string.value.charAt(position.toInt).toString))
+		})
 
 }

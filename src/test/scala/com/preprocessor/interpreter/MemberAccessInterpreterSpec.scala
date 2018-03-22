@@ -1,7 +1,8 @@
 package com.preprocessor.interpreter
 
-import com.preprocessor.ast.Language.Term.MemberAccess
+import com.preprocessor.ast.Language.Term.{FunctionCall, MemberAccess, Term}
 import com.preprocessor.ast.Language.Value
+import com.preprocessor.error.{NativeError, ProgramError}
 
 class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 
@@ -25,7 +26,24 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		)
 	}
 
-	protected def run(memberAccess: MemberAccess)(implicit state: EnvWithValue): EnvWithValue =
-		super.run[MemberAccess](MemberAccessInterpreter.run(_), memberAccess)
+	it should "interpret string.charAt" in {
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("abc"), Value.String("charAt")),
+				Vector(Value.Scalar(1)))
+			).value === Value.String("b")
+		)
+		assertThrows[NativeError](run(FunctionCall(
+			MemberAccess(Value.String("abc"), Value.String("charAt")),
+			Vector(Value.Scalar(-1)))
+		))
+		assertThrows[NativeError](run(FunctionCall(
+			MemberAccess(Value.String("abc"), Value.String("charAt")),
+			Vector(Value.Scalar(3)))
+		))
+	}
+
+	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =
+		super.run[Term](TermInterpreter.run(_), term)
 
 }
