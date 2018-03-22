@@ -3,7 +3,7 @@ package com.preprocessor.interpreter
 import com.preprocessor.ast.Language.Expression.Expression
 import com.preprocessor.ast.Language.Term.MemberAccess
 import com.preprocessor.ast.Language.Value
-import com.preprocessor.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Flag, Number, Primitive, Rgba, Transparent, Unit}
+import com.preprocessor.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Flag, NativeFunctionCall, Number, Primitive, Rgba, Transparent, Unit}
 import com.preprocessor.error.CompilerError
 import com.preprocessor.error.ProgramError.NonStringMemberCastFail
 import com.preprocessor.interpreter.ops.StringOps
@@ -47,6 +47,7 @@ object MemberAccessInterpreter {
 			case string: Value.String => runString(string, memberName)
 			case color: Color => ???
 			case _: Flag => ???
+			case _: NativeFunctionCall => ???
 		}
 
 
