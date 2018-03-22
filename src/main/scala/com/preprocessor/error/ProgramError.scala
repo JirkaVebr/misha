@@ -12,7 +12,7 @@ object ProgramError {
 		def message(nodes: Language.Node*): String
 	}
 
-	private abstract class SimpleError(val message: String) extends ProgramErrorCode {
+	abstract class SimpleError(val message: String) extends ProgramErrorCode {
 		override def message(nodes: Language.Node*): String = message
 	}
 

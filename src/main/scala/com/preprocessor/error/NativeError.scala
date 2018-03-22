@@ -12,7 +12,7 @@ object NativeError {
 		def message(): String
 	}
 
-	private abstract class SimpleError(val errorMessage: String) extends NativeErrorCode {
+	abstract class SimpleError(val errorMessage: String) extends NativeErrorCode {
 		override def message(): String = errorMessage
 	}
 
