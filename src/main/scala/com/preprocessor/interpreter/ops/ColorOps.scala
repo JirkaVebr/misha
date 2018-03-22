@@ -5,6 +5,13 @@ import com.preprocessor.ast.Language.Value.{Percentage, Rgba}
 object ColorOps {
 
 	/**
+		* A somewhat arbitrary value used for results featuring saturation or lightness
+		*/
+	val PERCENTAGE_PRECISION = 3
+
+	val ALPHA_PRECISION = 6
+
+	/**
 		*
 		* @param h [0, 360)
 		* @param s [0, 1)
