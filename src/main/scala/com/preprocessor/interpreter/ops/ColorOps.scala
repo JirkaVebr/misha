@@ -142,6 +142,12 @@ object ColorOps {
 	def hue(color: Rgba): Value.Scalar =
 		Value.Scalar(toHsla(color).h.round)
 
+	def isDark(color: Rgba): Value.Boolean =
+		Value.Boolean(toHsla(color).l < 0.5)
+
+	def isLight(color: Rgba): Value.Boolean =
+		Value.Boolean(toHsla(color).l >= 0.5)
+
 	def lightness(color: Rgba): Value.Percentage =
 		Value.Percentage(MathUtils.round(toHsla(color).l * 100, PERCENTAGE_PRECISION))
 
