@@ -121,6 +121,21 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		)
 	}
 
+	it should "interpret color.{darken, lighten}" in {
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.Rgba(180, 212, 85), Value.String("darken")),
+				Vector(Value.Percentage(15)))
+			).value === Value.Rgba(143, 176, 45)
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.Rgba(240, 70, 21), Value.String("lighten")),
+				Vector(Value.Percentage(25)))
+			).value === Value.Rgba(248, 165, 141)
+		)
+	}
+
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =
 		super.run[Term](TermInterpreter.run(_), term)
 

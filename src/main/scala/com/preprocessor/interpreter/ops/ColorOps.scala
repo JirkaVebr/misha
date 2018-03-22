@@ -1,8 +1,10 @@
 package com.preprocessor.interpreter.ops
 
-import com.preprocessor.ast.Language.Value
-import com.preprocessor.ast.Language.Value.{Percentage, Rgba}
+import com.preprocessor.ast.Language.{Type, Value}
+import com.preprocessor.ast.Language.Value.{Native, Percentage, Rgba, Value}
 import com.preprocessor.utils.MathUtils
+
+import scala.util.Success
 
 object ColorOps {
 
@@ -145,5 +147,22 @@ object ColorOps {
 
 	def saturation(color: Rgba): Value.Percentage =
 		Value.Percentage(MathUtils.round(toHsla(color).s * 100, PERCENTAGE_PRECISION))
+
+
+	// Method generators
+
+	def getDarken(color: Rgba): Native =
+		Native(Vector(Type.Percentage), (arguments: Vector[Value]) => {
+			val delta = arguments(0).asInstanceOf[Value.Percentage]
+
+			Success(darken(color, delta))
+		})
+
+	def getLighten(color: Rgba): Native =
+		Native(Vector(Type.Percentage), (arguments: Vector[Value]) => {
+			val delta = arguments(0).asInstanceOf[Value.Percentage]
+
+			Success(lighten(color, delta))
+		})
 
 }

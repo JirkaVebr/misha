@@ -108,14 +108,14 @@ object MemberAccessInterpreter {
 				case "alpha" => Some(ColorOps.alpha(rgba))
 				case "blue" => Some(Value.Scalar(rgba.b))
 				case "complement" => Some(ColorOps.complement(rgba))
-				case "darken" => ???
+				case "darken" => Some(ColorOps.getDarken(rgba))
 				case "desaturate" => ???
 				case "green" => Some(Value.Scalar(rgba.g))
 				case "hue" => Some(ColorOps.hue(rgba))
 				case "inverted" => ???
 				case "isDark" => ???
 				case "isLight" => ???
-				case "lighten" => ???
+				case "lighten" => Some(ColorOps.getLighten(rgba))
 				case "lightness" => Some(ColorOps.lightness(rgba))
 				case "red" => Some(Value.Scalar(rgba.r))
 				case "saturate" => ???
