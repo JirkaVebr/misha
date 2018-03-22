@@ -2,6 +2,8 @@ package com.mishaLang.interpreter
 
 import Symbol._
 
+import scala.annotation.tailrec
+
 
 class Environment private
 	(val parentEnvironment: Option[Environment],
@@ -46,7 +48,7 @@ class Environment private
 
 	def isInCurrentScope(name: Symbol): Boolean = symbolTable.get(name).nonEmpty
 
-	def isInScope(name: Symbol): Boolean = isInCurrentScope(name) || (parentEnvironment match {
+	@tailrec final def isInScope(name: Symbol): Boolean = isInCurrentScope(name) || (parentEnvironment match {
 		case Some(parent) => parent.isInScope(name)
 		case None => false
 	})
@@ -62,7 +64,7 @@ class Environment private
 	def lookupContext(): Option[RuleContextSymbol.Value] =
 		lookup(RuleContextSymbol)
 
-	def lookup(name: Symbol): Option[name.Value] = {
+	@tailrec final def lookup(name: Symbol): Option[name.Value] = {
 		val value = lookupCurrent(name)
 		value match {
 			case Some(_) => value
