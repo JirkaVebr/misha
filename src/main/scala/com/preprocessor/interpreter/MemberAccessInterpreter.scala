@@ -75,12 +75,20 @@ object MemberAccessInterpreter {
 	private def runColor(color: Value.Color, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val result = color match {
 			case Rgba(r, g, b, a) => memberName match {
+				case "adjustHue" => ???
 				case "alpha" => Some(Value.Scalar(a))
 				case "blue" => Some(Value.Scalar(b))
+				case "complement" => ???
+				case "darken" => ???
+				case "desaturate" => ???
 				case "green" => Some(Value.Scalar(g))
 				case "hue" => ???
+				case "isDark" => ???
+				case "isLight" => ???
+				case "lighten" => ???
 				case "lightness" => ???
 				case "red" => Some(Value.Scalar(r))
+				case "saturate" => ???
 				case "saturation" => ???
 			}
 			case CurrentColor => None
