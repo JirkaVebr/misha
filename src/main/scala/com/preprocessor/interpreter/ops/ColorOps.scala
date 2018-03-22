@@ -1,6 +1,8 @@
 package com.preprocessor.interpreter.ops
 
+import com.preprocessor.ast.Language.Value
 import com.preprocessor.ast.Language.Value.{Percentage, Rgba}
+import com.preprocessor.utils.MathUtils
 
 object ColorOps {
 
@@ -126,10 +128,22 @@ object ColorOps {
 
 	// Properties
 
+	def alpha(color: Rgba): Value.Scalar =
+		Value.Scalar(MathUtils.round(color.a / 255d, ALPHA_PRECISION))
+
 	def complement(color: Rgba): Rgba = {
 		val hsla = toHsla(color)
 		val complement = hsla.copy(h = (hsla.h + 180) % 360)
 		hslaToRgba(complement)
 	}
+
+	def hue(color: Rgba): Value.Scalar =
+		Value.Scalar(toHsla(color).h.round)
+
+	def lightness(color: Rgba): Value.Percentage =
+		Value.Percentage(MathUtils.round(toHsla(color).l * 100, PERCENTAGE_PRECISION))
+
+	def saturation(color: Rgba): Value.Percentage =
+		Value.Percentage(MathUtils.round(toHsla(color).s * 100, PERCENTAGE_PRECISION))
 
 }

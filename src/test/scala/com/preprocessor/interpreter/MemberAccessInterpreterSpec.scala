@@ -96,7 +96,7 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "interpret color members" in {
 		assert(
-			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("alpha"))).value === Value.Scalar(123)
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("alpha"))).value === Value.Scalar(0.482353)
 		)
 		assert(
 			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("blue"))).value === Value.Scalar(199)
@@ -108,7 +108,16 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("green"))).value === Value.Scalar(12)
 		)
 		assert(
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("hue"))).value === Value.Scalar(313)
+		)
+		assert(
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("lightness"))).value === Value.Percentage(51.961)
+		)
+		assert(
 			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("red"))).value === Value.Scalar(253)
+		)
+		assert(
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("saturation"))).value === Value.Percentage(98.367)
 		)
 	}
 

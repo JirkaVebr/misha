@@ -105,21 +105,21 @@ object MemberAccessInterpreter {
 		val result = color match {
 			case rgba: Rgba => memberName match {
 				case "adjustHue" => ???
-				case "alpha" => Some(Value.Scalar(rgba.a))
+				case "alpha" => Some(ColorOps.alpha(rgba))
 				case "blue" => Some(Value.Scalar(rgba.b))
 				case "complement" => Some(ColorOps.complement(rgba))
 				case "darken" => ???
 				case "desaturate" => ???
 				case "green" => Some(Value.Scalar(rgba.g))
-				case "hue" => ???
+				case "hue" => Some(ColorOps.hue(rgba))
 				case "inverted" => ???
 				case "isDark" => ???
 				case "isLight" => ???
 				case "lighten" => ???
-				case "lightness" => ???
+				case "lightness" => Some(ColorOps.lightness(rgba))
 				case "red" => Some(Value.Scalar(rgba.r))
 				case "saturate" => ???
-				case "saturation" => ???
+				case "saturation" => Some(ColorOps.saturation(rgba))
 			}
 			case CurrentColor => None
 			case Transparent => ???
