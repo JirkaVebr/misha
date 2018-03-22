@@ -43,6 +43,15 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		))
 	}
 
+	it should "interpret string.concat" in {
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("abc"), Value.String("concat")),
+				Vector(Value.String("def")))
+			).value === Value.String("abcdef")
+		)
+	}
+
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =
 		super.run[Term](TermInterpreter.run(_), term)
 

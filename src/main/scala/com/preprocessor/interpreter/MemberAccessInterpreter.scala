@@ -53,7 +53,7 @@ object MemberAccessInterpreter {
 	private def runString(string: Value.String, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val result = memberName match {
 			case "charAt" => Some(StringOps.getCharAt(string))
-			case "concat" => ???
+			case "concat" => Some(StringOps.getConcat(string))
 			case "endsWith" => ???
 			case "indexOf" => ???
 			case "length" => Some(StringOps.length(string))
