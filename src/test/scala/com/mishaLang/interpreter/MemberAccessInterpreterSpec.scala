@@ -146,6 +146,6 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =
-		super.run[Term](TermInterpreter.run(_), term)
+		super.run[Term](TermInterpreter.run(_)(state), term)
 
 }

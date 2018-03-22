@@ -90,6 +90,6 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 
 
 	protected def run(rule: Rule)(implicit state: EnvWithValue): EnvWithValue =
-		super.run[Rule](RuleInterpreter.run(_), rule)
+		super.run[Rule](RuleInterpreter.run(_)(state), rule)
 
 }

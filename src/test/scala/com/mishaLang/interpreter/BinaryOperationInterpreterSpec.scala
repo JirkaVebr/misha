@@ -111,5 +111,5 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 
 
 	protected def run(binaryOperation: BinaryOperation)(implicit state: EnvWithValue): EnvWithValue =
-		super.run[BinaryOperation](BinaryOperationInterpreter.run(_), binaryOperation)
+		super.run[BinaryOperation](BinaryOperationInterpreter.run(_)(state), binaryOperation)
 }

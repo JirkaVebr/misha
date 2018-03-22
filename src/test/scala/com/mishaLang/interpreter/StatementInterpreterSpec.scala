@@ -115,5 +115,5 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 
 
 	protected def run(statement: Statement)(implicit state: EnvWithValue): EnvWithValue =
-		super.run[Statement](StatementInterpreter.run(_), statement)
+		super.run[Statement](StatementInterpreter.run(_)(state), statement)
 }

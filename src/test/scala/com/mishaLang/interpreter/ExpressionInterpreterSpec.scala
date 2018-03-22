@@ -63,5 +63,5 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 
 
 	protected def run(expression: Expression)(implicit state: EnvWithValue): EnvWithValue =
-		super.run[Expression](ExpressionInterpreter.run(_), expression)
+		super.run[Expression](ExpressionInterpreter.run(_)(state), expression)
 }
