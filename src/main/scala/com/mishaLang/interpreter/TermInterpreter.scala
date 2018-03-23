@@ -1,13 +1,15 @@
 package com.mishaLang.interpreter
 
-import com.mishaLang.ast.Language.Expression.Expression
+import com.mishaLang.ast.Language.Expression.{Block, Expression}
+import com.mishaLang.ast.Language.Statement.{Sequence, VariableDeclaration}
 import com.mishaLang.ast.Language.Term._
 import com.mishaLang.ast.Language.Value._
-import com.mishaLang.ast.Language.{Term, Value}
+import com.mishaLang.ast.Language.{Term, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.Selector._
 import com.mishaLang.error.ProgramError._
 import com.mishaLang.interpreter.RuleContext.{AtRule, RuleSelector}
 import com.mishaLang.interpreter.ops.FunctionOps
+import com.mishaLang.interpreter.typing.Subtype
 
 import scala.util.{Failure, Success, Try}
 
@@ -109,8 +111,10 @@ object TermInterpreter {
 						case Success(stateAfterArguments) =>
 							val newestState = EnvironmentWithValue(stateAfterArguments.environment)
 							function match {
-								case lambda: Lambda => callLambda(lambda, functionCall, stateAfterArguments.value)(newestState)
-								case native: Native => callNative(native, functionCall, stateAfterArguments.value.toVector)(newestState)
+								case lambda: Lambda =>
+									callLambda(lambda, functionCall, stateAfterArguments.value.toVector)(newestState)
+								case native: Native =>
+									callNative(native, functionCall, stateAfterArguments.value.toVector)(newestState)
 								case PolymorphicGroup(lambdas) => ???
 							}
 					}
@@ -120,7 +124,7 @@ object TermInterpreter {
 
 	private def callNative(native: Native, functionCall: FunctionCall, arguments: Vector[Value])
 												(implicit state: EnvWithValue): Try[EnvWithValue] = {
-		FunctionOps.getNativeApplicationError(native.expectedType, arguments) match {
+		FunctionOps.getNativeApplicationError(native, arguments) match {
 			case Some(errorCode) => state.fail(errorCode, native, functionCall)
 			case None => native.implementation(arguments) match {
 				case Failure(exception) => Failure(exception)
@@ -129,15 +133,36 @@ object TermInterpreter {
 		}
 	}
 
-	private def callLambda(lambda: Lambda, functionCall: FunctionCall, arguments: scala.List[Value])
+	private def callLambda(lambda: Lambda, functionCall: FunctionCall, arguments: Vector[Value])
 												(implicit state: EnvWithValue): Try[EnvWithValue] = {
-		val lambdaMandatoryArity = lambda.mandatoryArguments.length
-		val lambdaFurtherArity = lambda.otherArguments.length
-		val suppliedArgumentsCount = functionCall.arguments.length
-
-		if (suppliedArgumentsCount < lambdaMandatoryArity) state.fail(NotEnoughArguments, lambda, functionCall)
-		else {
-			???
+		FunctionOps.getLambdaApplicationError(lambda, arguments) match {
+			case Some(errorCode) => state.fail(errorCode, lambda, functionCall)
+			case None =>
+				val expectedArguments = lambda.mandatoryArguments ++ lambda.otherArguments
+				val supplied = arguments.zip(expectedArguments).map {
+					case (argument, declaration) => VariableDeclaration(
+						ValueSymbolDeclaration[Expression](declaration.name, declaration.typeAnnotation, argument)
+					)
+				}
+				val notSupplied = lambda.otherArguments.takeRight(expectedArguments.length - arguments.length).map(VariableDeclaration)
+				val firstExpression = lambda.body match {
+					case Block(content) => content
+					case _ => lambda.body
+				}
+				val newBody = (supplied ++ notSupplied).foldRight(firstExpression) {
+					case (declaration, accumulator) => Sequence(declaration, accumulator)
+				}
+				ExpressionInterpreter.run(Block(newBody)) match {
+					case Failure(exception) => Failure(exception)
+					case Success(newState) => lambda.returnType match {
+						case Some(returnType) =>
+							if (Subtype.isSubtypeOf(newState.value.valueType, returnType))
+								Success(newState)
+							else
+								newState.fail(IllTypedReturn, lambda, functionCall)
+						case None => Success(newState)
+					}
+				}
 		}
 	}
 

@@ -10,18 +10,20 @@ object FunctionOps {
 	/**
 		* Return value of None means that the function can be called
 		*/
-	def getFunctionApplicationError(function: Value.Function, argVector: Vector[Value.Value]): Option[ProgramErrorCode] =
+	def getFunctionApplicationError(function: Value.Function, arguments: Vector[Value.Value]): Option[ProgramErrorCode] =
 		function match {
-			case Lambda(mandatoryArguments, otherArguments, returnType, body, scopeId) => ???
-			case Native(expectedType, _) =>
-				getNativeApplicationError(expectedType, argVector)
+			case lambda: Lambda =>
+				getLambdaApplicationError(lambda, arguments)
+			case native: Native =>
+				getNativeApplicationError(native, arguments)
 		}
 
-	def getNativeApplicationError(expectedType: Vector[Type.Any], argVector: Vector[Value.Value]): Option[ProgramErrorCode] = {
-		val arityComparison = argVector.length - expectedType.length
+
+	def getNativeApplicationError(native: Native, arguments: Vector[Value.Value]): Option[ProgramErrorCode] = {
+		val arityComparison = arguments.length - native.expectedType.length
 
 		if (arityComparison == 0) {
-			val zipped = expectedType.zip(argVector)
+			val zipped = native.expectedType.zip(arguments)
 			val incorrectlyTyped = zipped.filterNot{
 				case (expected, value) => Subtype.isSubtypeOf(Typing.getType(value), expected)
 			}
@@ -34,6 +36,20 @@ object FunctionOps {
 			Some(NotEnoughArguments)
 		else
 			Some(TooManyArguments)
+	}
+
+
+	def getLambdaApplicationError(lambda: Lambda, arguments: Vector[Value.Value]): Option[ProgramErrorCode] = {
+		/*val lambdaMandatoryArity = lambda.mandatoryArguments.length
+		val lambdaFurtherArity = lambda.otherArguments.length
+		val suppliedArgumentsCount = arguments.length
+
+		if (suppliedArgumentsCount < lambdaMandatoryArity)
+			Some(NotEnoughArguments)
+		else {
+			???
+		}*/
+		None // TODO
 	}
 
 }
