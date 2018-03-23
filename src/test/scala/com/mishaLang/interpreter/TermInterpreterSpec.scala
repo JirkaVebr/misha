@@ -99,6 +99,48 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		))).value === Value.String("abcdef"))
 	}
 
+	it should "correctly invoke lambdas with just supplied optional arguments" in {
+		val lambda = Lambda(Vector(
+			ValueSymbolDeclaration[Unit]("str1", None, Unit),
+			ValueSymbolDeclaration[Unit]("str2", None, Unit)
+		), Vector(
+			ValueSymbolDeclaration[Expression]("str3", None, Value.String("default"))
+		), None, Block(
+			BinaryOperation(Addition, BinaryOperation(Addition, Variable("str1"), Variable("str2")), Variable("str3"))
+		), scopeId)
+		assert(run(FunctionCall(lambda, Vector(
+			Value.String("abc"), Value.String("def"), Value.String("ghi")
+		))).value === Value.String("abcdefghi"))
+	}
+
+	it should "correctly invoke lambdas with just missing optional arguments" in {
+		val lambda = Lambda(Vector(
+			ValueSymbolDeclaration[Unit]("str1", None, Unit),
+			ValueSymbolDeclaration[Unit]("str2", None, Unit)
+		), Vector(
+			ValueSymbolDeclaration[Expression]("str3", None, Value.String("default"))
+		), None, Block(
+			BinaryOperation(Addition, BinaryOperation(Addition, Variable("str1"), Variable("str2")), Variable("str3"))
+		), scopeId)
+		assert(run(FunctionCall(lambda, Vector(
+			Value.String("abc"), Value.String("def")
+		))).value === Value.String("abcdefdefault"))
+	}
+
+	it should "correctly invoke lambdas with some supplied and some missing optional arguments" in {
+		val lambda = Lambda(Vector(
+			ValueSymbolDeclaration[Unit]("str1", None, Unit)
+		), Vector(
+			ValueSymbolDeclaration[Expression]("str2", None, Value.String("default1")),
+			ValueSymbolDeclaration[Expression]("str3", None, Value.String("default2"))
+		), None, Block(
+			BinaryOperation(Addition, BinaryOperation(Addition, Variable("str1"), Variable("str2")), Variable("str3"))
+		), scopeId)
+		assert(run(FunctionCall(lambda, Vector(
+			Value.String("abc"), Value.String("def")
+		))).value === Value.String("abcdefdefault2"))
+	}
+
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =
 		super.run[Term](TermInterpreter.run(_)(state), term)
 }
