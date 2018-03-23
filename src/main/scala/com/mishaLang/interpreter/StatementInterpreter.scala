@@ -55,7 +55,7 @@ object StatementInterpreter {
 					else
 						stateAfterValue.fail(TypeAnnotationMismatch, varDeclaration)
 				case None =>
-					stateAfterValue.withNewSymbol(declaration.name)(stateAfterValue.value) // TODO There used to be inference here
+					stateAfterValue.withNewSymbol(declaration.name)(stateAfterValue.value)
 			}
 		}
 	}
