@@ -58,9 +58,9 @@ object ExpressionInterpreter {
 			}
 		}
 
-	private def runBlock(block: Block)(implicit state: EnvWithValue): Try[EnvWithValue] = {
+	def runBlock(block: Block)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val newScope = state.environment.pushSubScope()
-		StatementInterpreter.run(block.content)(EnvironmentWithValue(newScope, Value.Unit)) match {
+		StatementInterpreter.run(block.content)(EnvironmentWithValue(newScope)) match {
 			case fail: Failure[EnvWithValue] => fail
 			case Success(result) =>
 				Success(EnvironmentWithValue(result.environment.popSubScope().get, result.value))
