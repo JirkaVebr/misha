@@ -65,8 +65,8 @@ object Language {
 
 		sealed trait Callable extends Composite
 		sealed trait Function extends Callable
-		case class Lambda(mandatoryArguments: Seq[ValueSymbolDeclaration[Unit]],
-											otherArguments: Seq[ValueSymbolDeclaration[Expression]],
+		case class Lambda(mandatoryArguments: Vector[ValueSymbolDeclaration[Unit]],
+											otherArguments: Vector[ValueSymbolDeclaration[Expression]],
 											returnType: Option[Type.Any], body: Expression, scopeId: ScopeId) extends Function
 		case class Native(expectedType: Vector[Type.Any], implementation: (Vector[Value]) => Try[Value]) extends Function
 		case class PolymorphicGroup(lambdas: Seq[Function]) extends Callable
