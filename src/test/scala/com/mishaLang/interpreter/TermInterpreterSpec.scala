@@ -3,8 +3,8 @@ package com.mishaLang.interpreter
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Term.{FunctionCall, ParentSelector, Term, Variable}
 import com.mishaLang.ast.Language.Type.Scalar
-import com.mishaLang.ast.Language.Value.{Native, Value}
-import com.mishaLang.ast.Language.{Term, Value}
+import com.mishaLang.ast.Language.Value.{Lambda, Native, Value}
+import com.mishaLang.ast.Language.{Term, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.Selector.{Class, Id, SelectorList}
 import com.mishaLang.error.ProgramError
 import com.mishaLang.interpreter.RuleContext.RuleSelector
@@ -13,6 +13,8 @@ import com.mishaLang.interpreter.Symbol.ValueSymbol
 import scala.util.Success
 
 class TermInterpreterSpec extends BaseInterpreterSpec {
+
+	private val scopeId = testEnvironment.scopeId
 
 	behavior of "Term interpreter"
 
@@ -76,6 +78,25 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		assertThrows[ProgramError[_]](run(FunctionCall(
 			multiply, Vector(Value.Scalar(3), Value.String("bad type"))
 		)))
+	}
+
+	it should "correctly invoke nullary lambdas" in {
+		val lambda = Lambda(Vector(), Vector(), None, Block(
+			Value.Scalar(123)
+		), scopeId)
+		assert(run(FunctionCall(lambda, Vector())).value === Value.Scalar(123))
+	}
+
+	it should "correctly invoke lambdas with just mandatory arguments" in {
+		val lambda = Lambda(Vector(
+			ValueSymbolDeclaration[Unit]("str1", None, Unit),
+			ValueSymbolDeclaration[Unit]("str2", None, Unit)
+		), Vector(), None, Block(
+			BinaryOperation(Addition, Variable("str1"), Variable("str2"))
+		), scopeId)
+		assert(run(FunctionCall(lambda, Vector(
+			Value.String("abc"), Value.String("def")
+		))).value === Value.String("abcdef"))
 	}
 
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =
