@@ -28,7 +28,6 @@ object ProgramError {
 	case object IllegalPropertyValue extends SimpleError("Property value cannot be cast to string")
 	case object IllTypedArgument extends SimpleError("Type of argument value does not conform to the expected type")
 	case object IllTypedAssignment extends SimpleError("Type of assignment value does not conform to the declared variable type")
-	case object IllTypedConditionBranches extends SimpleError("Miss-matched types of branches of a conditional expression")
 	case object InvokingANonFunction extends SimpleError("Invoking a non-function expression")
 	case object LogicOnNonBooleans extends SimpleError("Attempting logical operations on non-boolean values")
 	case object MultiplyingStringByNonInt extends SimpleError("Multiplying a string by a non-integer value")

@@ -2,11 +2,10 @@ package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Term.Term
+import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.Language.Value.{Dimensioned, Percentage, Scalar}
-import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.error.ProgramError
-import com.mishaLang.error.ProgramError.{IllTypedConditionBranches, NonBooleanCondition}
-import com.mishaLang.interpreter.typing.Subtype
+import com.mishaLang.error.ProgramError.NonBooleanCondition
 
 import scala.util.{Failure, Success, Try}
 
