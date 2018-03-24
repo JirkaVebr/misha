@@ -43,18 +43,18 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		assert(run(Term.List(List(
 			BinaryOperation(Addition, Value.String("123"), Value.String("456")),
 			BinaryOperation(IsEqualTo, Value.Scalar(10), Value.Scalar(10))
-		))).value === Value.List(List(
+		))).value === Value.List(Vector(
 			Value.String("123456"),
 			Value.Boolean(true)
 		)))
 	}
 
 	it should "correctly interpret the parent selector magic symbol" in {
-		assert(run(ParentSelector).value === Value.List(List.empty))
+		assert(run(ParentSelector).value === Value.List(Vector()))
 
 		val originalRuleHead = ".myClass"
 		val newState = EnvironmentWithValue(testEnvironment.pushSubScope(RuleSelector(Class("myClass"))))
-		assert(run(ParentSelector)(newState).value === Value.List(List(originalRuleHead)))
+		assert(run(ParentSelector)(newState).value === Value.List(Vector(originalRuleHead)))
 	}
 
 	it should "correctly invoke native functions" in {

@@ -61,7 +61,7 @@ object Language {
 
 		// Composite types
 		case class Tuple2(first: Value, second: Value) extends Composite
-		case class List(values: Seq[Value]) extends Composite
+		case class List(values: Vector[Value]) extends Composite
 
 		sealed trait Callable extends Composite
 		sealed trait Function extends Callable

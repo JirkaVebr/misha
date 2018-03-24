@@ -66,7 +66,7 @@ object TermInterpreter {
 	}
 
 	private def runMagicSymbol(symbol: MagicSymbol)(implicit state: EnvWithValue): Try[EnvWithValue] = symbol match {
-		case ParentSelector => state ~> Value.List(runParentSelector().toList)
+		case ParentSelector => state ~> Value.List(runParentSelector().toVector)
 	}
 
 	private def runVariable(variable: Variable)(implicit state: EnvWithValue): Try[EnvWithValue] = {
@@ -87,7 +87,7 @@ object TermInterpreter {
 		chainResult match {
 			case Failure(exception) => Failure(exception)
 			case Success(newEnvironment) =>
-				runListValue(Value.List(newEnvironment.value))(EnvironmentWithValue(newEnvironment.environment))
+				runListValue(Value.List(newEnvironment.value.toVector))(EnvironmentWithValue(newEnvironment.environment))
 		}
 	}
 
