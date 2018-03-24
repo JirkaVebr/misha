@@ -43,17 +43,23 @@ class Environment private
 
 
 	def pushSubScope(): Environment = {
-		val child = createInstance(scopeId :+ subEnvironments.length, Some(this), Map[Symbol, Symbol#Value](), Vector())
-		val newThis = createAndUpdateTree(scopeId, parentEnvironment, symbolTable, subEnvironments :+ child)
-		newThis.subEnvironments.last
+		pushSubScope(createSubScopeChild(Map())).get
 	}
 
 
 	def pushSubScope(context: RuleContextSymbol.Value): Environment = {
-		val child = createInstance(scopeId :+ subEnvironments.length, Some(this), Map(RuleContextSymbol -> context), Vector())
-		val newThis = createAndUpdateTree(scopeId, parentEnvironment, symbolTable, subEnvironments :+ child)
-		newThis.subEnvironments.last
+		pushSubScope(createSubScopeChild(Map(RuleContextSymbol -> context))).get
 	}
+
+
+	private def pushSubScope(child: Environment): Option[Environment] = {
+		val newThis = createAndUpdateTree(scopeId, parentEnvironment, symbolTable, subEnvironments :+ child)
+		Some(newThis.subEnvironments.last)
+	}
+
+
+	private def createSubScopeChild(childSymbols: Map[Symbol, Symbol#Value]): Environment =
+		createInstance(scopeId :+ subEnvironments.length, Some(this), childSymbols, Vector())
 
 
 	def popSubScope(): Option[Environment] = parentEnvironment
