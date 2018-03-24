@@ -4,6 +4,7 @@ import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Term.{FunctionCall, MemberAccess, ParentSelector, Variable}
 import com.mishaLang.ast.Language.Value._
 import com.mishaLang.ast.Language.{Term, Type, ValueSymbolDeclaration}
+import com.mishaLang.interpreter.Symbol.ValueSymbol
 import com.mishaLang.parser.BaseParserSpec
 
 class ExpressionSpec extends BaseParserSpec {
@@ -173,14 +174,16 @@ class ExpressionSpec extends BaseParserSpec {
 	}
 
 	it should "correctly parse anonymous functions" in {
-		assert(parse("() => 123") === Term.Function(scala.List(), scala.List(), None, Block(Scalar(123))))
-		assert(parse("(): Unit => 123") === Term.Function(scala.List(), scala.List(), Some(Type.Unit), Block(Scalar(123))))
+		assert(parse("() => 123") === Term.Function(None, Vector(), Vector(), None, Block(Scalar(123))))
+		assert(parse("(): Unit => 123") === Term.Function(None, Vector(), Vector(), Some(Type.Unit), Block(Scalar(123))))
 		assert(parse("($a): Unit => 123") ===
-			Term.Function(scala.List(ValueSymbolDeclaration("a", None, None)), scala.List(), Some(Type.Unit), Block(Scalar(123))))
+			Term.Function(None, Vector(ValueSymbolDeclaration("a", None, None)), Vector(), Some(Type.Unit), Block(Scalar(123))))
 		assert(parse("($a: Scalar): Unit => 123") ===
-			Term.Function(scala.List(ValueSymbolDeclaration("a", Some(Type.Scalar), ())), scala.List(), Some(Type.Unit), Block(Scalar(123))))
+			Term.Function(None, Vector(ValueSymbolDeclaration("a", Some(Type.Scalar), ())), Vector(), Some(Type.Unit), Block(Scalar(123))))
 		assert(parse("($a: Scalar = 1): Unit => 123") ===
-			Term.Function(scala.List(), scala.List(ValueSymbolDeclaration("a", Some(Type.Scalar), Scalar(1))), Some(Type.Unit), Block(Scalar(123))))
+			Term.Function(None, Vector(), Vector(ValueSymbolDeclaration("a", Some(Type.Scalar), Scalar(1))), Some(Type.Unit), Block(Scalar(123))))
+		assert(parse("recursiveName ($a: Scalar = 1): Unit => 123") ===
+			Term.Function(Some(ValueSymbol("recursiveName")), Vector(), Vector(ValueSymbolDeclaration("a", Some(Type.Scalar), Scalar(1))), Some(Type.Unit), Block(Scalar(123))))
 	}
 
 	it should "correctly parse complicated arithmetic expressions" in {

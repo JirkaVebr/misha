@@ -98,8 +98,8 @@ object TermInterpreter {
 
 	private def runFunctionTerm(function: Term.Function)(implicit state: EnvWithValue): Try[EnvWithValue] =
 		runCallableValue(Value.Lambda(
-			function.mandatoryArguments.toVector, function.otherArguments.toVector, function.returnType,
-			function.body, state.environment.scopeId
+			function.recursiveName, function.mandatoryArguments.toVector, function.otherArguments.toVector,
+			function.returnType, function.body, state.environment.scopeId
 		))
 
 	private def runFunctionCall(functionCall: Term.FunctionCall)(implicit state: EnvWithValue): Try[EnvWithValue] =

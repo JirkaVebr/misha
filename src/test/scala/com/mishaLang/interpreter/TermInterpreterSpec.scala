@@ -81,14 +81,14 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 	it should "correctly invoke nullary lambdas" in {
-		val lambda = Lambda(Vector(), Vector(), None, Block(
+		val lambda = Lambda(None, Vector(), Vector(), None, Block(
 			Value.Scalar(123)
 		), scopeId)
 		assert(run(FunctionCall(lambda, Vector())).value === Value.Scalar(123))
 	}
 
 	it should "correctly invoke lambdas with just mandatory arguments" in {
-		val lambda = Lambda(Vector(
+		val lambda = Lambda(None, Vector(
 			ValueSymbolDeclaration[Unit]("str1", None, Unit),
 			ValueSymbolDeclaration[Unit]("str2", None, Unit)
 		), Vector(), None, Block(
@@ -100,7 +100,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 	it should "correctly invoke lambdas with just supplied optional arguments" in {
-		val lambda = Lambda(Vector(
+		val lambda = Lambda(None, Vector(
 			ValueSymbolDeclaration[Unit]("str1", None, Unit),
 			ValueSymbolDeclaration[Unit]("str2", None, Unit)
 		), Vector(
@@ -114,7 +114,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 	it should "correctly invoke lambdas with just missing optional arguments" in {
-		val lambda = Lambda(Vector(
+		val lambda = Lambda(None, Vector(
 			ValueSymbolDeclaration[Unit]("str1", None, Unit),
 			ValueSymbolDeclaration[Unit]("str2", None, Unit)
 		), Vector(
@@ -128,7 +128,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 	it should "correctly invoke lambdas with some supplied and some missing optional arguments" in {
-		val lambda = Lambda(Vector(
+		val lambda = Lambda(None, Vector(
 			ValueSymbolDeclaration[Unit]("str1", None, Unit)
 		), Vector(
 			ValueSymbolDeclaration[Expression]("str2", None, Value.String("default1")),

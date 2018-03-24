@@ -70,7 +70,7 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 		val root = testEnvironment.putNew(testVariable)(testValue1)
 		var sub0 = root.pushSubScope()
 		sub0 = sub0.putNew(testLambda)(Value.Lambda(
-			Vector(), Vector(), None, Term.Variable(testVariable), sub0.scopeId
+			None, Vector(), Vector(), None, Term.Variable(testVariable), sub0.scopeId
 		))
 		sub0 = sub0.updated(testVariable)(testValue2)
 

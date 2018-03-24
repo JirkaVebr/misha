@@ -195,7 +195,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def anonymousFunction: Rule1[Expression] = rule {
-		'(' ~
+		optional(variableName ~ SingleLineWhitespace) ~ '(' ~
 			(zeroOrMore(('$' ~ variableName ~ TypeAnnotation ~ !(AnyWhitespace ~ '=')) ~> (
 				(name: ValueSymbol, typeAnnotation: Option[Language.Type.Any]) => ValueSymbolDeclaration[Unit](name, typeAnnotation, ())
 			)).separatedBy(AnyWhitespaceAround(",")) ~

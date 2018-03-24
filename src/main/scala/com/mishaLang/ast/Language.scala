@@ -65,7 +65,7 @@ object Language {
 
 		sealed trait Callable extends Composite
 		sealed trait Function extends Callable
-		case class Lambda(mandatoryArguments: Vector[ValueSymbolDeclaration[Unit]],
+		case class Lambda(recursiveName: Option[ValueSymbol], mandatoryArguments: Vector[ValueSymbolDeclaration[Unit]],
 											otherArguments: Vector[ValueSymbolDeclaration[Expression]],
 											returnType: Option[Type.Any], body: Expression, scopeId: ScopeId) extends Function
 		case class Native(expectedType: Vector[Type.Any], implementation: (Vector[Value]) => Try[Value]) extends Function
@@ -171,7 +171,7 @@ object Language {
 
 		case class Variable(name: ValueSymbol) extends Term
 		case class FunctionCall(function: Expression, arguments: Seq[Expression] = scala.Vector.empty) extends Term
-		case class Function(mandatoryArguments: Seq[ValueSymbolDeclaration[Unit]],
+		case class Function(recursiveName: Option[ValueSymbol], mandatoryArguments: Seq[ValueSymbolDeclaration[Unit]],
 												otherArguments: Seq[ValueSymbolDeclaration[Expression]],
 												returnType: Option[Type.Any], body: Block) extends Term
 		case class Tuple2(first: Expression, second: Expression) extends Term
