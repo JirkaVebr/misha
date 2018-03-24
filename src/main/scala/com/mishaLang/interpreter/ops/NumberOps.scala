@@ -1,9 +1,24 @@
 package com.mishaLang.interpreter.ops
 
+import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Value
+import com.mishaLang.ast.Language.Value.Scalar
 import com.mishaLang.interpreter.validators.NumberValidator
 
 object NumberOps {
+
+
+	def performNumericOperator(operator: NumericOperator, left: Scalar, right: Scalar): Scalar = {
+		val performOperation: (Double, Double) => Double = operator match {
+			case Addition => _ + _
+			case Subtraction => _ - _
+			case Multiplication => _ * _
+			case Division => _ / _
+			case Exponentiation => Math.pow(_, _)
+			case Remainder => _ % _
+		}
+		Scalar(performOperation(left.value, right.value))
+	}
 
 
 
