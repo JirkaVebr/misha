@@ -1,8 +1,8 @@
 package com.mishaLang.interpreter
 
-import com.mishaLang.ast.Language.Expression.Expression
+import com.mishaLang.ast.Language.Expression.{Block, Expression}
 import com.mishaLang.ast.Language.Statement._
-import com.mishaLang.ast.Language.{Statement, Value}
+import com.mishaLang.ast.Language.{Statement, Type, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.PropertyRecord
 import com.mishaLang.error.ProgramError._
 import com.mishaLang.interpreter.Symbol.PropertySymbol
@@ -17,6 +17,7 @@ object StatementInterpreter {
 		case sequence: Sequence => runSequence(sequence)
 		case typeAlias: TypeAliasDeclaration => runTypeAliasDeclaration(typeAlias)
 		case variableDeclaration: VariableDeclaration => runVariableDeclaration(variableDeclaration)
+		case each: Each => runEach(each)
 		case rule: Rule => RuleInterpreter.run(rule)
 		case property: Statement.Property => runProperty(property)
 		case NoOp => runNoOp()
@@ -42,7 +43,36 @@ object StatementInterpreter {
 		}
 	}
 
-	private def runVariableDeclaration(varDeclaration: VariableDeclaration)(implicit state: EnvWithValue): Try[EnvWithValue] = {
+
+	private def runEach(each: Each)(implicit state: EnvWithValue): Try[EnvWithValue] =
+		ExpressionInterpreter.run(each.iterable) match {
+			case Failure(exception) => Failure(exception)
+			case Success(stateAfterIterable) =>
+				stateAfterIterable.value match {
+					case iterable: Value.List =>
+						if (iterable.values.nonEmpty) {
+							val steps = iterable.values.map {
+								value =>
+									Block(
+										Sequence(
+											VariableDeclaration(ValueSymbolDeclaration(each.iterator.name, None, value)),
+											each.body.content
+										)
+									)
+							}
+							Interpreter.chainRun[Block](steps.toList, stateAfterIterable, ExpressionInterpreter.runBlock(_)(_)) match {
+								case Failure(exception) => Failure(exception)
+								case Success(stateAfterIterations) =>
+									Success(EnvironmentWithValue(stateAfterIterations.environment, stateAfterIterations.value.last))
+							}
+						} else
+							Success(stateAfterIterable)
+					case _ => state.fail(NonListIterable, each)
+				}
+		}
+
+
+		private def runVariableDeclaration(varDeclaration: VariableDeclaration)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val declaration = varDeclaration.declaration
 		if (state.environment.isInCurrentScope(declaration.name))
 			state.fail(DuplicateVariableDeclaration, varDeclaration)

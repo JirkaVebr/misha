@@ -113,6 +113,40 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		assert(run(NoOp).environment === testEnvironment)
 	}
 
+	it should "ignore loops on empty lists" in {
+		assert(run(
+			Sequence(
+				Sequence(
+					VariableDeclaration(ValueSymbolDeclaration("n", None, Value.Scalar(123))),
+					Each(
+						Variable("i"), Value.List(Vector()), Block(
+							BinaryOperation(Equals, Variable("n"), Value.Scalar(456))
+						)
+					)
+				),
+				Variable("n")
+			)
+		).value === Value.Scalar(123))
+	}
+
+	it should "correctly execute each loops" in {
+		assert(run(
+			Sequence(
+				Sequence(
+					VariableDeclaration(ValueSymbolDeclaration("n", None, Value.Scalar(0))),
+					Each(
+						Variable("i"), Value.List(Vector(
+							Value.Scalar(1), Value.Scalar(2), Value.Scalar(3), Value.Scalar(4), Value.Scalar(5)
+						)), Block(
+							BinaryOperation(Equals, Variable("n"), BinaryOperation(Addition, Variable("n"), Variable("i")))
+						)
+					)
+				),
+				Variable("n")
+			)
+		).value === Value.Scalar(15))
+	}
+
 
 	protected def run(statement: Statement)(implicit state: EnvWithValue): EnvWithValue =
 		super.run[Statement](StatementInterpreter.run(_)(state), statement)

@@ -19,6 +19,7 @@ object ExpressionInterpreter {
 		case term: Term => TermInterpreter.run(term)
 	}
 
+
 	private def runUnaryOperation(unaryOperation: UnaryOperation)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val operator = unaryOperation.operator
 		val value = run(unaryOperation.value)
@@ -42,6 +43,7 @@ object ExpressionInterpreter {
 		}
 	}
 
+
 	private def runConditional(conditional: Conditional)(implicit state: EnvWithValue): Try[EnvWithValue] =
 		run(conditional.condition) match {
 			case Failure(error) => Failure(error)
@@ -57,6 +59,7 @@ object ExpressionInterpreter {
 				case _ => stateAfterCondition.fail(NonBooleanCondition)
 			}
 		}
+
 
 	def runBlock(block: Block)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		state.environment.pushSubScope() match {
