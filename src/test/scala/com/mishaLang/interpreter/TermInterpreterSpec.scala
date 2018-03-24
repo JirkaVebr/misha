@@ -158,6 +158,26 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		assert(run(FunctionCall(lambda, Vector(Value.Scalar(5)))).value === Value.Scalar(120))
 	}
 
+	it should "pass parent context to lambdas" in {
+		val testLambda = ValueSymbol("testLambda")
+		val testSelector = Class("testClass")
+		val root = testEnvironment.putNew(testLambda)(Value.Lambda(
+			None, Vector(), Vector(), None, Term.ParentSelector, testEnvironment.scopeId
+		))
+
+		assert(
+			run(Term.FunctionCall(Term.Variable(testLambda), Vector()))(EnvironmentWithValue(root)).value ===
+			Value.List(Vector())
+		)
+
+		val sub0 = root.pushSubScope(RuleSelector(testSelector)).get
+
+		assert(
+			run(Term.FunctionCall(Term.Variable(testLambda), Vector()))(EnvironmentWithValue(sub0)).value ===
+				Value.List(Vector(testSelector.toString))
+		)
+	}
+
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =
 		super.run[Term](TermInterpreter.run(_)(state), term)
 }

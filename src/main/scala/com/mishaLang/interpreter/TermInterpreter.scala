@@ -163,27 +163,35 @@ object TermInterpreter {
 				}
 				state.environment.getEnvironmentByScopeId(lambda.scopeId) match {
 					case Some(environment) =>
-						val newLambdaEnvironment = EnvironmentWithValue(environment)
-						ExpressionInterpreter.runBlock(Block(newBody))(newLambdaEnvironment) match {
-							case Failure(exception) => Failure(exception)
-							case Success(newState) =>
-								newState.environment.getEnvironmentByScopeId(state.environment.scopeId) match {
-									case Some(callSiteEnvironment) =>
-										val callSiteState = EnvironmentWithValue(
-											callSiteEnvironment, newState.value
-										)
-										lambda.returnType match {
-											case Some(returnType) =>
-												if (Subtype.isSubtypeOf(callSiteState.value.valueType, returnType))
-													Success(callSiteState)
-												else
-													callSiteState.fail(IllTypedReturn, lambda, functionCall)
-											case None => Success(callSiteState)
+						val subScope = state.environment.lookupContext() match {
+							case Some(context) => environment.pushSubScope(context)
+							case None => environment.pushSubScope()
+						}
+						subScope match {
+							case Some(newLambdaScope) =>
+								StatementInterpreter.run(newBody)(EnvironmentWithValue(newLambdaScope)) match {
+									case Failure(exception) => Failure(exception)
+									case Success(newState) =>
+										newState.environment.getEnvironmentByScopeId(state.environment.scopeId) match {
+											case Some(callSiteEnvironment) =>
+												val callSiteState = EnvironmentWithValue(
+													callSiteEnvironment, newState.value
+												)
+												lambda.returnType match {
+													case Some(returnType) =>
+														if (Subtype.isSubtypeOf(callSiteState.value.valueType, returnType))
+															Success(callSiteState)
+														else
+															callSiteState.fail(IllTypedReturn, lambda, functionCall)
+													case None => Success(callSiteState)
+												}
+											case None =>
+												newState.failFatally(CompilerError("Undefined call site env"))
 										}
-									case None =>
-										newState.failFatally(CompilerError("Undefined call site env"))
 								}
-							}
+							case None =>
+								state.fail(StackOverflow)
+						}
 					case None =>
 						state.failFatally(CompilerError("Undefined lambda parent env"))
 				}
