@@ -1,6 +1,7 @@
 package com.mishaLang.ast
 
 import com.mishaLang.ast.Language.Expression.{Block, Expression}
+import com.mishaLang.ast.Language.Term.Variable
 import com.mishaLang.ast.NumberUnit.UnitOfMeasure
 import com.mishaLang.interpreter.ScopeId
 import com.mishaLang.interpreter.Symbol.{TypeSymbol, ValueSymbol}
@@ -113,6 +114,7 @@ object Language {
 		//case class Import(destination: Expression, parameters: Option[Expression]) extends Statement
 		case class TypeAliasDeclaration(alias: TypeAlias, subType: Any) extends Statement
 		case class VariableDeclaration(declaration: ValueSymbolDeclaration[Expression]) extends Statement
+		case class Each(iterator: Variable, iterable: Expression, body: Block) extends Statement
 
 		case class Rule(head: RuleHead, body: Block) extends Statement
 

@@ -226,6 +226,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		(typeAliasDeclaration ~ EndOfLine) |
 		(variableDeclaration ~ EndOfLine) |
 		(property ~ EndOfLine) |
+		(each ~ EndOfLine) |
 		(Expression ~ EndOfLine) |
 		(rule ~ EndOfLine) |
 		(propertyFunctionCall ~ EndOfLine) |
@@ -245,6 +246,11 @@ trait L5_Expressions { this: org.parboiled2.Parser
 
 	private def property: Rule1[Property] = rule {
 		(Token("@property") ~ "(" ~ Expression ~ "," ~ Expression ~ optional("," ~ Expression) ~ optional(",") ~ ")") ~> Property
+	}
+
+	private def each: Rule1[Each] = rule {
+		(Token("@each") ~!~ MandatorySingleLineWhitespace ~ Variable ~ Token("@in") ~ MandatorySingleLineWhitespace ~
+			Expression ~ block) ~> Each
 	}
 
 	private def propertyFunctionCall: Rule1[FunctionCall] = rule {

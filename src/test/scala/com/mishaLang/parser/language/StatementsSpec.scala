@@ -2,7 +2,7 @@ package com.mishaLang.parser.language
 
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Statement._
-import com.mishaLang.ast.Language.Term.{FunctionCall, ParentSelector}
+import com.mishaLang.ast.Language.Term.{FunctionCall, ParentSelector, Variable}
 import com.mishaLang.ast.Language.Value.{Important, Rgba, Scalar}
 import com.mishaLang.ast.Language.{Term, Type, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.NumberUnit.UnitOfMeasure
@@ -132,6 +132,15 @@ class StatementsSpec extends BaseParserSpec {
 		assert(parse("@no-op") === NoOp)
 		assert(parse("@no-Op") === NoOp)
 		assert(parse("@NOOP") === NoOp)
+	}
+
+	it should "correctly parse an each loop" in {
+		assert(parse(
+			"""@each $i @in [1 2 3]
+				|	123
+				|""".stripMargin) === Each(Variable("i"), Term.List(Vector(
+			Value.Scalar(1), Value.Scalar(2), Value.Scalar(3)
+		)), Block(Value.Scalar(123))))
 	}
 
 	protected def parse(input: java.lang.String): Statement = parseLanguageRule(input, _.Statement)
