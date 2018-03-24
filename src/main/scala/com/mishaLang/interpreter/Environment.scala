@@ -105,5 +105,36 @@ class Environment private
 		}
 	}
 
+
+	def getEnvironmentByScopeId(id: ScopeId): Option[Environment] = {
+		val longestCommonPrefix = scopeId.zip(id).takeWhile(Function.tupled(_ == _))
+
+		getNthParent(scopeId.length - longestCommonPrefix.length) match {
+			case Some(nthParent) => Some(nthParent.getChildren(id.drop(longestCommonPrefix.length)))
+			case None => None
+		}
+	}
+
+
+	@tailrec
+	private def getNthParent(n: Int): Option[Environment] = {
+		if (n == 0) Some(this)
+		else parentEnvironment match {
+			case Some(parent) => parent.getNthParent(n - 1)
+			case None => None
+		}
+	}
+
+
+	/**
+		* @param relativeId The id is *relative* to this environment, meaning that it is assumed that there always will
+		*                   be appropriate sub-environments
+		*/
+	@tailrec
+	private def getChildren(relativeId: ScopeId): Environment = {
+		if (scopeId.length == 1) subEnvironments(scopeId(0))
+		else subEnvironments(scopeId(0)).getChildren(scopeId.tail)
+	}
+
 }
 
