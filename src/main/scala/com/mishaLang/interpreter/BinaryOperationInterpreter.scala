@@ -1,11 +1,11 @@
 package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Expression._
-import com.mishaLang.ast.Language.Value.{Color, Composite, Dimensioned, Flag, Percentage, Primitive, Rgba, Scalar, Value}
+import com.mishaLang.ast.Language.Value.{Boolean, Color, Composite, Dimensioned, Flag, NativeFunctionCall, Percentage, Primitive, Rgba, Scalar, String, Value}
 import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
-import com.mishaLang.interpreter.ops.{ColorOps, StringOps}
+import com.mishaLang.interpreter.ops.{ColorOps, NumberOps, StringOps}
 import com.mishaLang.interpreter.typing.Subtype
 import com.mishaLang.interpreter.validators.NumberValidator
 
@@ -39,7 +39,7 @@ object BinaryOperationInterpreter {
 		case primitive: Primitive => primitive match {
 			case number: Value.Number => number match {
 				case Dimensioned(value, unit) => sys.error("todo") // TODO
-				case Scalar(value) => sys.error("todo") // TODO
+				case scalar: Scalar => runNumericOperatorOnScalar(operator, scalar, right)
 				case Percentage(value) => sys.error("todo") // TODO
 			}
 			case string: Value.String => runNumericOperatorOnString(operator, string, right)
@@ -55,6 +55,24 @@ object BinaryOperationInterpreter {
 			}
 			case _ => ??? // TODO
 		}
+	}
+
+	private def runNumericOperatorOnScalar(operator: NumericOperator, left: Value.Scalar, right: Value)
+																				(implicit state: EnvWithValue): Try[EnvWithValue] = right match {
+		case Value.Unit => ???
+		case primitive: Primitive => primitive match {
+			case number: Value.Number => number match {
+				case Dimensioned(value, unit) => ???
+				case rightScalar: Scalar => state ~> NumberOps.performNumericOperator(operator, left, rightScalar)
+				case Percentage(value) => ???
+			}
+			case Boolean(value) => ???
+			case String(value) => ???
+			case _: Color => ???
+			case _: Flag => ???
+			case NativeFunctionCall(function, arguments, returnType) => ???
+		}
+		case _: Composite => ???
 	}
 
 	private def runNumericOperatorOnString(operator: NumericOperator, left: Value.String, right: Value)
@@ -116,7 +134,7 @@ object BinaryOperationInterpreter {
 			sys.error("todo") // TODO
 		case _ =>
 			// Unchecked because it's too stupid to realize that it already can't be IsEqualTo or In
-			val operation: (Double, Double) => Boolean = (operator: @unchecked) match {
+			val operation: (Double, Double) => scala.Boolean = (operator: @unchecked) match {
 				case LowerThan => _ < _
 				case LowerEquals => _ <= _
 				case GreaterThan => _ > _
