@@ -150,7 +150,15 @@ object TermInterpreter {
 					case Block(content) => content
 					case _ => lambda.body
 				}
-				val newBody = (supplied ++ notSupplied).foldRight(firstExpression) {
+				val recursiveDeclaration = lambda.recursiveName match {
+					case Some(recursiveName) => Vector(
+						VariableDeclaration(
+							ValueSymbolDeclaration[Expression](recursiveName, None, lambda)
+						)
+					)
+					case None => Vector()
+				}
+				val newBody = (recursiveDeclaration ++ supplied ++ notSupplied).foldRight(firstExpression) {
 					case (declaration, accumulator) => Sequence(declaration, accumulator)
 				}
 				state.environment.getEnvironmentByScopeId(lambda.scopeId) match {

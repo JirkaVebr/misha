@@ -141,6 +141,23 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		))).value === Value.String("abcdefdefault2"))
 	}
 
+	it should "correctly invoke recursive lambdas" in {
+		val lambda = Lambda(Some("factorial"), Vector(
+			ValueSymbolDeclaration[Unit]("n", None, Unit)
+		), Vector(), None, Block(
+			Conditional(
+				BinaryOperation(IsEqualTo, Variable("n"), Value.Scalar(0)),
+				Value.Scalar(1),
+				Some(BinaryOperation(Multiplication, Variable("n"), FunctionCall(
+					Variable("factorial"), Vector(
+						BinaryOperation(Subtraction, Variable("n"), Value.Scalar(1))
+					)
+				)))
+			)
+		), scopeId)
+		assert(run(FunctionCall(lambda, Vector(Value.Scalar(5)))).value === Value.Scalar(120))
+	}
+
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =
 		super.run[Term](TermInterpreter.run(_)(state), term)
 }
