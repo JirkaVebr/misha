@@ -3,10 +3,10 @@ package com.mishaLang.interpreter
 object Scope {
 
 	/**
-		* The id's are stored in reversed order, meaning that the head is the deepest id
+		* The id's are stored in deepest-last order
 		*/
-	type Id = List[Int]
+	type Id = Vector[Int]
 
-	val rootScopeId: Id = Nil
+	val rootScopeId: Id = Vector()
 
 }

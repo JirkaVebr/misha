@@ -5,7 +5,7 @@ import com.mishaLang.ast.Language.Term.{FunctionCall, ParentSelector, Term, Vari
 import com.mishaLang.ast.Language.Type.Scalar
 import com.mishaLang.ast.Language.Value.{Lambda, Native, Value}
 import com.mishaLang.ast.Language.{Term, Value, ValueSymbolDeclaration}
-import com.mishaLang.ast.Selector.{Class, Id, SelectorList}
+import com.mishaLang.ast.Selector.Class
 import com.mishaLang.error.ProgramError
 import com.mishaLang.interpreter.RuleContext.RuleSelector
 import com.mishaLang.interpreter.Symbol.ValueSymbol

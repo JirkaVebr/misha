@@ -30,7 +30,7 @@ class Environment private
 			case Some(parent) =>
 				createInstance(id, Some(parent.createAndUpdateTree(
 					parent.scopeId, parent.parentEnvironment, parent.symbolTable,
-					parent.subEnvironments.updated(id.head, newInstance)
+					parent.subEnvironments.updated(id.last, newInstance)
 				)), symbols, children)
 			case None => newInstance
 		}
@@ -43,14 +43,14 @@ class Environment private
 
 
 	def pushSubScope(): Environment = {
-		val child = createInstance(subEnvironments.length :: scopeId, Some(this), Map[Symbol, Symbol#Value](), Vector())
+		val child = createInstance(scopeId :+ subEnvironments.length, Some(this), Map[Symbol, Symbol#Value](), Vector())
 		val newThis = createAndUpdateTree(scopeId, parentEnvironment, symbolTable, subEnvironments :+ child)
 		newThis.subEnvironments.last
 	}
 
 
 	def pushSubScope(context: RuleContextSymbol.Value): Environment = {
-		val child = createInstance(subEnvironments.length :: scopeId, Some(this), Map(RuleContextSymbol -> context), Vector())
+		val child = createInstance(scopeId :+ subEnvironments.length, Some(this), Map(RuleContextSymbol -> context), Vector())
 		val newThis = createAndUpdateTree(scopeId, parentEnvironment, symbolTable, subEnvironments :+ child)
 		newThis.subEnvironments.last
 	}
