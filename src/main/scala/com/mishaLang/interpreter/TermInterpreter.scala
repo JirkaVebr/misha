@@ -6,6 +6,7 @@ import com.mishaLang.ast.Language.Term._
 import com.mishaLang.ast.Language.Value._
 import com.mishaLang.ast.Language.{Term, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.Selector._
+import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
 import com.mishaLang.interpreter.RuleContext.{AtRule, RuleSelector}
 import com.mishaLang.interpreter.ops.FunctionOps
@@ -152,16 +153,31 @@ object TermInterpreter {
 				val newBody = (supplied ++ notSupplied).foldRight(firstExpression) {
 					case (declaration, accumulator) => Sequence(declaration, accumulator)
 				}
-				ExpressionInterpreter.run(Block(newBody)) match {
-					case Failure(exception) => Failure(exception)
-					case Success(newState) => lambda.returnType match {
-						case Some(returnType) =>
-							if (Subtype.isSubtypeOf(newState.value.valueType, returnType))
-								Success(newState)
-							else
-								newState.fail(IllTypedReturn, lambda, functionCall)
-						case None => Success(newState)
-					}
+				state.environment.getEnvironmentByScopeId(lambda.scopeId) match {
+					case Some(environment) =>
+						val newLambdaEnvironment = EnvironmentWithValue(environment)
+						ExpressionInterpreter.run(Block(newBody))(newLambdaEnvironment) match {
+							case Failure(exception) => Failure(exception)
+							case Success(newState) =>
+								newState.environment.getEnvironmentByScopeId(state.environment.scopeId) match {
+									case Some(callSiteEnvironment) =>
+										val callSiteState = EnvironmentWithValue(
+											callSiteEnvironment, newState.value
+										)
+										lambda.returnType match {
+											case Some(returnType) =>
+												if (Subtype.isSubtypeOf(callSiteState.value.valueType, returnType))
+													Success(callSiteState)
+												else
+													callSiteState.fail(IllTypedReturn, lambda, functionCall)
+											case None => Success(callSiteState)
+										}
+									case None =>
+										newState.failFatally(CompilerError("Undefined call site env"))
+								}
+							}
+					case None =>
+						state.failFatally(CompilerError("Undefined lambda parent env"))
 				}
 		}
 	}

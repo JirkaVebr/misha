@@ -61,6 +61,32 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 		assert(updatedState.environment.lookup(symbol).get === outerValue)
 	}
 
+	it should "evaluate functions with static scope" in {
+		val testVariable = ValueSymbol("testVariable")
+		val testLambda = ValueSymbol("testLambda")
+		val testValue1 = Scalar(123)
+		val testValue2 = Scalar(456)
+
+		val root = testEnvironment.putNew(testVariable)(testValue1)
+		var sub0 = root.pushSubScope()
+		sub0 = sub0.putNew(testLambda)(Value.Lambda(
+			Vector(), Vector(), None, Term.Variable(testVariable), sub0.scopeId
+		))
+		sub0 = sub0.updated(testVariable)(testValue2)
+
+		assert(run(Term.FunctionCall(Term.Variable(testLambda), Vector()))(EnvironmentWithValue(sub0)).value === testValue2)
+		/*
+		{ // root
+			@let $testVariable = 123
+			{ // sub0
+				@let testLambda = () => $testVariable
+				$testVariable = 456
+				$testLambda()
+			}
+		}
+		*/
+	}
+
 
 	protected def run(expression: Expression)(implicit state: EnvWithValue): EnvWithValue =
 		super.run[Expression](ExpressionInterpreter.run(_)(state), expression)
