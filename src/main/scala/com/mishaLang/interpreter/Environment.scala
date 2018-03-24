@@ -132,8 +132,9 @@ class Environment private
 		*/
 	@tailrec
 	private def getChildren(relativeId: ScopeId): Environment = {
-		if (scopeId.length == 1) subEnvironments(scopeId(0))
-		else subEnvironments(scopeId(0)).getChildren(scopeId.tail)
+		if (relativeId.length == 1) subEnvironments(relativeId(0))
+		else if (relativeId.isEmpty) this
+		else subEnvironments(relativeId(0)).getChildren(relativeId.tail)
 	}
 
 }
