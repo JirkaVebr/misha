@@ -42,6 +42,7 @@ object ProgramError {
 	case object NonStringSelectorExpression extends SimpleError("Expression used as a part of a selector cannot be cast to string")
 	case object NotEnoughArguments extends SimpleError("Not enough arguments for function")
 	case object ReadingUndefinedVariable extends SimpleError("Reading of an undefined variable")
+	case object StackOverflow extends SimpleError("Stack overflow")
 	case object TooManyArguments extends SimpleError("Too many arguments for function")
 	case object TypeAnnotationMismatch extends SimpleError("Assigned value doesn't match the declared type annotation")
 	case object UndefinedType extends SimpleError("Using an undefined type")

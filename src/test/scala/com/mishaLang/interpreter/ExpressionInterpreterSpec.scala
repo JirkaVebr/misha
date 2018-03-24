@@ -68,7 +68,7 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 		val testValue2 = Scalar(456)
 
 		val root = testEnvironment.putNew(testVariable)(testValue1)
-		var sub0 = root.pushSubScope()
+		var sub0 = root.pushSubScope().get
 		sub0 = sub0.putNew(testLambda)(Value.Lambda(
 			None, Vector(), Vector(), None, Term.Variable(testVariable), sub0.scopeId
 		))
@@ -85,6 +85,15 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 			}
 		}
 		*/
+	}
+
+
+	it should "enforce stack overflow" in {
+		def wrap(expression: Expression, n: Int): Expression =
+			if (n == 0) expression
+			else Block(wrap(expression, n - 1))
+
+		assertThrows[ProgramError[_]](run(wrap(Value.Scalar(1), 100)))
 	}
 
 

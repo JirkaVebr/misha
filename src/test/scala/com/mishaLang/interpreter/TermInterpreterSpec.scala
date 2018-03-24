@@ -53,7 +53,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		assert(run(ParentSelector).value === Value.List(Vector()))
 
 		val originalRuleHead = ".myClass"
-		val newState = EnvironmentWithValue(testEnvironment.pushSubScope(RuleSelector(Class("myClass"))))
+		val newState = EnvironmentWithValue(testEnvironment.pushSubScope(RuleSelector(Class("myClass"))).get)
 		assert(run(ParentSelector)(newState).value === Value.List(Vector(originalRuleHead)))
 	}
 

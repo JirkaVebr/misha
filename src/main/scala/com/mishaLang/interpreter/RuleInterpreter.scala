@@ -2,7 +2,7 @@ package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Statement.Rule
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.error.ProgramError.NonStringSelectorExpression
+import com.mishaLang.error.ProgramError.{NonStringSelectorExpression, StackOverflow}
 import com.mishaLang.error.{ProgramError, RuleHeadParseError}
 import com.mishaLang.interpreter.RuleContext.RuleSelector
 import com.mishaLang.interpreter.ops.StringOps
@@ -32,12 +32,15 @@ object RuleInterpreter {
 						SelectorValidator.validateSelector(rawSelector)(state) match {
 							case Failure(exception) => Failure(exception)
 							case Success(validSelector) =>
-								val newScope = stateAfterHead.environment.pushSubScope(RuleSelector(validSelector))
-
-								StatementInterpreter.run(rule.body.content)(EnvironmentWithValue(newScope, Value.Unit)) match {
-									case fail: Failure[EnvWithValue] => fail
-									case Success(result) =>
-										Success(EnvironmentWithValue(result.environment.popSubScope().get, result.value))
+								stateAfterHead.environment.pushSubScope(RuleSelector(validSelector)) match {
+									case Some(newEnvironment) =>
+										StatementInterpreter.run(rule.body.content)(EnvironmentWithValue(newEnvironment, Value.Unit)) match {
+											case fail: Failure[EnvWithValue] => fail
+											case Success(result) =>
+												Success(EnvironmentWithValue(result.environment.popSubScope().get, result.value))
+										}
+									case None =>
+										state.fail(StackOverflow)
 								}
 						}
 				}

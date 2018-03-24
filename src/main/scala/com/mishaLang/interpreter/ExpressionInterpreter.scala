@@ -5,7 +5,7 @@ import com.mishaLang.ast.Language.Term.Term
 import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.Language.Value.{Dimensioned, Percentage, Scalar}
 import com.mishaLang.error.ProgramError
-import com.mishaLang.error.ProgramError.NonBooleanCondition
+import com.mishaLang.error.ProgramError.{NonBooleanCondition, StackOverflow}
 
 import scala.util.{Failure, Success, Try}
 
@@ -59,11 +59,15 @@ object ExpressionInterpreter {
 		}
 
 	def runBlock(block: Block)(implicit state: EnvWithValue): Try[EnvWithValue] = {
-		val newScope = state.environment.pushSubScope()
-		StatementInterpreter.run(block.content)(EnvironmentWithValue(newScope)) match {
-			case fail: Failure[EnvWithValue] => fail
-			case Success(result) =>
-				Success(EnvironmentWithValue(result.environment.popSubScope().get, result.value))
+		state.environment.pushSubScope() match {
+			case Some(newEnvironment) =>
+				StatementInterpreter.run(block.content)(EnvironmentWithValue(newEnvironment)) match {
+					case fail: Failure[EnvWithValue] => fail
+					case Success(result) =>
+						Success(EnvironmentWithValue(result.environment.popSubScope().get, result.value))
+				}
+			case None =>
+				state.fail(StackOverflow)
 		}
 	}
 }

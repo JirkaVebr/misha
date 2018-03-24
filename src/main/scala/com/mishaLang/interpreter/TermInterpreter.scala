@@ -164,7 +164,7 @@ object TermInterpreter {
 				state.environment.getEnvironmentByScopeId(lambda.scopeId) match {
 					case Some(environment) =>
 						val newLambdaEnvironment = EnvironmentWithValue(environment)
-						ExpressionInterpreter.run(Block(newBody))(newLambdaEnvironment) match {
+						ExpressionInterpreter.runBlock(Block(newBody))(newLambdaEnvironment) match {
 							case Failure(exception) => Failure(exception)
 							case Success(newState) =>
 								newState.environment.getEnvironmentByScopeId(state.environment.scopeId) match {

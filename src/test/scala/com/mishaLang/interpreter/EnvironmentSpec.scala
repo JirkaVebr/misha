@@ -69,7 +69,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 
 		parentEnvironment = parentEnvironment.putNew(testTypeSymbol)(testType)
 
-		val childEnvironment = parentEnvironment.pushSubScope()
+		val childEnvironment = parentEnvironment.pushSubScope().get
 
 		assert(childEnvironment.lookup(testTypeSymbol).nonEmpty)
 		assert(childEnvironment.lookup(testTypeSymbol).get === testType)
@@ -87,7 +87,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 
 		parentEnvironment = parentEnvironment.putNew(testTypeSymbol)(testTypeParent)
 
-		var childEnvironment = parentEnvironment.pushSubScope()
+		var childEnvironment = parentEnvironment.pushSubScope().get
 		childEnvironment = childEnvironment.putNew(testTypeSymbol)(testTypeChild)
 
 		assert(childEnvironment.lookup(testTypeSymbol).nonEmpty)
@@ -106,8 +106,8 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		val testValue2 = Value.Scalar(2)
 		val testValue3 = Value.Scalar(3)
 		val root = new Environment
-		var sub0 = root.pushSubScope().putNew(testVariable1)(testValue1)
-		var sub00 = sub0.pushSubScope().putNew(testVariable2)(testValue2)
+		var sub0 = root.pushSubScope().get.putNew(testVariable1)(testValue1)
+		var sub00 = sub0.pushSubScope().get.putNew(testVariable2)(testValue2)
 		val sub00Id = sub00.scopeId
 
 		sub0 = sub00.popSubScope().get.updated(testVariable1)(testValue3)

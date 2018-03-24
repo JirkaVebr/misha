@@ -23,7 +23,7 @@ class EmitterSpec extends BaseEmitterSpec {
 
 	it should "emit an environment with a rule-less sub-environment" in {
 		val baseEnvironment = new Environment().putNew(PropertySymbol)(List(PropertyRecord("line-height", "1.6")))
-		val childEnvironment = baseEnvironment.pushSubScope()
+		val childEnvironment = baseEnvironment.pushSubScope().get
 		val childWithProperty = childEnvironment.putNew(PropertySymbol)(List(PropertyRecord("color", "blue")))
 		val baseWithChild = childWithProperty.popSubScope().get
 

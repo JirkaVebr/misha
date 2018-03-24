@@ -1,6 +1,7 @@
 package com.mishaLang.interpreter
 
-import Symbol._
+import com.mishaLang.interpreter.Environment._
+import com.mishaLang.interpreter.Symbol._
 
 import scala.annotation.tailrec
 
@@ -42,19 +43,21 @@ class Environment private
 		new Environment(childId, parent, symbols, children)
 
 
-	def pushSubScope(): Environment = {
-		pushSubScope(createSubScopeChild(Map())).get
+	def pushSubScope(): Option[Environment] = {
+		pushSubScope(createSubScopeChild(Map()))
 	}
 
 
-	def pushSubScope(context: RuleContextSymbol.Value): Environment = {
-		pushSubScope(createSubScopeChild(Map(RuleContextSymbol -> context))).get
+	def pushSubScope(context: RuleContextSymbol.Value): Option[Environment] = {
+		pushSubScope(createSubScopeChild(Map(RuleContextSymbol -> context)))
 	}
 
 
 	private def pushSubScope(child: Environment): Option[Environment] = {
 		val newThis = createAndUpdateTree(scopeId, parentEnvironment, symbolTable, subEnvironments :+ child)
-		Some(newThis.subEnvironments.last)
+
+		if (child.scopeId.length >= MaxStackSize) None
+		else Some(newThis.subEnvironments.last)
 	}
 
 
@@ -145,3 +148,8 @@ class Environment private
 
 }
 
+
+object Environment {
+
+	val MaxStackSize: Int = 30 // TODO make this configurable
+}
