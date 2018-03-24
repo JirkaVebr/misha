@@ -98,4 +98,37 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		val parentEnvironmentAgain = childEnvironment.popSubScope()
 		assert(parentEnvironmentAgain.get.lookup(testTypeSymbol).get === testTypeParent)
 	}
+
+	it should "update the tree as appropriate" in {
+		val testVariable1 = ValueSymbol("foo1")
+		val testVariable2 = ValueSymbol("foo2")
+		val testValue1 = Value.Scalar(1)
+		val testValue2 = Value.Scalar(2)
+		val testValue3 = Value.Scalar(3)
+		val root = new Environment
+		var sub0 = root.pushSubScope().putNew(testVariable1)(testValue1)
+		var sub00 = sub0.pushSubScope().putNew(testVariable2)(testValue2)
+
+		sub0 = sub00.popSubScope().get.updated(testVariable1)(testValue3)
+		sub00 = sub0.parentEnvironment.get.subEnvironments(0).subEnvironments(0)
+
+		/*
+		{ // root
+			{ // sub0
+				@let $foo1 = 1
+				{ // sub00
+					@let $foo2 = 2
+				}
+				$foo1 = 3
+			}
+		}
+		*/
+		assert(sub00.lookup(testVariable1).get === testValue3)
+
+		// Going back to sub00 (simulating a function call)
+		sub00 = sub00.updated(testVariable1)(testValue2)
+		sub0 = sub00.parentEnvironment.get
+
+		assert(sub0.lookup(testVariable1).get === testValue2)
+	}
 }

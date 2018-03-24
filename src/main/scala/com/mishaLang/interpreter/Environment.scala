@@ -19,25 +19,44 @@ class Environment private
 		this(Scope.rootScopeId, parentEnvironment, Map(), Vector())
 
 
-	def pushSubScope(): Environment =
-		new Environment(subEnvironments.length :: scopeId, Some(this), Map[Symbol, Symbol#Value](), subEnvironments)
+	protected def cloneWithNewParent(newParent: Environment): Environment =
+		createInstance(scopeId, Some(newParent), symbolTable, subEnvironments)
 
 
-	def pushSubScope(context: RuleContextSymbol.Value): Environment =
-		new Environment(subEnvironments.length :: scopeId, Some(this), Map(RuleContextSymbol -> context), subEnvironments)
-
-
-	def popSubScope(): Option[Environment] = parentEnvironment match {
-		case Some(parent) => Some(
-			new Environment(
-				parent.scopeId,
-				parent.parentEnvironment,
-				parent.symbolTable,
-				parent.subEnvironments :+ this
-			)
-		)
-		case None => None
+	private def createAndUpdateTree(id: ScopeId, newParent: Option[Environment], symbols: Map[Symbol, Symbol#Value],
+																	children: Vector[Environment]): Environment = {
+		val newInstance = createInstance(id, newParent, symbols, children)
+		newParent match {
+			case Some(parent) =>
+				createInstance(id, Some(parent.createAndUpdateTree(
+					parent.scopeId, parent.parentEnvironment, parent.symbolTable,
+					parent.subEnvironments.updated(id.head, newInstance)
+				)), symbols, children)
+			case None => newInstance
+		}
 	}
+
+
+	protected def createInstance(childId: ScopeId, parent: Option[Environment], symbols: Map[Symbol, Symbol#Value],
+															 children: Vector[Environment]): Environment =
+		new Environment(childId, parent, symbols, children)
+
+
+	def pushSubScope(): Environment = {
+		val child = createInstance(subEnvironments.length :: scopeId, Some(this), Map[Symbol, Symbol#Value](), Vector())
+		val newThis = createAndUpdateTree(scopeId, parentEnvironment, symbolTable, subEnvironments :+ child)
+		newThis.subEnvironments.last
+	}
+
+
+	def pushSubScope(context: RuleContextSymbol.Value): Environment = {
+		val child = createInstance(subEnvironments.length :: scopeId, Some(this), Map(RuleContextSymbol -> context), Vector())
+		val newThis = createAndUpdateTree(scopeId, parentEnvironment, symbolTable, subEnvironments :+ child)
+		newThis.subEnvironments.last
+	}
+
+
+	def popSubScope(): Option[Environment] = parentEnvironment
 
 
 	def updated(name: Symbol)(value: name.Value): Environment =
@@ -50,23 +69,20 @@ class Environment private
 
 
 	def putNew(name: Symbol)(value: name.Value): Environment =
-		new Environment(scopeId, parentEnvironment, symbolTable.updated(name, value), subEnvironments)
+		createAndUpdateTree(scopeId, parentEnvironment, symbolTable.updated(name, value), subEnvironments)
 
 
 	def isInCurrentScope(name: Symbol): Boolean = symbolTable.get(name).nonEmpty
 
 
-	@tailrec final def isInScope(name: Symbol): Boolean = isInCurrentScope(name) || (parentEnvironment match {
+	@tailrec
+	final def isInScope(name: Symbol): Boolean = isInCurrentScope(name) || (parentEnvironment match {
 		case Some(parent) => parent.isInScope(name)
 		case None => false
 	})
 
 
 	def isWritable(name: ValueSymbol): Boolean = true // TODO
-
-
-	def cloneWithNewParent(newParent: Environment): Environment =
-		new Environment(scopeId, Some(newParent), symbolTable, subEnvironments)
 
 
 	def lookupCurrent(name: Symbol): Option[name.Value] =
@@ -77,7 +93,8 @@ class Environment private
 		lookup(RuleContextSymbol)
 
 
-	@tailrec final def lookup(name: Symbol): Option[name.Value] = {
+	@tailrec
+	final def lookup(name: Symbol): Option[name.Value] = {
 		val value = lookupCurrent(name)
 		value match {
 			case Some(_) => value
