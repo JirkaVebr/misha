@@ -3,6 +3,7 @@ package com.mishaLang.ast
 import com.mishaLang.ast.Language.Expression.{Block, Expression}
 import com.mishaLang.ast.Language.Term.Variable
 import com.mishaLang.ast.NumberUnit.UnitOfMeasure
+import com.mishaLang.ast.SimpleExpression.SimpleExpression
 import com.mishaLang.interpreter.ScopeId
 import com.mishaLang.interpreter.Symbol.{TypeSymbol, ValueSymbol}
 import com.mishaLang.interpreter.typing.Typing
@@ -63,6 +64,8 @@ object Language {
 		// Composite types
 		case class Tuple2(first: Value, second: Value) extends Composite
 		case class List(values: Vector[Value]) extends Composite
+
+		case class Formula(formula: SimpleExpression) extends Composite
 
 		sealed trait Callable extends Composite
 		sealed trait Function extends Callable
@@ -137,12 +140,14 @@ object Language {
 		sealed trait BinaryOperator
 
 		sealed trait NumericOperator extends BinaryOperator
-		case object Addition extends NumericOperator
-		case object Subtraction extends NumericOperator
-		case object Multiplication extends NumericOperator
-		case object Division extends NumericOperator
-		case object Exponentiation extends NumericOperator
-		case object Remainder extends NumericOperator
+		sealed trait SimpleNumericOperator extends NumericOperator
+		sealed trait ComplexNumericOperator extends NumericOperator
+		case object Addition extends SimpleNumericOperator
+		case object Subtraction extends SimpleNumericOperator
+		case object Multiplication extends SimpleNumericOperator
+		case object Division extends SimpleNumericOperator
+		case object Exponentiation extends ComplexNumericOperator
+		case object Remainder extends ComplexNumericOperator
 
 		sealed trait Comparison extends BinaryOperator
 		case object IsEqualTo extends Comparison
