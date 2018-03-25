@@ -22,13 +22,19 @@ object RootEnvironment {
 		new RootEnvironment
 
 	val preDefinedTypes: Map[String, Symbol.TypeSymbol#Value] = Map(
+		"Angle" -> Language.Type.Angle,
 		"Any" -> Language.Type.Any,
 		"Color" -> Language.Type.Color,
 		"Boolean" -> Language.Type.Boolean,
 		"Flag" -> Language.Type.Flag,
+		"Flex" -> Language.Type.Flex,
+		"Frequency" -> Language.Type.Frequency,
+		"Length" -> Language.Type.Length,
 		"Percentage" -> Language.Type.Percentage,
+		"Resolution" -> Language.Type.Resolution,
 		"Scalar" -> Language.Type.Scalar,
 		"String" -> Language.Type.String,
+		"Time" -> Language.Type.Time,
 		"Unit" -> Language.Type.Unit
 	) ++ specTypes
 }

@@ -8,12 +8,19 @@ class TypesSpec extends BaseParserSpec {
 	behavior of "The type parser"
 
 	it should "parse builtin types" in {
+		assert(parse("Angle") === Type.Angle)
 		assert(parse("Any") === Type.Any)
 		assert(parse("Color") === Type.Color)
 		assert(parse("Boolean") === Type.Boolean)
+		assert(parse("Flag") === Type.Flag)
+		assert(parse("Flex") === Type.Flex)
+		assert(parse("Frequency") === Type.Frequency)
+		assert(parse("Length") === Type.Length)
 		assert(parse("Percentage") === Type.Percentage)
+		assert(parse("Resolution") === Type.Resolution)
 		assert(parse("Scalar") === Type.Scalar)
 		assert(parse("String") === Type.String)
+		assert(parse("Time") === Type.Time)
 		assert(parse("Unit") === Type.Unit)
 	}
 
@@ -80,7 +87,7 @@ class TypesSpec extends BaseParserSpec {
 
 	it should "parse built-in parametrized types" in {
 		assert(parse("List[Scalar]") === Type.List(Type.Scalar))
-		assert(parse("Formula[Length]") === Type.Formula(Type.TypeAlias("Length")))
+		assert(parse("Formula[Length]") === Type.Formula(Type.Length))
 		assert(parse("Map[String, Percentage]") === Type.Map(Type.String, Type.Percentage))
 	}
 

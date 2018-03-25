@@ -99,8 +99,14 @@ object Language {
 
 		case object Color extends Primitive
 		case object Scalar extends Primitive // A unitless number
-		case class Dimensioned(typeName: TypeSymbol) extends Primitive // A number with a unit
 		case object Percentage extends Primitive
+
+		case object Angle extends Primitive
+		case object Flex extends Primitive
+		case object Frequency extends Primitive
+		case object Length extends Primitive
+		case object Resolution extends Primitive
+		case object Time extends Primitive
 	}
 
 	object Statement {
