@@ -1,13 +1,11 @@
 package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Expression._
-import com.mishaLang.ast.Language.Value.{Boolean, Callable, Color, Composite, Dimensioned, Flag, Formula, NativeFunctionCall, Percentage, Primitive, Rgba, Scalar, String, Tuple2, Value}
+import com.mishaLang.ast.Language.Value.{Dimensioned, Percentage, Scalar, Value}
 import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
-import com.mishaLang.interpreter.ops.{ColorOps, ListOps, NumberOps, StringOps}
 import com.mishaLang.interpreter.typing.Subtype
-import com.mishaLang.interpreter.validators.NumberValidator
 
 import scala.util.{Failure, Success, Try}
 
@@ -26,111 +24,14 @@ object BinaryOperationInterpreter {
 					val newState = EnvironmentWithValue(newEnvironment.environment)
 
 					binaryOperation.operator match {
-						case operator: NumericOperator => runNumericOperator(operator, left, right)(newState)
+						case operator: NumericOperator =>
+							NumericOperatorInterpreter.run(operator, left, right)(newState)
 						case operator: Comparison => runComparison(operator, left, right)(newState)
 						case _ => state.failFatally(CompilerError("TODO")) // TODO
 					}
 			}
 	}
 
-	private def runNumericOperator(operator: NumericOperator, left: Value, right: Value)
-																(implicit state: EnvWithValue): Try[EnvWithValue] = left match {
-		case Value.Unit =>
-			state.fail(IllegalNumericOperatorOperand, left, right)
-		case primitive: Primitive => primitive match {
-			case number: Value.Number => number match {
-				case Dimensioned(value, unit) =>
-					sys.error("todo") // TODO
-				case scalar: Scalar =>
-					runNumericOperatorOnScalar(operator, scalar, right)
-				case Percentage(value) =>
-					sys.error("todo") // TODO
-			}
-			case string: Value.String =>
-				runNumericOperatorOnString(operator, string, right)
-			case color: Color =>
-				runNumericOperatorOnColor(operator, color, right)
-			case _: Flag | _: Value.Boolean =>
-				state.fail(IllegalNumericOperatorOperand, left, right)
-		}
-		case composite: Composite => composite match {
-			case _: Value.Tuple2 =>
-				state.fail(IllegalNumericOperatorOperand, left, right)
-			case list: Value.List => operator match {
-				case Addition =>
-					state ~> ListOps.append(list, right)
-				case Multiplication =>
-					right match {
-						case Value.Scalar(n) =>
-							if (NumberValidator.isInteger(n))
-								state ~> ListOps.repeat(list, n.toInt)
-							else
-								state.fail(IllegalNumericOperatorOperand, left, right) // TODO mention explicitly that we'd like an int
-						case _ => state.fail(IllegalNumericOperatorOperand, left, right)
-					}
-				case _ =>
-					state.fail(IllegalNumericOperatorOperand, left, right)
-			}
-			case _ => ??? // TODO
-		}
-	}
-
-	private def runNumericOperatorOnScalar(operator: NumericOperator, left: Value.Scalar, right: Value)
-																				(implicit state: EnvWithValue): Try[EnvWithValue] = right match {
-		case primitive: Primitive => primitive match {
-			case number: Value.Number => number match {
-				case Dimensioned(value, unit) => ???
-				case rightScalar: Scalar => state ~> NumberOps.performNumericOperator(operator, left, rightScalar)
-				case Percentage(value) => ???
-			}
-			case Boolean(value) => ???
-			case String(value) => ???
-			case _: Color => ???
-			case _: Flag => ???
-			case NativeFunctionCall(function, arguments, returnType) => ???
-		}
-		case composite: Composite => composite match {
-			case Tuple2(first, second) => ???
-			case Value.List(values) => ???
-			case Formula(formula) => ???
-			case _: Callable => ???
-		}
-		case Value.Unit => ???
-	}
-
-	private def runNumericOperatorOnString(operator: NumericOperator, left: Value.String, right: Value)
-																				(implicit state: EnvWithValue): Try[EnvWithValue] = operator match {
-		case Addition => StringOps.castToString(right) match {
-			case Some(string) => state ~> StringOps.concatenate(left, string)
-			case None => state.fail(ConcatenatingIllegalOperand, left, right)
-		}
-		case Multiplication => right match {
-			case scalar: Scalar =>
-				if (NumberValidator.isInteger(scalar))
-					state ~> StringOps.multiply(left, scalar)
-				else state.fail(MultiplyingStringByNonInt, left, right)
-			case _ => state.fail(MultiplyingStringByNonScalar, left, right)
-		}
-		case _ => state.fail(IllegalNumericOperatorOperand, left, right)
-	}
-
-	private def runNumericOperatorOnColor(operator: NumericOperator, left: Color, right: Value)
-																			 (implicit state: EnvWithValue): Try[EnvWithValue] = left match {
-		case leftRgba: Rgba => operator match {
-			case Addition => right match {
-				case percentage: Percentage => state ~> ColorOps.lighten(leftRgba, percentage)
-				case rightRgba: Rgba => state ~> ColorOps.addColors(leftRgba, rightRgba)
-				case _ => state.fail(IllegalNumericOperatorOperand, left, right)
-			}
-			case Subtraction => right match {
-				case percentage: Percentage => state ~> ColorOps.darken(leftRgba, percentage)
-				case rightRgba: Rgba => state ~> ColorOps.subtractColors(leftRgba, rightRgba)
-				case _ => state.fail(IllegalNumericOperatorOperand, left, right)
-			}
-			case _ => state.fail(IllegalNumericOperatorOperand, left, right)
-		}
-		case _ => state.fail(IllegalNumericOperatorOperand, left, right)
-	}
 
 	private def runAssignment(left: Expression, right: Expression)(implicit state: EnvWithValue): Try[EnvWithValue] = left match {
 		case Term.Variable(name) => ExpressionInterpreter.run(right) match {
@@ -148,6 +49,7 @@ object BinaryOperationInterpreter {
 		}
 		case _ => state.fail(AssigningToNonVariable, left)
 	}
+
 
 	private def runComparison(operator: Comparison, left: Value, right: Value)
 													 (implicit state: EnvWithValue): Try[EnvWithValue] = operator match {

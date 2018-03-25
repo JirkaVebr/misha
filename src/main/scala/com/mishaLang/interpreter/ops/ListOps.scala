@@ -10,6 +10,9 @@ object ListOps {
 	def prepend(list: Value.List, newItem: Value.Value): Value.List =
 		Value.List(newItem +: list.values)
 
+	def concatenate(left: Value.List, right: Value.List): Value.List =
+		Value.List(left.values ++ right.values)
+
 
 	def repeat(list: Value.List, factor: Int): Value.List = {
 		def appendNTimes[T](list: Vector[T], n: Int): Vector[T] =

@@ -56,6 +56,7 @@ object MemberAccessInterpreter {
 			case Tuple2(first, second) => ???
 			case list: Value.List => runList(list, memberName)
 			case _: Callable => ???
+			case _: Value.Formula => ???
 		}
 
 
@@ -143,7 +144,9 @@ object MemberAccessInterpreter {
 
 	private def runList(list: Value.List, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val result = memberName match {
+			case "append" => ???
 			case "length" => Some(ListOps.length(list))
+			case "prepend" => ???
 			case _ => None
 		}
 		result match {

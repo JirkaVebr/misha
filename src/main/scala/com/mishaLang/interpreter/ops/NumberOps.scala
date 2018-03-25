@@ -2,22 +2,26 @@ package com.mishaLang.interpreter.ops
 
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.Scalar
+import com.mishaLang.ast.Language.Value.{Percentage, Scalar}
 import com.mishaLang.interpreter.validators.NumberValidator
 
 object NumberOps {
 
 
+	private def performOperation(operator: NumericOperator, left: Double, right: Double): Double = operator match {
+		case Addition => left + right
+		case Subtraction => left - right
+		case Multiplication => left * right
+		case Division => left / right
+		case Exponentiation => Math.pow(left, right)
+		case Remainder => left % right
+	}
+
 	def performNumericOperator(operator: NumericOperator, left: Scalar, right: Scalar): Scalar = {
-		val performOperation: (Double, Double) => Double = operator match {
-			case Addition => _ + _
-			case Subtraction => _ - _
-			case Multiplication => _ * _
-			case Division => _ / _
-			case Exponentiation => Math.pow(_, _)
-			case Remainder => _ % _
-		}
-		Scalar(performOperation(left.value, right.value))
+		Scalar(performOperation(operator, left.value, right.value))
+	}
+	def performNumericOperator(operator: NumericOperator, left: Percentage, right: Percentage): Percentage = {
+		Percentage(performOperation(operator, left.value, right.value))
 	}
 
 
