@@ -24,4 +24,10 @@ class ListOpsSpec extends BaseInterpreterSpec {
 		)), Scalar(3)) === Value.List(Vector(Scalar(1), Scalar(2), Scalar(3))))
 	}
 
+	it should "correctly prepend to lists" in {
+		assert(ListOps.prepend(Value.List(Vector(
+			Scalar(1), Scalar(2)
+		)), Scalar(3)) === Value.List(Vector(Scalar(3), Scalar(1), Scalar(2))))
+	}
+
 }
