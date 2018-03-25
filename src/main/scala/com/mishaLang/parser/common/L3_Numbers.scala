@@ -35,7 +35,7 @@ trait L3_Numbers { this: org.parboiled2.Parser
 	}
 
 	private def fractional: Rule1[Double] = rule {
-		'.' ~ digits ~> (digitsToFractional(_))
+		'.' ~ digits ~> digitsToFractional _
 	}
 
 	private def base: Rule1[Double] = rule {
@@ -44,7 +44,7 @@ trait L3_Numbers { this: org.parboiled2.Parser
 	}
 
 	def Sign: Rule1[Int] = rule {
-		capture(optional(Signs)) ~> (signToFactor(_))
+		capture(optional(Signs)) ~> signToFactor _
 	}
 
 	private def digits: Rule1[String] = rule {
