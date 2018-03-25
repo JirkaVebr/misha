@@ -10,7 +10,7 @@ import com.mishaLang.ast.Language.Value._
 	*/
 object ColorKeywords {
 
-	val map: Map[java.lang.String, Color] = Map(
+	lazy final val Colors: Map[java.lang.String, Color] = Map(
 		"currentcolor" -> CurrentColor,
 		"transparent" -> Transparent,
 

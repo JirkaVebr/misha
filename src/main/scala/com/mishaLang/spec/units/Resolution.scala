@@ -7,7 +7,7 @@ object Resolution {
 	case object DotsPerCentiMeter extends Resolution { override val symbol = "dpcm" }
 	case object DotsPerPixel extends Resolution { override val symbol = "dppx" }
 
-	lazy val resolutionUnits: Map[String, Resolution] = Map(
+	lazy final val ResolutionUnits: Map[String, Resolution] = Map(
 		DotsPerCentiMeter.symbol -> DotsPerCentiMeter,
 		DotsPerInch.symbol -> DotsPerInch,
 		DotsPerPixel.symbol -> DotsPerPixel

@@ -35,7 +35,7 @@ object Length {
 	case object ViewportMax extends ViewportRelative { override val symbol = "vmax" }
 
 
-	lazy val lengthUnits: Map[String, Length] = Map(
+	lazy final val LengthUnits: Map[String, Length] = Map(
 		AdvanceMeasureCJK.symbol -> AdvanceMeasureCJK,
 		AdvanceMeasureZero.symbol -> AdvanceMeasureZero,
 		CapitalHeight.symbol -> CapitalHeight,

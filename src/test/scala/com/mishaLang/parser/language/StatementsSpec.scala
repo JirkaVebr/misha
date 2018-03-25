@@ -113,9 +113,9 @@ class StatementsSpec extends BaseParserSpec {
 	}
 
 	it should "correctly parse a property" in {
-		assert(parse("@property(\"color\", blue)") === Property(Value.String("color"), ColorKeywords.map("blue"), None))
+		assert(parse("@property(\"color\", blue)") === Property(Value.String("color"), ColorKeywords.Colors("blue"), None))
 		assert(parse("@property(\"color\", blue, !important)") ===
-			Property(Value.String("color"), ColorKeywords.map("blue"), Some(Important)))
+			Property(Value.String("color"), ColorKeywords.Colors("blue"), Some(Important)))
 	}
 
 	it should "correctly parse a sugared property/function call" in {

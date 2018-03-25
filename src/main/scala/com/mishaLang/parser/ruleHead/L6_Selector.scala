@@ -98,7 +98,7 @@ trait L6_Selector { this: org.parboiled2.Parser
 			(identifier: CssIdentifier) => {
 				val lower = identifier.value.toLowerCase
 
-				PseudoElements.pseudoElements.get(lower) match {
+				PseudoElements.PseudoElements.get(lower) match {
 					case Some(element) => PseudoElement(element)
 					case None => PseudoElement(CustomPseudoElement(lower))
 				}
@@ -111,7 +111,7 @@ trait L6_Selector { this: org.parboiled2.Parser
 			(cursorChar: @switch) match {
 				case '(' => '(' ~!~ SingleLineWhitespace ~ functionalPseudoClass ~ SingleLineWhitespace ~ ')'
 				case _ => run((identifier: CssIdentifier) =>
-					NonFunctional(PseudoClasses.nonFunctionalPseudoClass.get(identifier.value.toLowerCase) match {
+					NonFunctional(PseudoClasses.NonFunctionalPseudoClass.get(identifier.value.toLowerCase) match {
 						case Some(pseudoClass) => pseudoClass
 						case None => CustomPseudoClass(identifier)
 					}))
@@ -133,11 +133,11 @@ trait L6_Selector { this: org.parboiled2.Parser
 	}
 
 	private def attributeMatcher: Rule1[Matcher] = rule {
-		valueMap(AttributeSelector.matchers)
+		valueMap(AttributeSelector.Matchers)
 	}
 
 	private def modifier: Rule1[Modifier] = rule {
-		valueMap(AttributeSelector.modifiers)
+		valueMap(AttributeSelector.Modifiers)
 	}
 
 
@@ -145,9 +145,9 @@ trait L6_Selector { this: org.parboiled2.Parser
 		run((identifier: CssIdentifier) => {
 			val normalized = identifier.value.toLowerCase
 
-			PseudoClasses.subSelectors.get(normalized) match {
+			PseudoClasses.SubSelectors.get(normalized) match {
 				case Some(subSelector) => Selector ~> (RawSubSelector(subSelector, _))
-				case None => PseudoClasses.nthPseudoClasses.get(normalized) match {
+				case None => PseudoClasses.NthPseudoClasses.get(normalized) match {
 					case Some(nth) =>
 						AnPlusB ~ optional(
 							MandatorySingleLineWhitespace ~ Token("of") ~ MandatorySingleLineWhitespace ~ Selector
@@ -165,7 +165,7 @@ trait L6_Selector { this: org.parboiled2.Parser
 
 	private def dirPseudoClass: Rule1[RawPseudoClass] = rule {
 		CssIdentifier ~> (
-			(identifier: CssIdentifier) => PseudoClasses.directionality.get(identifier.value.toLowerCase) match {
+			(identifier: CssIdentifier) => PseudoClasses.Directionality.get(identifier.value.toLowerCase) match {
 				case Some(directionality) => Dir(directionality)
 				case None => Dir(UndefinedDirectionality(identifier))
 			}
@@ -178,11 +178,11 @@ trait L6_Selector { this: org.parboiled2.Parser
 				val normalized = identifiers.toSet
 
 				if (identifiers.lengthCompare(normalized.size) == 0) {
-					if (normalized.forall(PseudoClasses.dropFilter.get(_).isDefined))
+					if (normalized.forall(PseudoClasses.DropFilter.get(_).isDefined))
 						push(Drop(normalized.map((identifier: CssIdentifier) =>
-							PseudoClasses.dropFilter(identifier.value.toLowerCase)
+							PseudoClasses.DropFilter(identifier.value.toLowerCase)
 						)))
-					else failX("one or more of " + PseudoClasses.dropFilter.keys.mkString(", "))
+					else failX("one or more of " + PseudoClasses.DropFilter.keys.mkString(", "))
 				} else {
 					failX("Duplicate drop keywords") // @pedantic
 				}

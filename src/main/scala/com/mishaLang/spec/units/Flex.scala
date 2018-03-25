@@ -7,7 +7,7 @@ object Flex {
 	case object Fraction extends Flex { override val symbol = "fr" }
 
 
-	lazy val flexUnits: Map[String, Flex] = Map(
+	lazy final val FlexUnits: Map[String, Flex] = Map(
 		Fraction.symbol -> Fraction
 	)
 

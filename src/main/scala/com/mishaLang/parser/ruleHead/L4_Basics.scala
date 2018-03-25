@@ -33,7 +33,7 @@ trait L4_Basics { this: org.parboiled2.Parser
 			)) |
 			(CssIdentifier ~> (
 				(namespace: Option[Namespace], identifier: CssIdentifier) =>
-					QualifiedElement(HtmlElements.htmlElements.getOrElse(
+					QualifiedElement(HtmlElements.HtmlElements.getOrElse(
 						identifier.value, CustomElement(identifier.value)
 					), namespace)
 				))

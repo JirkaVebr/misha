@@ -23,7 +23,7 @@ object PseudoElements {
 	case class CustomPseudoElement(name: String) extends PseudoElement
 
 
-	val pseudoElements: Map[String, PseudoElement] = Map(
+	lazy final val PseudoElements: Map[String, PseudoElement] = Map(
 		After.name -> After,
 		Before.name -> Before,
 		FirstLetter.name -> FirstLetter,

@@ -31,7 +31,7 @@ object PseudoClasses {
 		override val name: String = "current"
 	}
 
-	val subSelectors: Map[String, SubSelector] = Map(
+	lazy final val SubSelectors: Map[String, SubSelector] = Map(
 		Not.name -> Not,
 		Matches.name -> Matches,
 		Something.name -> Something,
@@ -62,7 +62,7 @@ object PseudoClasses {
 	}
 	case class UndefinedDirectionality(value: String) extends Directionality
 
-	val directionality: Map[String, Directionality] = Map(
+	lazy final val Directionality: Map[String, Directionality] = Map(
 		Ltr.value -> Ltr,
 		Rtl.value -> Rtl
 	)
@@ -87,7 +87,7 @@ object PseudoClasses {
 		override val value: String = "invalid"
 	}
 
-	val dropFilter: Map[String, DropFilter] = Map(
+	lazy final val DropFilter: Map[String, DropFilter] = Map(
 		Active.value -> Active,
 		Valid.value -> Valid,
 		Invalid.value -> Invalid
@@ -118,7 +118,7 @@ object PseudoClasses {
 		override val name: String = "nth-last-col"
 	}
 
-	val nthPseudoClasses: Map[String, Nth] = Map(
+	lazy final val NthPseudoClasses: Map[String, Nth] = Map(
 		Child.name -> Child,
 		LastChild.name -> LastChild,
 		OfType.name -> OfType,
@@ -186,7 +186,7 @@ object PseudoClasses {
 		case class CustomPseudoClass(name: String) extends NonFunctionalPseudoClass
 	}
 
-	val nonFunctionalPseudoClass: Map[String, NonFunctionalPseudoClass] = Map(
+	lazy final val NonFunctionalPseudoClass: Map[String, NonFunctionalPseudoClass] = Map(
 		NonFunctional.Active.name -> NonFunctional.Active,
 		NonFunctional.AnyLink.name -> NonFunctional.AnyLink,
 		NonFunctional.Blank.name -> NonFunctional.Blank,

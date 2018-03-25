@@ -44,7 +44,7 @@ trait L4_Types { this: org.parboiled2.Parser
 	}
 
 	private def nonCompositeType: Rule1[Language.Type.Any] = rule {
-		valueMap(RootEnvironment.preDefinedTypes)
+		valueMap(RootEnvironment.PreDefinedTypes)
 	}
 
 	def TypeAlias: Rule1[Language.Type.TypeAlias] = rule {

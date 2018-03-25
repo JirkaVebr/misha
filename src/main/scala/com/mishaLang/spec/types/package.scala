@@ -4,7 +4,7 @@ import com.mishaLang.interpreter.Symbol
 
 package object types {
 
-	val specTypes: Map[String, Symbol.TypeSymbol#Value] = Map(
+	lazy final val SpecTypes: Map[String, Symbol.TypeSymbol#Value] = Map(
 		Animatable.name -> Animatable(),
 		BlendMode.name -> BlendMode()
 	)

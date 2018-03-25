@@ -61,7 +61,7 @@ trait L3_Numbers { this: org.parboiled2.Parser
 
 	private def unitOfMeasure: Rule1[NumberUnit.UnitOfMeasure] = rule {
 		percentageUnit | (
-			valueMap(units.unitsMap) ~> NumberUnit.Atomic
+			valueMap(units.UnitsMap) ~> NumberUnit.Atomic
 		)
 	}
 

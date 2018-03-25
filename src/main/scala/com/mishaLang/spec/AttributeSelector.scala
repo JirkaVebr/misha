@@ -12,7 +12,7 @@ object AttributeSelector {
 		override val name: String = "i"
 	}
 
-	val modifiers: Map[String, Modifier] = Map(
+	lazy final val Modifiers: Map[String, Modifier] = Map(
 		CaseInsensitive.name -> CaseInsensitive
 	)
 
@@ -39,7 +39,7 @@ object AttributeSelector {
 		override val symbol: String = "*=" // [attr*=value]
 	}
 
-	val matchers: Map[String, Matcher] = Map(
+	lazy final val Matchers: Map[String, Matcher] = Map(
 		Equals.symbol -> Equals,
 		Includes.symbol -> Includes,
 		Prefix.symbol -> Prefix,

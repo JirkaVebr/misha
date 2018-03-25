@@ -10,7 +10,7 @@ object Angle {
 	case object Turn extends Angle { override val symbol = "turn" }
 
 
-	lazy val angleUnits: Map[String, Angle] = Map(
+	lazy final val AngleUnits: Map[String, Angle] = Map(
 		Degree.symbol -> Degree,
 		Gradian.symbol -> Gradian,
 		Radian.symbol -> Radian,

@@ -8,7 +8,7 @@ object Frequency {
 	case object KiloHertz extends Frequency { override val symbol = "kHz" }
 
 
-	lazy val frequencyUnits: Map[String, Frequency] = Map(
+	lazy final val FrequencyUnits: Map[String, Frequency] = Map(
 		Hertz.symbol -> Hertz,
 		KiloHertz.symbol -> KiloHertz
 	)
