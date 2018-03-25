@@ -18,4 +18,10 @@ class ListOpsSpec extends BaseInterpreterSpec {
 		assert(ListOps.repeat(Value.List(Vector()), -3) === Value.List(Vector()))
 	}
 
+	it should "correctly append to lists" in {
+		assert(ListOps.append(Value.List(Vector(
+			Scalar(1), Scalar(2)
+		)), Scalar(3)) === Value.List(Vector(Scalar(1), Scalar(2), Scalar(3))))
+	}
+
 }

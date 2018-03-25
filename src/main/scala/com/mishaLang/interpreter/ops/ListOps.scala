@@ -4,6 +4,9 @@ import com.mishaLang.ast.Language.Value
 
 object ListOps {
 
+	def append(list: Value.List, newItem: Value.Value): Value.List =
+		Value.List(list.values :+ newItem)
+
 
 	def repeat(list: Value.List, factor: Int): Value.List = {
 		def appendNTimes[T](list: Vector[T], n: Int): Vector[T] =
