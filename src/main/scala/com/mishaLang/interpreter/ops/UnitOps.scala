@@ -90,8 +90,8 @@ object UnitOps {
 
 	def convertTimeUnit(value: Double, source: Time, target: Time): Double =
 		(source, target) match {
-			case (Second, MiliSecond) => value / 1000
-			case (MiliSecond, Second) => value * 1000
+			case (Second, MiliSecond) => value * 1000d
+			case (MiliSecond, Second) => value / 1000d
 			case _ => value // The units must be equal
 		}
 
