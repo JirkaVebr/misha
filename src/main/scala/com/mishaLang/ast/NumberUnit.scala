@@ -1,15 +1,23 @@
 package com.mishaLang.ast
 
+import com.mishaLang.spec.units.AtomicUnit
+
 
 object NumberUnit {
-	sealed abstract class Unit
+	sealed trait UnitOfMeasure
+
+	sealed trait SimpleUnit extends UnitOfMeasure
+	sealed trait ComplexUnit extends UnitOfMeasure
+
+
+	case class Atomic(unit: AtomicUnit) extends SimpleUnit
+	case object Percentage extends SimpleUnit
+
 
 	/**
-		*
-		* @param subUnitProduct A map from sub-unit names to powers. For instance, the SI unit of
-		*                       acceleration would be <code>Map("m" -> 1, "s" -> -2)</code>.
+		* @example A unit of frequency could be Second with power equal to -1
 		*/
-	case class UnitOfMeasure(subUnitProduct: Map[String, Int] = Map.empty) extends Unit
+	case class RaisedUnit(baseUnit: SimpleUnit, power: Int) extends ComplexUnit
+	case class RaisedUnitProduct(subUnits: Set[RaisedUnit]) extends ComplexUnit
 
-	case object Percentage extends Unit
 }

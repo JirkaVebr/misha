@@ -2,8 +2,9 @@ package com.mishaLang.parser.common
 
 import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.NodePosition
-import com.mishaLang.ast.NumberUnit.UnitOfMeasure
+import com.mishaLang.ast.NumberUnit.{Atomic, UnitOfMeasure}
 import com.mishaLang.parser.BaseParserSpec
+import com.mishaLang.spec.units.Time.{MiliSecond, Second}
 
 class NumbersParserSpec extends BaseParserSpec {
 
@@ -51,10 +52,10 @@ class NumbersParserSpec extends BaseParserSpec {
 	}
 
 	it should "parse a number with a simple unit" in {
-		assert(parse("10e2s") === Value.Dimensioned(1000, UnitOfMeasure(Map("s" -> 1))))
-		assert(parse("0km") === Value.Dimensioned(0, UnitOfMeasure(Map("km" -> 1))))
-		assert(parse(".3s") === Value.Dimensioned(.3, UnitOfMeasure(Map("s" -> 1))))
-		assert(parse("-7e2ms") === Value.Dimensioned(-700, UnitOfMeasure(Map("ms" -> 1))))
+		assert(parse("10e2s") === Value.Dimensioned(1000, Atomic(Second)))
+		assert(parse("0ms") === Value.Dimensioned(0, Atomic(MiliSecond)))
+		assert(parse(".3s") === Value.Dimensioned(.3, Atomic(Second)))
+		assert(parse("-7e2ms") === Value.Dimensioned(-700, Atomic(MiliSecond)))
 	}
 
 	it should "parse percentage as a number" in {

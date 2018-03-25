@@ -3,6 +3,7 @@ package com.mishaLang.parser.common
 import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.NumberUnit
 import com.mishaLang.ast.NumberUnit.UnitOfMeasure
+import com.mishaLang.spec.units
 import org.parboiled2._
 
 trait L3_Numbers { this: org.parboiled2.Parser
@@ -20,7 +21,7 @@ trait L3_Numbers { this: org.parboiled2.Parser
 
 	def Percentage: Rule1[Value.Percentage] = rule {
 		nodeStart ~ (atomic(base ~ optional(exponent) ~ percentageUnit) ~> (
-			(base: Double, exponent: Option[Double], unit: NumberUnit.Unit) =>
+			(base: Double, exponent: Option[Double], unit: NumberUnit.SimpleUnit) =>
 				createNumber(base, exponent, Some(unit))
 		)) ~ nodeEnd
 	}
@@ -54,13 +55,14 @@ trait L3_Numbers { this: org.parboiled2.Parser
 		(Exponent ~ Sign ~ digits) ~> ((sign: Int, digits: String) => sign * digits.toDouble)
 	}
 
-	private def percentageUnit: Rule1[NumberUnit.Unit] = rule {
+	private def percentageUnit: Rule1[NumberUnit.SimpleUnit] = rule {
 		'%' ~ push(NumberUnit.Percentage)
 	}
 
-	private def unitOfMeasure: Rule1[NumberUnit.Unit] = rule {
-		percentageUnit |
-			capture(oneOrMore(CharPredicate.Alpha)) ~> ((unitOfMeasure: String) => UnitOfMeasure(Map(unitOfMeasure -> 1)))
+	private def unitOfMeasure: Rule1[NumberUnit.UnitOfMeasure] = rule {
+		percentageUnit | (
+			valueMap(units.unitsMap) ~> NumberUnit.Atomic
+		)
 	}
 
 }
@@ -85,12 +87,12 @@ object L3_Numbers {
 	private def getNumericValue(base: Double, exponent: Option[Double]) =
 		if (exponent.isEmpty) base else base * Math.pow(10, exponent.get)
 
-	private def createNumber(base: Double, exponent: Option[Double], unitOfMeasure: Option[NumberUnit.Unit]): Value.Number = {
+	private def createNumber(base: Double, exponent: Option[Double], unitOfMeasure: Option[NumberUnit.UnitOfMeasure]): Value.Number = {
 		val value = getNumericValue(base, exponent)
 		unitOfMeasure match {
 			case Some(unit) => unit match {
-				case unit: UnitOfMeasure => Value.Dimensioned(value, unit)
 				case NumberUnit.Percentage => Value.Percentage(value)
+				case unit: UnitOfMeasure  => Value.Dimensioned(value, unit)
 			}
 			case None => Value.Scalar(value)
 		}

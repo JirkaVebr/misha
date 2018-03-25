@@ -5,9 +5,10 @@ import com.mishaLang.ast.Language.Statement._
 import com.mishaLang.ast.Language.Term.{FunctionCall, ParentSelector, Variable}
 import com.mishaLang.ast.Language.Value.{Important, Rgba, Scalar}
 import com.mishaLang.ast.Language.{Term, Type, Value, ValueSymbolDeclaration}
-import com.mishaLang.ast.NumberUnit.UnitOfMeasure
+import com.mishaLang.ast.NumberUnit.{Atomic, UnitOfMeasure}
 import com.mishaLang.parser.BaseParserSpec
 import com.mishaLang.spec.ColorKeywords
+import com.mishaLang.spec.units.Time.Second
 
 
 class StatementsSpec extends BaseParserSpec {
@@ -121,8 +122,8 @@ class StatementsSpec extends BaseParserSpec {
 		assert(parse("color red") === FunctionCall(Term.Variable("color"), List(Rgba(255, 0, 0))))
 		assert(parse("transition color .3s, opacity .5s ease-in-out") === FunctionCall(
 			Term.Variable("transition"), Vector(Term.List(Vector(
-				Term.List(Vector(Value.String("color"), Value.Dimensioned(.3, UnitOfMeasure(Map("s" -> 1))))),
-				Term.List(Vector(Value.String("opacity"), Value.Dimensioned(.5, UnitOfMeasure(Map("s" -> 1))), Value.String("ease-in-out")))
+				Term.List(Vector(Value.String("color"), Value.Dimensioned(.3, Atomic(Second)))),
+				Term.List(Vector(Value.String("opacity"), Value.Dimensioned(.5, Atomic(Second)), Value.String("ease-in-out")))
 			)))))
 	}
 
