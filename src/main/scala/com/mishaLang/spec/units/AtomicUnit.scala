@@ -1,5 +1,5 @@
 package com.mishaLang.spec.units
 
-trait UnitOfMeasure {
+trait AtomicUnit {
 	val symbol: String
 }

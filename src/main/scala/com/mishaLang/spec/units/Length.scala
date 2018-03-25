@@ -2,7 +2,7 @@ package com.mishaLang.spec.units
 
 object Length {
 
-	sealed trait Length extends UnitOfMeasure
+	sealed trait Length extends AtomicUnit
 
 
 	sealed trait Absolute extends Length
@@ -33,5 +33,30 @@ object Length {
 	case object ViewportBlock extends ViewportRelative { override val symbol = "vb" }
 	case object ViewportMin extends ViewportRelative { override val symbol = "vmin" }
 	case object ViewportMax extends ViewportRelative { override val symbol = "vmax" }
+
+
+	lazy val lengthUnits: Map[String, Length] = Map(
+		AdvanceMeasureCJK.symbol -> AdvanceMeasureCJK,
+		AdvanceMeasureZero.symbol -> AdvanceMeasureZero,
+		CapitalHeight.symbol -> CapitalHeight,
+		CentiMeter.symbol -> CentiMeter,
+		Em.symbol -> Em,
+		Inch.symbol -> Inch,
+		LineHeight.symbol -> LineHeight,
+		MiliMeter.symbol -> MiliMeter,
+		Pica.symbol -> Pica,
+		Pixel.symbol -> Pixel,
+		Point.symbol -> Point,
+		QuarterMiliMeter.symbol -> QuarterMiliMeter,
+		RootEm.symbol -> RootEm,
+		RootLineHeight.symbol -> RootLineHeight,
+		ViewportBlock.symbol -> ViewportBlock,
+		ViewportHeight.symbol -> ViewportHeight,
+		ViewportInline.symbol -> ViewportInline,
+		ViewportMax.symbol -> ViewportMax,
+		ViewportMin.symbol -> ViewportMin,
+		ViewportWidth.symbol -> ViewportWidth,
+		XHeight.symbol -> XHeight
+	)
 
 }
