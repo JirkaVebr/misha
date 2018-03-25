@@ -4,8 +4,8 @@ import com.mishaLang.ast.NumberUnit._
 import com.mishaLang.spec.units.Angle._
 import com.mishaLang.spec.units.AtomicUnit
 import com.mishaLang.spec.units.Flex.Flex
-import com.mishaLang.spec.units.Frequency.Frequency
-import com.mishaLang.spec.units.Length.Length
+import com.mishaLang.spec.units.Frequency.{Frequency, Hertz, KiloHertz}
+import com.mishaLang.spec.units.Length._
 import com.mishaLang.spec.units.Resolution.Resolution
 import com.mishaLang.spec.units.Time.{MiliSecond, Second, Time}
 
@@ -42,47 +42,45 @@ object UnitOps {
 		}
 
 
-	def convertAngleUnit(value: Double, source: Angle, target: Angle): Double =
-		value * (source match {
-			case Degree =>
-				target match {
-					case Degree => 1d
-					case Gradian => 10d / 9d
-					case Radian => Math.PI / 180d
-					case Turn => 1d / 360d
-				}
-			case Gradian =>
-				target match {
-					case Degree => 9d / 10d
-					case Gradian => 1d
-					case Radian => Math.PI / 200d
-					case Turn => 1d / 400d
-				}
-			case Radian =>
-				target match {
-					case Degree => 180d / Math.PI
-					case Gradian => 200d / Math.PI
-					case Radian => 1d
-					case Turn => 1d / (2d * Math.PI)
-				}
-			case Turn =>
-				target match {
-					case Degree => 360d
-					case Gradian => 400d
-					case Radian => 2d * Math.PI
-					case Turn => 1d
-				}
-		})
+	def convertAngleUnit(value: Double, source: Angle, target: Angle): Double = {
+		val radianFactors: Map[Angle, Double] = Map(
+			Degree -> Math.PI / 180d,
+			Radian -> 1d,
+			Gradian -> Math.PI / 200d,
+			Turn -> 2d * Math.PI
+		)
+
+		value * radianFactors(source) / radianFactors(target)
+	}
 
 
 	def convertFlexUnit(value: Double, source: Flex, target: Flex): Double =
 		value // There's just une flex unit
 
 
-	def convertFrequencyUnit(value: Double, source: Frequency, target: Frequency): Double = ???
+	def convertFrequencyUnit(value: Double, source: Frequency, target: Frequency): Double =
+		(source, target) match {
+			case (Hertz, KiloHertz) => value / 1000d
+			case (KiloHertz, Hertz) => value * 1000d
+			case _ => value // The units must be equal
+		}
 
 
-	def convertLengthUnit(value: Double, source: Length, target: Length): Option[Double] = ???
+	def convertLengthUnit(value: Double, sourceUnit: Length, targetUnit: Length): Option[Double] =
+		(sourceUnit, targetUnit) match {
+			case (source: Absolute, target: Absolute) =>
+				val pixelFactors: Map[Absolute, Double] = Map(
+					Pixel -> 1d,
+					CentiMeter -> 96d / 2.54,
+					MiliMeter -> (96d / 2.54) * 10d,
+					QuarterMiliMeter -> (96d / 2.54) * 40,
+					Inch -> 96d,
+					Pica -> 16d,
+					Point -> 4d / 3d
+				)
+				Some(value * pixelFactors(source) / pixelFactors(target))
+			case _ => None
+		}
 
 
 	def convertResolutionUnit(value: Double, source: Resolution, target: Resolution): Double = ???
