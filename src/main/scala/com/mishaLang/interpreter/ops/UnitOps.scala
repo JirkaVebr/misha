@@ -12,6 +12,25 @@ import com.mishaLang.spec.units.Time.{MiliSecond, Second, Time}
 object UnitOps {
 
 
+	final val RadianFactors: Map[Angle, Double] = Map(
+		Degree -> Math.PI / 180d,
+		Radian -> 1d,
+		Gradian -> Math.PI / 200d,
+		Turn -> 2d * Math.PI
+	)
+
+
+	final val PixelFactors: Map[Absolute, Double] = Map(
+		Pixel -> 1d,
+		CentiMeter -> 96d / 2.54,
+		MiliMeter -> (96d / 2.54) * 10d,
+		QuarterMiliMeter -> (96d / 2.54) * 40,
+		Inch -> 96d,
+		Pica -> 16d,
+		Point -> 4d / 3d
+	)
+
+
 	def convert(value: Double, source: UnitOfMeasure, target: UnitOfMeasure): Option[Double] =
 		source match {
 			case simple: SimpleUnit => simple match {
@@ -43,20 +62,12 @@ object UnitOps {
 
 
 	def convertAngleUnit(value: Double, source: Angle, target: Angle): Double = {
-		val radianFactors: Map[Angle, Double] = Map(
-			Degree -> Math.PI / 180d,
-			Radian -> 1d,
-			Gradian -> Math.PI / 200d,
-			Turn -> 2d * Math.PI
-		)
-
-		value * radianFactors(source) / radianFactors(target)
+		value * RadianFactors(source) / RadianFactors(target)
 	}
 
 
 	def convertFlexUnit(value: Double, source: Flex, target: Flex): Double =
 		value // There's just une flex unit
-
 
 	def convertFrequencyUnit(value: Double, source: Frequency, target: Frequency): Double =
 		(source, target) match {
@@ -69,16 +80,7 @@ object UnitOps {
 	def convertLengthUnit(value: Double, sourceUnit: Length, targetUnit: Length): Option[Double] =
 		(sourceUnit, targetUnit) match {
 			case (source: Absolute, target: Absolute) =>
-				val pixelFactors: Map[Absolute, Double] = Map(
-					Pixel -> 1d,
-					CentiMeter -> 96d / 2.54,
-					MiliMeter -> (96d / 2.54) * 10d,
-					QuarterMiliMeter -> (96d / 2.54) * 40,
-					Inch -> 96d,
-					Pica -> 16d,
-					Point -> 4d / 3d
-				)
-				Some(value * pixelFactors(source) / pixelFactors(target))
+				Some(value * PixelFactors(source) / PixelFactors(target))
 			case _ => None
 		}
 
