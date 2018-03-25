@@ -5,7 +5,7 @@ import com.mishaLang.ast.Language.Value.{Percentage, Rgba, Scalar}
 import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.error.ProgramError
 import com.mishaLang.interpreter.Symbol.ValueSymbol
-import com.mishaLang.interpreter.ops.{ColorOps, StringOps}
+import com.mishaLang.interpreter.ops.{ColorOps, ListOps, StringOps}
 
 class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 
@@ -107,6 +107,17 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 		val (l, r) = (Value.String("a"), Scalar(3))
 		assert(run(BinaryOperation(Multiplication, l, r)).value === StringOps.multiply(l, r))
 		assertThrows[ProgramError[_]](run(BinaryOperation(Multiplication, l, Scalar(123.456))))
+	}
+
+	it should "evaluate List * Scalar" in {
+		val (l, r) = (Value.List(Vector(Scalar(1), Scalar(2))), Scalar(3))
+		assert(run(BinaryOperation(Multiplication, l, r)).value === ListOps.repeat(l, r.value.toInt))
+		assertThrows[ProgramError[_]](run(BinaryOperation(Multiplication, l, Scalar(123.456))))
+	}
+
+	it should "evaluate List + Any" in {
+		val (l, r) = (Value.List(Vector(Scalar(1), Scalar(2))), Scalar(3))
+		assert(run(BinaryOperation(Addition, l, r)).value === ListOps.append(l, r))
 	}
 
 

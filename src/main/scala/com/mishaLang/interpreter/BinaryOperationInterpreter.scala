@@ -1,11 +1,11 @@
 package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Expression._
-import com.mishaLang.ast.Language.Value.{Boolean, Color, Composite, Dimensioned, Flag, NativeFunctionCall, Percentage, Primitive, Rgba, Scalar, String, Value}
+import com.mishaLang.ast.Language.Value.{Boolean, Callable, Color, Composite, Dimensioned, Flag, Formula, NativeFunctionCall, Percentage, Primitive, Rgba, Scalar, String, Tuple2, Value}
 import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
-import com.mishaLang.interpreter.ops.{ColorOps, NumberOps, StringOps}
+import com.mishaLang.interpreter.ops.{ColorOps, ListOps, NumberOps, StringOps}
 import com.mishaLang.interpreter.typing.Subtype
 import com.mishaLang.interpreter.validators.NumberValidator
 
@@ -35,23 +35,41 @@ object BinaryOperationInterpreter {
 
 	private def runNumericOperator(operator: NumericOperator, left: Value, right: Value)
 																(implicit state: EnvWithValue): Try[EnvWithValue] = left match {
-		case Value.Unit => state.fail(IllegalNumericOperatorOperand, left, right)
+		case Value.Unit =>
+			state.fail(IllegalNumericOperatorOperand, left, right)
 		case primitive: Primitive => primitive match {
 			case number: Value.Number => number match {
-				case Dimensioned(value, unit) => sys.error("todo") // TODO
-				case scalar: Scalar => runNumericOperatorOnScalar(operator, scalar, right)
-				case Percentage(value) => sys.error("todo") // TODO
+				case Dimensioned(value, unit) =>
+					sys.error("todo") // TODO
+				case scalar: Scalar =>
+					runNumericOperatorOnScalar(operator, scalar, right)
+				case Percentage(value) =>
+					sys.error("todo") // TODO
 			}
-			case string: Value.String => runNumericOperatorOnString(operator, string, right)
-			case color: Color => runNumericOperatorOnColor(operator, color, right)
-			case _: Flag | _: Value.Boolean => state.fail(IllegalNumericOperatorOperand, left, right)
+			case string: Value.String =>
+				runNumericOperatorOnString(operator, string, right)
+			case color: Color =>
+				runNumericOperatorOnColor(operator, color, right)
+			case _: Flag | _: Value.Boolean =>
+				state.fail(IllegalNumericOperatorOperand, left, right)
 		}
 		case composite: Composite => composite match {
-			case _: Value.Tuple2 => state.fail(IllegalNumericOperatorOperand, left, right)
-			case Value.List(values) => operator match {
-				case Addition => sys.error("todo") // TODO New element of a correct type or a list
-				case Multiplication => sys.error("todo") // TODO Non-negative integer scalar
-				case _ => state.fail(IllegalNumericOperatorOperand, left, right)
+			case _: Value.Tuple2 =>
+				state.fail(IllegalNumericOperatorOperand, left, right)
+			case list: Value.List => operator match {
+				case Addition =>
+					state ~> ListOps.append(list, right)
+				case Multiplication =>
+					right match {
+						case Value.Scalar(n) =>
+							if (NumberValidator.isInteger(n))
+								state ~> ListOps.repeat(list, n.toInt)
+							else
+								state.fail(IllegalNumericOperatorOperand, left, right) // TODO mention explicitly that we'd like an int
+						case _ => state.fail(IllegalNumericOperatorOperand, left, right)
+					}
+				case _ =>
+					state.fail(IllegalNumericOperatorOperand, left, right)
 			}
 			case _ => ??? // TODO
 		}
@@ -59,7 +77,6 @@ object BinaryOperationInterpreter {
 
 	private def runNumericOperatorOnScalar(operator: NumericOperator, left: Value.Scalar, right: Value)
 																				(implicit state: EnvWithValue): Try[EnvWithValue] = right match {
-		case Value.Unit => ???
 		case primitive: Primitive => primitive match {
 			case number: Value.Number => number match {
 				case Dimensioned(value, unit) => ???
@@ -72,7 +89,13 @@ object BinaryOperationInterpreter {
 			case _: Flag => ???
 			case NativeFunctionCall(function, arguments, returnType) => ???
 		}
-		case _: Composite => ???
+		case composite: Composite => composite match {
+			case Tuple2(first, second) => ???
+			case Value.List(values) => ???
+			case Formula(formula) => ???
+			case _: Callable => ???
+		}
+		case Value.Unit => ???
 	}
 
 	private def runNumericOperatorOnString(operator: NumericOperator, left: Value.String, right: Value)
