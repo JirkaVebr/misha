@@ -42,17 +42,30 @@ object FunctionOps {
 	}
 
 
-	def getLambdaApplicationError(lambda: Lambda, arguments: Vector[Value.Value]): Option[ProgramErrorCode] = {
-		/*val lambdaMandatoryArity = lambda.mandatoryArguments.length
-		val lambdaFurtherArity = lambda.otherArguments.length
+	def getLambdaApplicationError(lambda: Lambda, arguments: Vector[Value.Value])
+															 (implicit state: EnvWithValue): Option[ProgramErrorCode] = {
+		val mandatoryArity = lambda.mandatoryArguments.length
+		val furtherArity = lambda.otherArguments.length
 		val suppliedArgumentsCount = arguments.length
 
-		if (suppliedArgumentsCount < lambdaMandatoryArity)
+		if (suppliedArgumentsCount < mandatoryArity)
 			Some(NotEnoughArguments)
-		else {
-			???
-		}*/
-		None // TODO
+		else if (suppliedArgumentsCount > mandatoryArity + furtherArity) {
+			Some(TooManyArguments)
+		} else {
+			val zipped = (lambda.mandatoryArguments ++ lambda.otherArguments).zip(arguments)
+			val incorrectlyTyped = zipped.filterNot {
+				case (declaration, value) => declaration.typeAnnotation match {
+					case Some(annotation) => Typing.canBeAssignedTo(value, annotation)
+					case None => true
+				}
+			}
+			if (incorrectlyTyped.isEmpty) {
+				None
+			} else {
+				Some(IllTypedArgument)
+			}
+		}
 	}
 
 }

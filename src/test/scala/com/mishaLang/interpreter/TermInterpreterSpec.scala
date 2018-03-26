@@ -4,7 +4,7 @@ import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Term.{FunctionCall, ParentSelector, Term, Variable}
 import com.mishaLang.ast.Language.Type.Scalar
 import com.mishaLang.ast.Language.Value.{Lambda, Native, Value}
-import com.mishaLang.ast.Language.{Term, Value, ValueSymbolDeclaration}
+import com.mishaLang.ast.Language.{Term, Type, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.Selector.Class
 import com.mishaLang.error.ProgramError
 import com.mishaLang.interpreter.RuleContext.RuleSelector
@@ -87,14 +87,33 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		assert(run(FunctionCall(lambda, Vector())).value === Value.Scalar(123))
 	}
 
+
+	private val concatenateStrings = Lambda(None, Vector(
+		ValueSymbolDeclaration[Unit]("str1", Some(Type.String), Unit),
+		ValueSymbolDeclaration[Unit]("str2", Some(Type.String), Unit)
+	), Vector(), None, Block(
+		BinaryOperation(Addition, Variable("str1"), Variable("str2"))
+	), scopeId)
+
+
+	it should "reject lambda function calls with incorrect arity" in {
+		assertThrows[ProgramError[_]](run(FunctionCall(
+			concatenateStrings, Vector(Value.String("foo"))
+		)))
+
+		assertThrows[ProgramError[_]](run(FunctionCall(
+			concatenateStrings, Vector(Value.String("foo"), Value.String("bar"), Value.String("baz"))
+		)))
+	}
+
+	it should "reject lambda function calls with ill-typed arguments" in {
+		assertThrows[ProgramError[_]](run(FunctionCall(
+			concatenateStrings, Vector(Value.Scalar(1), Value.String("foo"))
+		)))
+	}
+
 	it should "correctly invoke lambdas with just mandatory arguments" in {
-		val lambda = Lambda(None, Vector(
-			ValueSymbolDeclaration[Unit]("str1", None, Unit),
-			ValueSymbolDeclaration[Unit]("str2", None, Unit)
-		), Vector(), None, Block(
-			BinaryOperation(Addition, Variable("str1"), Variable("str2"))
-		), scopeId)
-		assert(run(FunctionCall(lambda, Vector(
+		assert(run(FunctionCall(concatenateStrings, Vector(
 			Value.String("abc"), Value.String("def")
 		))).value === Value.String("abcdef"))
 	}
