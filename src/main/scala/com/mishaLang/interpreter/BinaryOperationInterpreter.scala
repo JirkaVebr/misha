@@ -5,7 +5,7 @@ import com.mishaLang.ast.Language.Value.{Dimensioned, Percentage, Scalar, Value}
 import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
-import com.mishaLang.interpreter.typing.Subtype
+import com.mishaLang.interpreter.typing.{Subtype, Typing}
 
 import scala.util.{Failure, Success, Try}
 
@@ -40,7 +40,7 @@ object BinaryOperationInterpreter {
 				if (newState.environment.isInScope(name)) {
 					val value = newState.environment.lookup(name).get
 
-					if (Subtype.isSubtypeOf(newState.value.valueType, value.valueType))
+					if (Typing.canBeAssignedTo(newState.value, value.valueType))
 					// TODO add readonly checks
 						newState.withUpdatedSymbol(name)(newState.value)
 					else newState.fail(IllTypedAssignment)

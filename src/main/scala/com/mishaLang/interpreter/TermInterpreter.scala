@@ -10,7 +10,7 @@ import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
 import com.mishaLang.interpreter.RuleContext.{AtRule, RuleSelector}
 import com.mishaLang.interpreter.ops.FunctionOps
-import com.mishaLang.interpreter.typing.Subtype
+import com.mishaLang.interpreter.typing.{Subtype, Typing}
 
 import scala.util.{Failure, Success, Try}
 
@@ -179,7 +179,7 @@ object TermInterpreter {
 												)
 												lambda.returnType match {
 													case Some(returnType) =>
-														if (Subtype.isSubtypeOf(callSiteState.value.valueType, returnType))
+														if (Typing.canBeAssignedTo(callSiteState.value, returnType))
 															Success(callSiteState)
 														else
 															callSiteState.fail(IllTypedReturn, lambda, functionCall)

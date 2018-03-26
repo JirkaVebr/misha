@@ -7,7 +7,7 @@ import com.mishaLang.ast.PropertyRecord
 import com.mishaLang.error.ProgramError._
 import com.mishaLang.interpreter.Symbol.PropertySymbol
 import com.mishaLang.interpreter.ops.StringOps
-import com.mishaLang.interpreter.typing.Subtype
+import com.mishaLang.interpreter.typing.{Subtype, Typing}
 
 import scala.util.{Failure, Success, Try}
 
@@ -80,7 +80,7 @@ object StatementInterpreter {
 			case Failure(exception) => Failure(exception)
 			case Success(stateAfterValue) => declaration.typeAnnotation match {
 				case Some(annotatedType) =>
-					if (Subtype.isSubtypeOf(stateAfterValue.value.valueType, annotatedType))
+					if (Typing.canBeAssignedTo(stateAfterValue.value, annotatedType))
 						stateAfterValue.withNewSymbol(declaration.name)(stateAfterValue.value)
 					else
 						stateAfterValue.fail(TypeAnnotationMismatch, varDeclaration)
