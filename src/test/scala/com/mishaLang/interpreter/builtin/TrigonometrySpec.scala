@@ -6,11 +6,11 @@ import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.NumberUnit.Atomic
 import com.mishaLang.interpreter.{BaseInterpreterSpec, EnvWithValue, ExpressionInterpreter}
 import com.mishaLang.spec.units.Angle.{Degree, Gradian, Radian, Turn}
-import org.scalactic.TolerantNumerics
+import org.scalactic.{Equality, TolerantNumerics}
 
 class TrigonometrySpec extends BaseInterpreterSpec {
 
-	implicit val doubleEquality = TolerantNumerics.tolerantDoubleEquality(0.00000001)
+	implicit val doubleEquality: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(0.00000001)
 
 	behavior of "Trigonometric builtins"
 
