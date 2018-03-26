@@ -1,13 +1,11 @@
 package com.mishaLang.interpreter.builtin
 
-import com.mishaLang.ast.Language.Expression.Expression
 import com.mishaLang.ast.Language.Term.{FunctionCall, Variable}
 import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.NumberUnit.Atomic
-import com.mishaLang.interpreter.{BaseInterpreterSpec, EnvWithValue, ExpressionInterpreter}
 import com.mishaLang.spec.units.Angle.{Degree, Gradian, Radian, Turn}
 
-class TrigonometrySpec extends BaseInterpreterSpec {
+class TrigonometrySpec extends BaseBuiltinSpec {
 
 	behavior of "Trigonometric builtins"
 
@@ -44,7 +42,4 @@ class TrigonometrySpec extends BaseInterpreterSpec {
 		)).value.asInstanceOf[Value.Scalar].value === 1d)
 	}
 
-
-	protected def run(expression: Expression)(implicit state: EnvWithValue): EnvWithValue =
-		super.run[Expression](ExpressionInterpreter.run(_)(state), expression)
 }
