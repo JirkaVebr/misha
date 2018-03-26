@@ -37,6 +37,16 @@ class TrigonometrySpec extends BaseInterpreterSpec {
 		)).value === Value.Scalar(1))
 	}
 
+	it should "correctly evaluate other trigonometric functions" in {
+		assert(run(FunctionCall(
+			Variable("cos"), Vector(Value.Dimensioned(45, Atomic(Degree)))
+		)).value.asInstanceOf[Value.Scalar].value === (Math.sqrt(2) / 2))
+
+		assert(run(FunctionCall(
+			Variable("tan"), Vector(Value.Dimensioned(45, Atomic(Degree)))
+		)).value.asInstanceOf[Value.Scalar].value === 1d)
+	}
+
 
 	protected def run(expression: Expression)(implicit state: EnvWithValue): EnvWithValue =
 		super.run[Expression](ExpressionInterpreter.run(_)(state), expression)
