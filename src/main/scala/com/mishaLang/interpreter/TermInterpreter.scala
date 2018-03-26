@@ -24,6 +24,7 @@ object TermInterpreter {
 				case tuple: Value.Tuple2 => runTupleValue(tuple)
 				case list: Value.List => runListValue(list)
 				case callable: Value.Callable => runCallableValue(callable)
+				case formula: Value.Formula => ???
 			}
 		}
 		case symbol: MagicSymbol => runMagicSymbol(symbol)
@@ -66,7 +67,7 @@ object TermInterpreter {
 	}
 
 	private def runMagicSymbol(symbol: MagicSymbol)(implicit state: EnvWithValue): Try[EnvWithValue] = symbol match {
-		case ParentSelector => state ~> Value.List(runParentSelector().toVector)
+		case ParentSelector => state ~> Value.List(runParentSelector())
 	}
 
 	private def runVariable(variable: Variable)(implicit state: EnvWithValue): Try[EnvWithValue] = {
