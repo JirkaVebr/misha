@@ -23,4 +23,6 @@ object SelectorError {
 	case object MultipleIdSelectors extends SimpleError("Multiple id selectors within a single compound selector")
 	case object MultiplePseudoElements extends SimpleError("Multiple pseudo elements within a single compound selector")
 	case object MultipleTypeSelectors extends SimpleError("Multiple type selectors within a single compound selector")
+	case object UndefinedElement extends SimpleError("Undefined element")
+	case object UndefinedPseudoElement extends SimpleError("Undefined pseudo-element")
 }

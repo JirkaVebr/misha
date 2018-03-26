@@ -6,6 +6,7 @@ import com.mishaLang.error.ProgramError.{NonStringSelectorExpression, StackOverf
 import com.mishaLang.error.{ProgramError, RuleHeadParseError}
 import com.mishaLang.interpreter.RuleContext.RuleSelector
 import com.mishaLang.interpreter.ops.StringOps
+import com.mishaLang.interpreter.validators.SelectorValidator
 import com.mishaLang.parser.ruleHead.SelectorParser
 import org.parboiled2.ParseError
 
