@@ -4,6 +4,7 @@ package object builtin {
 
 
 	lazy final val Builtins: Map[String, Symbol.ValueSymbol#Value] =
-		Trigonometry.Trigonometry
+		Trigonometry.Trigonometry ++
+		Constants.Constants
 
 }
