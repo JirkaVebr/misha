@@ -3,7 +3,7 @@ package com.mishaLang.interpreter
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Term.{FunctionCall, ParentSelector, Term, Variable}
 import com.mishaLang.ast.Language.Type.Scalar
-import com.mishaLang.ast.Language.Value.{Lambda, Native, Value}
+import com.mishaLang.ast.Language.Value.{Lambda, Native, PolymorphicGroup, Value}
 import com.mishaLang.ast.Language.{Term, Type, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.Selector.Class
 import com.mishaLang.error.ProgramError
@@ -195,6 +195,31 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 			run(Term.FunctionCall(Term.Variable(testLambda), Vector()))(EnvironmentWithValue(sub0)).value ===
 				Value.List(Vector(testSelector.toString))
 		)
+	}
+
+
+	it should "correctly invoke polymorphic groups" in {
+		val add = PolymorphicGroup(Vector( // This is silly. It's just for testing though.
+			Lambda(None, Vector(
+				ValueSymbolDeclaration[Unit]("num1", Some(Type.Scalar), Unit),
+				ValueSymbolDeclaration[Unit]("num2", Some(Type.Scalar), Unit)
+			), Vector(), None, Block(
+				BinaryOperation(Addition, Variable("num1"), Variable("num2"))
+			), scopeId),
+			Lambda(None, Vector(
+				ValueSymbolDeclaration[Unit]("str1", Some(Type.String), Unit),
+				ValueSymbolDeclaration[Unit]("str2", Some(Type.String), Unit)
+			), Vector(), None, Block(
+				BinaryOperation(Addition, Variable("str1"), Variable("str2"))
+			), scopeId)
+		))
+
+		assert(run(FunctionCall(add, Vector(
+			Value.String("abc"), Value.String("def")
+		))).value === Value.String("abcdef"))
+		assert(run(FunctionCall(add, Vector(
+			Value.Scalar(123), Value.Scalar(456)
+		))).value === Value.Scalar(579))
 	}
 
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =

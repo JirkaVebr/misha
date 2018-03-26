@@ -117,7 +117,8 @@ object TermInterpreter {
 									callLambda(lambda, functionCall, stateAfterArguments.value.toVector)(newestState)
 								case native: Native =>
 									callNative(native, functionCall, stateAfterArguments.value.toVector)(newestState)
-								case PolymorphicGroup(lambdas) => ???
+								case group: PolymorphicGroup =>
+									callPolymorphicGroup(group, functionCall, stateAfterArguments.value.toVector)(newestState)
 							}
 					}
 				case _ => newState.fail(InvokingANonFunction, functionCall)
@@ -196,6 +197,22 @@ object TermInterpreter {
 					case None =>
 						state.failFatally(CompilerError("Undefined lambda parent env"))
 				}
+		}
+	}
+
+
+	private def callPolymorphicGroup(group: PolymorphicGroup, functionCall: FunctionCall, arguments: Vector[Value])
+																	(implicit state: EnvWithValue): Try[EnvWithValue] = {
+		group.functions.find {
+			function => FunctionOps.getFunctionApplicationError(function, arguments).isEmpty
+		} match {
+			case Some(function) => function match {
+				case lambda: Lambda => callLambda(lambda, functionCall, arguments)
+				case native: Native => callNative(native, functionCall, arguments)
+			}
+			case None =>
+				// TODO this might be a bogus reason. Really, it should combine the aggregate results from the other places
+				state.fail(IllTypedArgument)
 		}
 	}
 

@@ -73,7 +73,7 @@ object Language {
 											otherArguments: Vector[ValueSymbolDeclaration[Expression]],
 											returnType: Option[Type.Any], body: Expression, scopeId: ScopeId) extends Function
 		case class Native(expectedType: Vector[Type.Any], implementation: (Vector[Value]) => Try[Value]) extends Function
-		case class PolymorphicGroup(lambdas: Seq[Function]) extends Callable
+		case class PolymorphicGroup(functions: Seq[Function]) extends Callable
 	}
 
 
