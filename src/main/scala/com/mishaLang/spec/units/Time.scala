@@ -2,7 +2,7 @@ package com.mishaLang.spec.units
 
 object Time {
 
-	sealed trait Time extends AtomicUnit
+	sealed abstract class Time extends AtomicUnit
 	case object Second extends Time { override val symbol = "s" }
 	case object MiliSecond extends Time { override val symbol = "ms" }
 

@@ -2,7 +2,7 @@ package com.mishaLang.spec.units
 
 object Angle {
 
-	sealed trait Angle extends AtomicUnit
+	sealed abstract class Angle extends AtomicUnit
 
 	case object Degree extends Angle { override val symbol = "deg" }
 	case object Gradian extends Angle { override val symbol = "grad" }

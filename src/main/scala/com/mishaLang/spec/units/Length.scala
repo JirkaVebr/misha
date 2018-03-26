@@ -2,10 +2,10 @@ package com.mishaLang.spec.units
 
 object Length {
 
-	sealed trait Length extends AtomicUnit
+	sealed abstract class Length extends AtomicUnit
 
 
-	sealed trait Absolute extends Length
+	sealed abstract class Absolute extends Length
 	case object Pixel extends Absolute { override val symbol = "px" }
 	case object CentiMeter extends Absolute { override val symbol = "cm" }
 	case object MiliMeter extends Absolute { override val symbol = "mm" }
@@ -15,7 +15,7 @@ object Length {
 	case object Point extends Absolute { override val symbol = "pt" }
 
 
-	sealed trait FontRelative extends Length
+	sealed abstract class FontRelative extends Length
 	case object CapitalHeight extends FontRelative { override val symbol = "cap" }
 	case object AdvanceMeasureZero extends FontRelative { override val symbol = "ch" }
 	case object Em extends FontRelative { override val symbol = "em" }
@@ -26,7 +26,7 @@ object Length {
 	case object RootLineHeight extends FontRelative { override val symbol = "rlh" }
 
 
-	sealed trait ViewportRelative extends Length
+	sealed abstract class ViewportRelative extends Length
 	case object ViewportHeight extends ViewportRelative { override val symbol = "vh" }
 	case object ViewportWidth extends ViewportRelative { override val symbol = "vw" }
 	case object ViewportInline extends ViewportRelative { override val symbol = "vi" }

@@ -2,7 +2,7 @@ package com.mishaLang.spec.units
 
 object Flex {
 
-	sealed trait Flex extends AtomicUnit
+	sealed abstract class Flex extends AtomicUnit
 
 	case object Fraction extends Flex { override val symbol = "fr" }
 
