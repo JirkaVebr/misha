@@ -7,7 +7,7 @@ import scala.util.Try
 
 class BaseInterpreterSpec extends BaseSpec {
 
-	val testEnvironment: Environment = new Environment()
+	val testEnvironment: Environment = RootEnvironment()
 
 	implicit val state: EnvWithValue = EnvironmentWithValue(testEnvironment)
 
