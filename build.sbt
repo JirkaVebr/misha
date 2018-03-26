@@ -1,8 +1,9 @@
-name := "preprocessor"
+name := "Misha Lang"
 
 version := "0.1"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.4"
 
-libraryDependencies += "org.parboiled" %% "parboiled" % "2.1.5-SNAPSHOT"
-libraryDependencies += "org.scalatest" % "scalatest_2.11" % "3.0.4" % "test"
+libraryDependencies += "org.parboiled" % "parboiled_2.12" % "2.1.5-SNAPSHOT"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+
