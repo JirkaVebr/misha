@@ -9,7 +9,7 @@ class RootEnvironment extends Environment {
 
 	override def lookupCurrent(name: Symbol.Symbol): Option[name.Value] = name match {
 		case TypeSymbol(typeName) => RootEnvironment.PreDefinedTypes.get(typeName).asInstanceOf[Option[name.Value]]
-		case ValueSymbol(_) => None // TODO
+		case ValueSymbol(valueName) => RootEnvironment.PreDefinedValues.get(valueName).asInstanceOf[Option[name.Value]]
 		case PropertySymbol => None
 		case RuleContextSymbol => None
 	}
@@ -37,4 +37,8 @@ object RootEnvironment {
 		"Time" -> Language.Type.Time,
 		"Unit" -> Language.Type.Unit
 	) ++ SpecTypes
+
+
+	lazy final val PreDefinedValues: Map[String, Symbol.ValueSymbol#Value] =
+		builtin.Builtins
 }
