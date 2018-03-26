@@ -97,6 +97,8 @@ object MemberAccessInterpreter {
 			case "endsWith" => Some(StringOps.getEndsWith(string))
 			case "indexOf" => ???
 			case "length" => Some(StringOps.length(string))
+			case "repeat" => ???
+			case "replace" => ???
 			case "split" => ???
 			case "substring" => ???
 			case "toLowerCase" => Some(StringOps.toLowerCase(string))
@@ -145,6 +147,7 @@ object MemberAccessInterpreter {
 	private def runList(list: Value.List, memberName: String)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val result = memberName match {
 			case "append" => ???
+			case "join" => ???
 			case "length" => Some(ListOps.length(list))
 			case "prepend" => ???
 			case _ => None
