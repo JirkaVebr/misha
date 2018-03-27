@@ -245,7 +245,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def property: Rule1[Property] = rule {
-		(Token("@property") ~ "(" ~ Expression ~ "," ~ Expression ~ optional("," ~ Expression) ~ optional(",") ~ ")") ~> Property
+		(Token("@property") ~ "(" ~ Expression ~ "," ~ Expression ~ optional("," ~ Expression) ~ optional(",") ~ Token(")")) ~> Property
 	}
 
 	private def each: Rule1[Each] = rule {
