@@ -1,5 +1,6 @@
 package com.mishaLang.interpreter.ops
 
+import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.Language.Value.{Percentage, Rgba}
 import com.mishaLang.interpreter.BaseInterpreterSpec
 
@@ -21,6 +22,13 @@ class ColorOpsSpec extends BaseInterpreterSpec{
 		assert(ColorOps.darken(Rgba(255, 255, 255), Percentage(10)) === Rgba(230, 230, 230))
 		assert(ColorOps.darken(Rgba(180, 212, 85), Percentage(15)) === Rgba(143, 176, 45))
 		assert(ColorOps.lighten(Rgba(240, 70, 21), Percentage(25)) === Rgba(248, 165, 141))
+	}
+
+	it should "correctly cast colors to strings" in {
+		assert(ColorOps.toString(Rgba(255, 255, 255)) === Value.String("#fff"))
+		assert(ColorOps.toString(Rgba(170, 187, 204)) === Value.String("#abc"))
+		assert(ColorOps.toString(Rgba(123, 123, 123)) === Value.String("#7b7b7b"))
+		assert(ColorOps.toString(Rgba(51, 51, 51, 16)) === Value.String("rgba(51, 51, 51, 0.062745)"))
 	}
 
 }

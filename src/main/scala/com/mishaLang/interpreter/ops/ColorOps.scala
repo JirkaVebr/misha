@@ -15,6 +15,13 @@ object ColorOps {
 
 	val ALPHA_PRECISION = 6
 
+
+	private def getPresentableAlpha(color: Rgba): Double =
+		MathUtils.round(color.a / 255d, ALPHA_PRECISION)
+
+	private def getPresentablePercentage(percentage: Double): Double =
+		MathUtils.round(percentage, PERCENTAGE_PRECISION)
+
 	/**
 		*
 		* @param h [0, 360)
@@ -131,7 +138,7 @@ object ColorOps {
 	// Properties
 
 	def alpha(color: Rgba): Value.Scalar =
-		Value.Scalar(MathUtils.round(color.a / 255d, ALPHA_PRECISION))
+		Value.Scalar(getPresentableAlpha(color))
 
 	def complement(color: Rgba): Rgba = {
 		val hsla = toHsla(color)
@@ -152,10 +159,10 @@ object ColorOps {
 		Value.Boolean(toHsla(color).l >= 0.5)
 
 	def lightness(color: Rgba): Value.Percentage =
-		Value.Percentage(MathUtils.round(toHsla(color).l * 100, PERCENTAGE_PRECISION))
+		Value.Percentage(getPresentablePercentage(toHsla(color).l * 100))
 
 	def saturation(color: Rgba): Value.Percentage =
-		Value.Percentage(MathUtils.round(toHsla(color).s * 100, PERCENTAGE_PRECISION))
+		Value.Percentage(getPresentablePercentage(toHsla(color).s * 100))
 
 
 	// Method generators
