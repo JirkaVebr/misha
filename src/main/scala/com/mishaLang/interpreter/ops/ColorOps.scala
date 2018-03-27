@@ -11,16 +11,16 @@ object ColorOps {
 	/**
 		* A somewhat arbitrary value used for results featuring saturation or lightness
 		*/
-	val PERCENTAGE_PRECISION = 3
+	final val PercentagePrecision = 3
 
-	val ALPHA_PRECISION = 6
+	final val AlphaPrecision = 6
 
 
 	private def getPresentableAlpha(color: Rgba): Double =
-		MathUtils.round(color.a / 255d, ALPHA_PRECISION)
+		MathUtils.round(color.a / 255d, AlphaPrecision)
 
 	private def getPresentablePercentage(percentage: Double): Double =
-		MathUtils.round(percentage, PERCENTAGE_PRECISION)
+		MathUtils.round(percentage, PercentagePrecision)
 
 	/**
 		*

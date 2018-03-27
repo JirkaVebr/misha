@@ -7,6 +7,8 @@ import com.mishaLang.interpreter.validators.NumberValidator
 
 object NumberOps {
 
+	final val NumericPrecision = 6
+
 
 	private def performOperation(operator: NumericOperator, left: Double, right: Double): Double = operator match {
 		case Addition => left + right
