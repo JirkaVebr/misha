@@ -3,9 +3,11 @@ package com.mishaLang.parser.language
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Statement._
 import com.mishaLang.ast.Language.Term.{FunctionCall, ParentSelector, Variable}
+import com.mishaLang.ast.Language.Type.TypeAlias
 import com.mishaLang.ast.Language.Value.{Important, Rgba, Scalar}
 import com.mishaLang.ast.Language.{Term, Type, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.NumberUnit.{Atomic, UnitOfMeasure}
+import com.mishaLang.interpreter.Symbol.TypeSymbol
 import com.mishaLang.parser.BaseParserSpec
 import com.mishaLang.spec.ColorKeywords
 import com.mishaLang.spec.units.Time.Second
@@ -110,6 +112,18 @@ class StatementsSpec extends BaseParserSpec {
 				|	123
 				|	456
 				|""".stripMargin) === VariableDeclaration(ValueSymbolDeclaration("myVar", None, Block(Sequence(Scalar(123), Scalar(456))))))
+	}
+
+	it should "correctly parse a function declaration" in {
+		assert(parse(
+			"""@let $color = ($color: Color) =>
+				|	@property("color", $color)
+				|""".stripMargin
+		) === VariableDeclaration(ValueSymbolDeclaration("color", None, Term.Function(
+			None, Vector(ValueSymbolDeclaration[Unit]("color", Some(Type.Color), Unit)), Vector(), None, Block(
+				Property("color", Variable("color"))
+			)
+		))))
 	}
 
 	it should "correctly parse a property" in {
