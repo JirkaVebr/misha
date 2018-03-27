@@ -108,7 +108,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		val root = new Environment
 		var sub0 = root.pushSubScope().get.putNew(testVariable1)(testValue1)
 		var sub00 = sub0.pushSubScope().get.putNew(testVariable2)(testValue2)
-		val sub00Id = sub00.scopeId
+		val sub00Id = sub00.meta.id
 
 		sub0 = sub00.popSubScope().get.updated(testVariable1)(testValue3)
 		sub00 = sub0.getEnvironmentByScopeId(sub00Id).get

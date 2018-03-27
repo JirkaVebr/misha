@@ -14,7 +14,7 @@ import scala.util.Success
 
 class TermInterpreterSpec extends BaseInterpreterSpec {
 
-	private val scopeId = testEnvironment.scopeId
+	private val scopeId = testEnvironment.meta.id
 
 	behavior of "Term interpreter"
 
@@ -181,7 +181,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 		val testLambda = ValueSymbol("testLambda")
 		val testSelector = Class("testClass")
 		val root = testEnvironment.putNew(testLambda)(Value.Lambda(
-			None, Vector(), Vector(), None, Term.ParentSelector, testEnvironment.scopeId
+			None, Vector(), Vector(), None, Term.ParentSelector, testEnvironment.meta.id
 		))
 
 		assert(

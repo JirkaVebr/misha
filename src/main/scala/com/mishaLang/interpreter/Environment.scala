@@ -1,13 +1,14 @@
 package com.mishaLang.interpreter
 
 import com.mishaLang.interpreter.Environment._
+import com.mishaLang.interpreter.EnvironmentType.RuleEnvironment
 import com.mishaLang.interpreter.Symbol._
 
 import scala.annotation.tailrec
 
 
 class Environment private
-	(val scopeId: ScopeId,
+	(val meta: EnvironmentMeta,
 	 val parentEnvironment: Option[Environment],
 	 val symbolTable: Map[Symbol, Symbol#Value],
 	 childEnvironments: Vector[Environment]
@@ -17,30 +18,30 @@ class Environment private
 
 
 	def this(parentEnvironment: Option[Environment] = None) =
-		this(Scope.rootScopeId, parentEnvironment, Map(), Vector())
+		this(EnvironmentMeta(Scope.rootScopeId, RuleEnvironment), parentEnvironment, Map(), Vector())
 
 
 	protected def cloneWithNewParent(newParent: Environment): Environment =
-		createInstance(scopeId, Some(newParent), symbolTable, subEnvironments)
+		createInstance(meta, Some(newParent), symbolTable, subEnvironments)
 
 
-	private def createAndUpdateTree(id: ScopeId, newParent: Option[Environment], symbols: Map[Symbol, Symbol#Value],
+	private def createAndUpdateTree(newMeta: EnvironmentMeta, newParent: Option[Environment], symbols: Map[Symbol, Symbol#Value],
 																	children: Vector[Environment]): Environment = {
-		val newInstance = createInstance(id, newParent, symbols, children)
+		val newInstance = createInstance(newMeta, newParent, symbols, children)
 		newParent match {
 			case Some(parent) =>
-				createInstance(id, Some(parent.createAndUpdateTree(
-					parent.scopeId, parent.parentEnvironment, parent.symbolTable,
-					parent.subEnvironments.updated(id.last, newInstance)
+				createInstance(newMeta, Some(parent.createAndUpdateTree(
+					parent.meta, parent.parentEnvironment, parent.symbolTable,
+					parent.subEnvironments.updated(newMeta.id.last, newInstance)
 				)), symbols, children)
 			case None => newInstance
 		}
 	}
 
 
-	protected def createInstance(childId: ScopeId, parent: Option[Environment], symbols: Map[Symbol, Symbol#Value],
+	protected def createInstance(childMeta: EnvironmentMeta, parent: Option[Environment], symbols: Map[Symbol, Symbol#Value],
 															 children: Vector[Environment]): Environment =
-		new Environment(childId, parent, symbols, children)
+		new Environment(childMeta, parent, symbols, children)
 
 
 	def pushSubScope(): Option[Environment] = {
@@ -54,15 +55,15 @@ class Environment private
 
 
 	private def pushSubScope(child: Environment): Option[Environment] = {
-		val newThis = createAndUpdateTree(scopeId, parentEnvironment, symbolTable, subEnvironments :+ child)
+		val newThis = createAndUpdateTree(meta, parentEnvironment, symbolTable, subEnvironments :+ child)
 
-		if (child.scopeId.length >= MaxStackSize) None
+		if (child.meta.id.length >= MaxStackSize) None
 		else Some(newThis.subEnvironments.last)
 	}
 
 
 	private def createSubScopeChild(childSymbols: Map[Symbol, Symbol#Value]): Environment =
-		createInstance(scopeId :+ subEnvironments.length, Some(this), childSymbols, Vector())
+		createInstance(meta ~> (meta.id :+ subEnvironments.length), Some(this), childSymbols, Vector())
 
 
 	def popSubScope(): Option[Environment] = parentEnvironment
@@ -78,7 +79,7 @@ class Environment private
 
 
 	def putNew(name: Symbol)(value: name.Value): Environment =
-		createAndUpdateTree(scopeId, parentEnvironment, symbolTable.updated(name, value), subEnvironments)
+		createAndUpdateTree(meta, parentEnvironment, symbolTable.updated(name, value), subEnvironments)
 
 
 	def isInCurrentScope(name: Symbol): Boolean = symbolTable.get(name).nonEmpty
@@ -116,9 +117,9 @@ class Environment private
 
 
 	def getEnvironmentByScopeId(id: ScopeId): Option[Environment] = {
-		val longestCommonPrefix = scopeId.zip(id).takeWhile(Function.tupled(_ == _))
+		val longestCommonPrefix = meta.id.zip(id).takeWhile(Function.tupled(_ == _))
 
-		getNthParent(scopeId.length - longestCommonPrefix.length) match {
+		getNthParent(meta.id.length - longestCommonPrefix.length) match {
 			case Some(nthParent) => Some(nthParent.getChildren(id.drop(longestCommonPrefix.length)))
 			case None => None
 		}

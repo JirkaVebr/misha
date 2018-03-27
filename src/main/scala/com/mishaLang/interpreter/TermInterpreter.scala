@@ -100,7 +100,7 @@ object TermInterpreter {
 	private def runFunctionTerm(function: Term.Function)(implicit state: EnvWithValue): Try[EnvWithValue] =
 		runCallableValue(Value.Lambda(
 			function.recursiveName, function.mandatoryArguments.toVector, function.otherArguments.toVector,
-			function.returnType, function.body, state.environment.scopeId
+			function.returnType, function.body, state.environment.meta.id
 		))
 
 	private def runFunctionCall(functionCall: Term.FunctionCall)(implicit state: EnvWithValue): Try[EnvWithValue] =
@@ -174,7 +174,7 @@ object TermInterpreter {
 								StatementInterpreter.run(newBody)(EnvironmentWithValue(newLambdaScope)) match {
 									case Failure(exception) => Failure(exception)
 									case Success(newState) =>
-										newState.environment.getEnvironmentByScopeId(state.environment.scopeId) match {
+										newState.environment.getEnvironmentByScopeId(state.environment.meta.id) match {
 											case Some(callSiteEnvironment) =>
 												val callSiteState = EnvironmentWithValue(
 													callSiteEnvironment, newState.value
