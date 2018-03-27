@@ -182,6 +182,11 @@ class ExpressionSpec extends BaseParserSpec {
 			Term.Function(None, Vector(ValueSymbolDeclaration("a", Some(Type.Scalar), ())), Vector(), Some(Type.Unit), Block(Scalar(123))))
 		assert(parse("($a: Scalar = 1): Unit => 123") ===
 			Term.Function(None, Vector(), Vector(ValueSymbolDeclaration("a", Some(Type.Scalar), Scalar(1))), Some(Type.Unit), Block(Scalar(123))))
+		assert(parse(
+			"""($a: Scalar = 1): Unit =>
+				|	123
+				|""".stripMargin) ===
+			Term.Function(None, Vector(), Vector(ValueSymbolDeclaration("a", Some(Type.Scalar), Scalar(1))), Some(Type.Unit), Block(Scalar(123))))
 		assert(parse("recursiveName ($a: Scalar = 1): Unit => 123") ===
 			Term.Function(Some(ValueSymbol("recursiveName")), Vector(), Vector(ValueSymbolDeclaration("a", Some(Type.Scalar), Scalar(1))), Some(Type.Unit), Block(Scalar(123))))
 	}
