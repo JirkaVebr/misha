@@ -1,7 +1,7 @@
 package com.mishaLang.interpreter.typing
 
 import com.mishaLang.ast.Language.Type.{Any, Color, Flag, Formula, Function, Literal, Map, Subtraction, TypeAlias, Union}
-import com.mishaLang.ast.Language.Value.{Color, Composite, Dimensioned, Flag, Number, Percentage, Primitive, Scalar, String, Tuple2, Unit}
+import com.mishaLang.ast.Language.Value.{Color, Composite, Dimensioned, Flag, NativeFunctionCall, Number, Percentage, Primitive, Scalar, String, Tuple2, Unit}
 import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.ast.NumberUnit.{Atomic, SimpleUnit}
 import com.mishaLang.interpreter.EnvWithValue
@@ -29,6 +29,7 @@ object Typing {
 			case String(_) => Type.String
 			case _: Color => Type.Color
 			case _: Flag => Type.Flag
+			case _: NativeFunctionCall => ???
 		}
 		case composite: Composite => composite match {
 			case Tuple2(first, second) => Type.Tuple2(getType(first), getType(second))
