@@ -164,6 +164,21 @@ object ColorOps {
 	def saturation(color: Rgba): Value.Percentage =
 		Value.Percentage(getPresentablePercentage(toHsla(color).s * 100))
 
+	def toString(color: Rgba): Value.String = {
+		if (color.a == 255) {
+			val (r, g, b) = (color.r.toHexString, color.g.toHexString, color.b.toHexString)
+
+			Value.String("#" + (
+				if (color.r % 17 == 0 && color.g % 17 == 0 && color.b % 17 == 0) {
+					s"${r.charAt(0)}${g.charAt(0)}${b.charAt(0)}"
+				} else {
+					s"${r.padTo(2, '0')}${g.padTo(2, '0')}${b.padTo(2, '0')}"
+				}
+			))
+		} else
+			Value.String(s"rgba(${color.r}, ${color.g}, ${color.b}, ${getPresentableAlpha(color)})")
+	}
+
 
 	// Method generators
 

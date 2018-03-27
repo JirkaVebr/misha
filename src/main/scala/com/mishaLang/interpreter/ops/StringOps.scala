@@ -1,7 +1,7 @@
 package com.mishaLang.interpreter.ops
 
 import com.mishaLang.ast.Language.{Type, Value}
-import com.mishaLang.ast.Language.Value.{Dimensioned, Native, Number, Percentage, Primitive, Scalar, Value}
+import com.mishaLang.ast.Language.Value.{Dimensioned, Native, Number, Percentage, Primitive, Rgba, Scalar, Value}
 import com.mishaLang.error.NativeError
 import com.mishaLang.error.NativeError.StringIndexOutOfBounds
 import com.mishaLang.interpreter.validators.NumberValidator
@@ -23,6 +23,7 @@ object StringOps {
 				case Percentage(magnitude) => Some(Value.String(numberToString(magnitude) + '%'))
 				case Dimensioned(_, _) => None // TODO?
 			}
+			case color: Rgba => Some(ColorOps.toString(color))
 			case _ => None
 		}
 		case _ => None
