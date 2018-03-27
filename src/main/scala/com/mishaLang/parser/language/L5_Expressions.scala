@@ -204,7 +204,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 				(name: ValueSymbol, typeAnnotation: Option[Language.Type.Any], value: Expression) =>
 					ValueSymbolDeclaration(name, typeAnnotation, value)
 			)).separatedBy(AnyWhitespaceAround(",")) ~ optional(AnyWhitespace ~ ',') ~
-			AnyWhitespaceAround(")") ~ TypeAnnotation ~ AnyWhitespaceAround("=>") ~ (
+			AnyWhitespaceAround(")") ~ TypeAnnotation ~ WhitespaceAround("=>") ~ (
 				Expression ~> ((expression: Expression) => expression match {
 					case block: Block => block
 					case _ => Block(expression)
