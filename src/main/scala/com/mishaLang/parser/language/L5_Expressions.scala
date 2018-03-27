@@ -187,7 +187,9 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def block: Rule1[Block] = rule {
-		SingleLineWhitespace ~ '\n' ~ INDENT ~!~ Statement ~ DEDENT ~> Block
+		SingleLineWhitespace ~ '\n' ~ INDENT ~!~
+			Statement ~
+		DEDENT ~> Block
 	}
 
 	private def noOp: Rule1[Statement] = rule {
