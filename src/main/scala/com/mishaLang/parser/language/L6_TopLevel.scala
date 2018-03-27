@@ -15,7 +15,7 @@ trait L6_TopLevel { this: org.parboiled2.Parser
 	with L5_Expressions =>
 
 	def Program: Rule1[Language.Program] = rule {
-		AnyWhitespace ~ Expression ~ AnyWhitespace ~ EOI ~> Language.Program
+		AnyWhitespace ~ Statement ~ AnyWhitespace ~ EOI ~> Language.Program
 	}
 
 }
