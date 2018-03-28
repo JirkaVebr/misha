@@ -225,12 +225,14 @@ trait L5_Expressions { this: org.parboiled2.Parser
 
 	private def sequenceNode: Rule1[Statement] = rule {
 		// Can't factor out the EndOfLine rules as that would have a different meaning
+
+		// TODO all these optional() calls are a hack: they're for rules that could end with a block
 		(typeAliasDeclaration ~ EndOfLine) |
-		(variableDeclaration ~ optional(EndOfLine)) | // TODO this is a hack: the whitespace shouldn't have to be optional
+		(variableDeclaration ~ optional(EndOfLine)) |
 		(property ~ EndOfLine) |
-		(each ~ EndOfLine) |
+		(each ~ optional(EndOfLine)) |
 		(Expression ~ EndOfLine) |
-		(rule ~ EndOfLine) |
+		(rule ~ optional(EndOfLine)) |
 		(propertyFunctionCall ~ EndOfLine) |
 		(noOp ~ EndOfLine)
 	}
