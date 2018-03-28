@@ -1,7 +1,7 @@
 package com.mishaLang.parser.language
 
 import com.mishaLang.ast.Language.Expression._
-import com.mishaLang.ast.Language.Term.{FunctionCall, MemberAccess, ParentSelector, Variable}
+import com.mishaLang.ast.Language.Term._
 import com.mishaLang.ast.Language.Value._
 import com.mishaLang.ast.Language.{Term, Type, ValueSymbolDeclaration}
 import com.mishaLang.interpreter.Symbol.ValueSymbol
@@ -81,6 +81,10 @@ class ExpressionSpec extends BaseParserSpec {
 
 	it should "correctly parse variable names" in {
 		assert(parse("$myVariable") === Variable("myVariable"))
+	}
+
+	it should "correctly parse property variable names" in {
+		assert(parse("$$myProperty") === PropertyVariable("myProperty"))
 	}
 
 	it should "correctly parse a nullary function call" in {

@@ -1,6 +1,6 @@
 package com.mishaLang.parser.language
 
-import com.mishaLang.ast.{Language, RuleHead, RuleHeadComponent}
+import com.mishaLang.ast.{CssIdentifier, Language, RuleHead, RuleHeadComponent}
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Statement._
 import com.mishaLang.ast.Language.Term._
@@ -114,8 +114,8 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def factor: Rule1[Expression] = rule {
-		sugaredFunctionCall | conditional | delimitedList | unaryOperation | Variable | anonymousFunction |
-		subExpression | magicSymbol | Literal | block
+		sugaredFunctionCall | conditional | delimitedList | unaryOperation | PropertyVariable | Variable |
+		anonymousFunction | subExpression | magicSymbol | Literal | block
 	}
 
 	private def unaryOperation: Rule1[UnaryOperation] = rule {
@@ -126,6 +126,10 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	def Variable: Rule1[Term.Variable] = rule {
 		// Deliberately using $ as a char and not a string as not to allow whitespace there
 		'$' ~!~ variableName ~> ((name: ValueSymbol) => Term.Variable(name))
+	}
+
+	def PropertyVariable: Rule1[Term.PropertyVariable] = rule {
+		Token("$$") ~!~ Identifier ~> Term.PropertyVariable
 	}
 
 	private def delimitedList: Rule1[Term.List] = rule {
