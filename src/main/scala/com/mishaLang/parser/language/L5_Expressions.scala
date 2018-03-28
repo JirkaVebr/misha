@@ -154,7 +154,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def variableName: Rule1[ValueSymbol] = rule {
-		Identifier ~ AnyWhitespace ~> ValueSymbol
+		Identifier ~ SingleLineWhitespace ~> ValueSymbol
 	}
 
 	private def argumentList: Rule1[Seq[Expression]] = rule {
