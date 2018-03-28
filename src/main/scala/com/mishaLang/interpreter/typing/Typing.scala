@@ -1,7 +1,7 @@
 package com.mishaLang.interpreter.typing
 
 import com.mishaLang.ast.Language.Type.{Any, Color, Flag, Formula, Function, Literal, Map, Subtraction, TypeAlias, Union}
-import com.mishaLang.ast.Language.Value.{Color, Composite, Dimensioned, Flag, NativeFunctionCall, Number, Primitive, Scalar, String, Tuple2, Unit}
+import com.mishaLang.ast.Language.Value.{Dimensioned, Number, Tuple2}
 import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.ast.NumberUnit.{Atomic, Percentage, SimpleUnit}
 import com.mishaLang.interpreter.EnvWithValue
@@ -16,27 +16,6 @@ import com.mishaLang.spec.units.Time.Time
 import scala.reflect.ClassTag
 
 object Typing {
-
-	def getType(value: Value.Value)/*(implicit environment: Environment)*/: Type.Any = value match {
-		case Unit => Type.Unit
-		case primitive: Primitive => primitive match {
-			case number: Number => number match {
-				case Dimensioned(value, unit) => sys.error("todo") // TODO
-				case Scalar(_) => Type.Scalar
-			}
-			case Value.Boolean(_) => Type.Boolean
-			case String(_) => Type.String
-			case _: Color => Type.Color
-			case _: Flag => Type.Flag
-			case _: NativeFunctionCall => ???
-		}
-		case composite: Composite => composite match {
-			case Tuple2(first, second) => Type.Tuple2(getType(first), getType(second))
-			case Value.List(values) =>  sys.error("todo") // TODO
-			case _ =>  sys.error("todo") // TODO
-		}
-	}
-
 
 	/**
 		* The idea of this method is to essentially just check whether a value satisfies a given type. However, the result

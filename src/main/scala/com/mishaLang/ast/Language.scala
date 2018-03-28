@@ -32,9 +32,7 @@ object Language {
 	object Value {
 		import Term._
 
-		sealed abstract class Value extends Term {
-			def valueType: Type.Any = Typing.getType(this)
-		}
+		sealed abstract class Value extends Term
 
 		case object Unit extends Value
 
