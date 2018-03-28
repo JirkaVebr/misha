@@ -1,10 +1,13 @@
 package com.mishaLang.interpreter.ops
 
-import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.ast.Language.Value.{Dimensioned, Native, Number, Percentage, Primitive, Rgba, Scalar, Value}
+import com.mishaLang.ast.Language.{Type, Value}
+import com.mishaLang.ast.NumberUnit
+import com.mishaLang.ast.NumberUnit.{Atomic, ComplexUnit, SimpleUnit}
 import com.mishaLang.error.NativeError
 import com.mishaLang.error.NativeError.StringIndexOutOfBounds
 import com.mishaLang.interpreter.validators.NumberValidator
+import com.mishaLang.spec.units.Length.Length
 
 import scala.util.{Failure, Success}
 
@@ -21,7 +24,21 @@ object StringOps {
 			case number: Number => number match {
 				case Scalar(magnitude) => Some(Value.String(numberToString(magnitude)))
 				case Percentage(magnitude) => Some(Value.String(numberToString(magnitude) + '%'))
-				case Dimensioned(_, _) => None // TODO?
+				case Dimensioned(magnitude, unit) => unit match {
+					case simple: SimpleUnit => simple match {
+						case Atomic(atomicUnit) =>
+							atomicUnit match {
+								case lengthUnit: Length =>
+									if (magnitude == 0d) Some(Value.String("0"))
+									else Some(Value.String(NumberOps.formatDouble(magnitude) + lengthUnit.symbol))
+								case _ =>
+									Some(Value.String(NumberOps.formatDouble(magnitude) + atomicUnit.symbol))
+							}
+						case NumberUnit.Percentage =>
+							Some(Value.String(NumberOps.formatDouble(magnitude) + '%'))
+					}
+					case _: ComplexUnit => None
+				}
 			}
 			case color: Rgba => Some(ColorOps.toString(color))
 			case _ => None

@@ -2,7 +2,10 @@ package com.mishaLang.interpreter.ops
 
 import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.Language.Value.Scalar
+import com.mishaLang.ast.NumberUnit.Atomic
 import com.mishaLang.interpreter.BaseInterpreterSpec
+import com.mishaLang.spec.units.Angle.Radian
+import com.mishaLang.spec.units.Length.Pixel
 
 class StringOpsSpec extends BaseInterpreterSpec {
 
@@ -15,6 +18,9 @@ class StringOpsSpec extends BaseInterpreterSpec {
 		val number = Value.Scalar(123.456)
 		assert(StringOps.castToString(number).get === Value.String("123.456"))
 		assert(StringOps.castToString(Value.Percentage(50)).get === Value.String("50%"))
+		assert(StringOps.castToString(Value.Dimensioned(123, Atomic(Pixel))).get === Value.String("123px"))
+		assert(StringOps.castToString(Value.Dimensioned(0, Atomic(Pixel))).get === Value.String("0"))
+		assert(StringOps.castToString(Value.Dimensioned(0, Atomic(Radian))).get === Value.String("0rad"))
 
 		assert(StringOps.castToString(Value.Tuple2(alreadyString, number)).isEmpty)
 	}
