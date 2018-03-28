@@ -8,6 +8,7 @@ package object types {
 		Animatable.name -> Animatable(),
 		BlendMode.name -> BlendMode(),
 		Global.name -> Global(),
+		Height.name -> Height(),
 		Margin.name -> Margin(),
 		Padding.name -> Padding(),
 		Width.name -> Width(),
