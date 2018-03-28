@@ -3,15 +3,18 @@ package com.mishaLang.spec.types
 import com.mishaLang.ast.Language.Type
 import com.mishaLang.ast.Language.Type.TypeAlias
 
-object Width extends Type {
+/**
+	* This is for both the "width" as well as the "height" property
+	*/
+object Dimension extends Type {
 
 
-	override def name: String = "Width"
+	override def name: String = "Dimension"
 
 	override def apply(): Type.Any = Type.Union(Set(
 		Type.Length,
 		Type.Percentage,
-		// TODO add "25em border-box" and "75% content-box"
+		// TODO add "25em border-box" and "75% content-box" and other values
 		Type.Literal("max-content"),
 		Type.Literal("min-content"),
 		Type.Literal("available"),
