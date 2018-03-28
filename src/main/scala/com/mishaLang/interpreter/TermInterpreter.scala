@@ -93,13 +93,13 @@ object TermInterpreter {
 								else
 									state ~> Value.List(propertyRecords.map(propertyRecord => propertyRecord.original).toVector)
 							case None =>
-								??? // Undefined property
+								state.fail(UndefinedPropertyVariable, variable) // Undefined property
 						}
 					case None =>
-						??? // Empty rule
+						state.fail(UndefinedPropertyVariable, variable) // Empty rule
 				}
 			case None =>
-				??? // We aren't even in a rule
+				state.fail(UndefinedPropertyVariable, variable) // We aren't even in a rule
 		}
 	}
 

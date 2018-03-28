@@ -1,7 +1,7 @@
 package com.mishaLang.interpreter.ops
 
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Dimensioned, Rgba}
+import com.mishaLang.ast.Language.Value.Rgba
 import com.mishaLang.ast.NumberUnit.Percentage
 import com.mishaLang.interpreter.BaseInterpreterSpec
 

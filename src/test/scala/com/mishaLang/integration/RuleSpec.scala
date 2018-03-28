@@ -22,39 +22,6 @@ class RuleSpec extends BaseIntegrationSpec {
 	}
 
 
-	they should "correctly evaluate property variables" in {
-		assert(run(
-			"""@let $width = ($length: Length) =>
-				|	@property("width", $length)
-				|@let $height = ($length: Length) =>
-				|	@property("height", $length)
-				|.foo
-				|	width 123px
-				|	height $$width
-				|""".stripMargin) ===
-			""".foo {
-				|	width: 123px;
-				|	height: 123px;
-				|}
-				|""".stripMargin)
-		assert(run(
-			"""@let $width = ($length: Length) =>
-				|	@property("width", $length)
-				|@let $height = ($length: Length) =>
-				|	@property("height", $length)
-				|.foo
-				|	width 123px
-				|.foo
-				|	height $$width
-				|""".stripMargin) ===
-			""".foo {
-				|	width: 123px;
-				|	height: 123px;
-				|}
-				|""".stripMargin)
-	}
-
-
 	they should "correctly evaluate nested rules" in {
 		assert(run(
 			"""@let $color = ($color: Color) =>

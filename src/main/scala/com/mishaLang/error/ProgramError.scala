@@ -50,6 +50,7 @@ object ProgramError {
 	case object TooManyArguments extends SimpleError("Too many arguments for function")
 	case object TypeAnnotationMismatch extends SimpleError("Assigned value doesn't match the declared type annotation")
 	case object UndefinedType extends SimpleError("Using an undefined type")
+	case object UndefinedPropertyVariable extends SimpleError("Undefined property variable")
 	case object WritingUninitializedVariable extends SimpleError("Writing to an uninitialized variable")
 
 	case class UnexpectedType(expected: Language.Type.Any, actual: Language.Type.Any) extends ProgramErrorCode {
