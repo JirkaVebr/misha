@@ -1,31 +1,30 @@
 package com.mishaLang.emitter
 
 import com.mishaLang.ast.PropertyRecord
-import com.mishaLang.interpreter.Symbol.{PropertySymbol, RuleContextSymbol}
+import com.mishaLang.interpreter.Symbol.{RuleStoreSymbol, RuleContextSymbol}
 import com.mishaLang.interpreter.Environment
+import com.mishaLang.interpreter.EnvironmentType.FunctionEnvironment
 
 class Emitter(val finalEnvironment: Environment) {
 
 
 	def emit(): StringBuilder =
-		emitEnvironment(finalEnvironment)(StringBuilder.newBuilder)
+		emitFinalEnvironment(finalEnvironment)(StringBuilder.newBuilder)
 
-	private def emitEnvironment(environment: Environment)(implicit builder: StringBuilder): StringBuilder = {
-		val properties = environment.lookupCurrent(PropertySymbol).getOrElse(List.empty)
-		val ruleContextSymbol = environment.lookupCurrent(RuleContextSymbol)
+	private def emitFinalEnvironment(environment: Environment)(implicit builder: StringBuilder): StringBuilder = {
+		val ruleStore = environment.lookupCurrent(RuleStoreSymbol).get
 
-		if (ruleContextSymbol.nonEmpty)
-			emitRuleStart(ruleContextSymbol.get)
+		for ((context, propertyStore) <- ruleStore) {
+			emitRuleStart(context)
 
-		emitProperties(properties)
+			for ((_, propertyRecords) <- propertyStore) {
+				emitProperties(propertyRecords)
+			}
 
-		if (environment.subEnvironments.nonEmpty)
-			emitSubEnvironments(environment)
+			emitRuleEnd(context)
+		}
 
-		if (ruleContextSymbol.nonEmpty)
-			emitRuleEnd(ruleContextSymbol.get)
-		else
-			builder
+		builder
 	}
 
 	private def emitRuleStart(head: RuleContextSymbol.Value)(implicit builder: StringBuilder): StringBuilder =
@@ -38,11 +37,6 @@ class Emitter(val finalEnvironment: Environment) {
 		properties.reverse.map((property: PropertyRecord) =>
 			'\t' + property.name + ": " + property.value + ";\n" // TODO handle flags
 		).foldLeft(builder)(_.append(_))
-
-	private def emitSubEnvironments(environment: Environment)(implicit builder: StringBuilder): StringBuilder =
-		environment.subEnvironments.foldLeft(builder)((builder, environment: Environment) =>
-			emitEnvironment(environment)(builder)
-		)
 
 	//private def
 
