@@ -81,10 +81,12 @@ object StatementInterpreter {
 			case Failure(exception) => Failure(exception)
 			case Success(stateAfterValue) => declaration.typeAnnotation match {
 				case Some(annotatedType) =>
-					if (Typing.canBeAssignedTo(stateAfterValue.value, annotatedType))
-						stateAfterValue.withNewSymbol(declaration.name)(stateAfterValue.value)
-					else
-						stateAfterValue.fail(TypeAnnotationMismatch, varDeclaration)
+					Typing.canBeAssignedTo(stateAfterValue.value, annotatedType) match {
+						case Some(newValue) =>
+							stateAfterValue.withNewSymbol(declaration.name)(newValue)
+						case None =>
+							stateAfterValue.fail(TypeAnnotationMismatch, varDeclaration)
+					}
 				case None =>
 					stateAfterValue.withNewSymbol(declaration.name)(stateAfterValue.value)
 			}

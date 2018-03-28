@@ -37,15 +37,11 @@ object BinaryOperationInterpreter {
 		case Term.Variable(name) => ExpressionInterpreter.run(right) match {
 			case Failure(exception) => Failure(exception)
 			case Success(newState) =>
-				if (newState.environment.isInScope(name)) {
-					val value = newState.environment.lookup(name).get
-
-					if (Typing.canBeAssignedTo(newState.value, value.valueType))
-					// TODO add readonly checks
-						newState.withUpdatedSymbol(name)(newState.value)
-					else newState.fail(IllTypedAssignment)
-				}
-				else newState.fail(WritingUninitializedVariable, left)
+				if (newState.environment.isInScope(name))
+					// TODO check for IllTypedAssignment? It would be necessary to associate variables with types though
+					newState.withUpdatedSymbol(name)(newState.value)
+				else
+					newState.fail(WritingUninitializedVariable, left)
 		}
 		case _ => state.fail(AssigningToNonVariable, left)
 	}

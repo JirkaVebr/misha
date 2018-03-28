@@ -205,10 +205,12 @@ object TermInterpreter {
 												)
 												lambda.returnType match {
 													case Some(returnType) =>
-														if (Typing.canBeAssignedTo(callSiteState.value, returnType))
-															Success(callSiteState)
-														else
-															callSiteState.fail(IllTypedReturn, lambda, functionCall)
+														Typing.canBeAssignedTo(callSiteState.value, returnType) match {
+															case Some(assignedValue) =>
+																callSiteState ~> assignedValue
+															case None =>
+																callSiteState.fail(IllTypedReturn, lambda, functionCall)
+														}
 													case None => Success(callSiteState)
 												}
 											case None =>
