@@ -7,7 +7,7 @@ import com.mishaLang.ast.Language.Type.TypeAlias
 import com.mishaLang.ast.Language.{Type, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.PropertyRecord
 import com.mishaLang.error.ProgramError
-import com.mishaLang.interpreter.Symbol.{PropertySymbol, TypeSymbol, ValueSymbol}
+import com.mishaLang.interpreter.Symbol.{RuleStoreSymbol, TypeSymbol, ValueSymbol}
 
 class StatementInterpreterSpec extends BaseInterpreterSpec {
 
@@ -85,20 +85,9 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		assertThrows[ProgramError[_]](run(TypeAliasDeclaration(TypeAlias(symbol), newType))(newState))
 	}
 
-	it should "correctly add properties" in {
-		val newState = run(
-			Sequence(
-				Sequence(
-					Property(Value.String("line-height"), Value.Scalar(1.6)),
-					Property(Value.String("width"), Value.Percentage(80))
-				),
-				Property(Value.String("position"), Value.String("absolute"))
-			)
-		)
-		assert(newState.environment.lookupCurrent(PropertySymbol).get === List(
-			PropertyRecord("position", "absolute"),
-			PropertyRecord("width", "80%"),
-			PropertyRecord("line-height", "1.6")
+	it should "reject properties outside rules" in {
+		assertThrows[ProgramError[_]](run(
+			Property(Value.String("position"), Value.String("absolute"))
 		))
 	}
 

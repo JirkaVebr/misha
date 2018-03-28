@@ -5,9 +5,10 @@ import com.mishaLang.ast.Language.Statement._
 import com.mishaLang.ast.Language.{Statement, Type, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.PropertyRecord
 import com.mishaLang.error.ProgramError._
-import com.mishaLang.interpreter.Symbol.PropertySymbol
+import com.mishaLang.interpreter.Symbol.RuleStoreSymbol
 import com.mishaLang.interpreter.ops.StringOps
 import com.mishaLang.interpreter.typing.{Subtype, Typing}
+import com.mishaLang.utils.LinkedMap
 
 import scala.util.{Failure, Success, Try}
 
@@ -91,26 +92,39 @@ object StatementInterpreter {
 	}
 
 	private def runProperty(property: Statement.Property)(implicit state: EnvWithValue): Try[EnvWithValue] =
-		ExpressionInterpreter.run(property.name) match {
-			case Failure(reason) => Failure(reason)
-			case Success(stateAfterName) => stateAfterName.value match {
-				case Value.String(name) => ExpressionInterpreter.run(property.value)(stateAfterName) match {
+		state.environment.lookupContext() match {
+			case Some(ruleContext) =>
+				ExpressionInterpreter.run(property.name) match {
 					case Failure(reason) => Failure(reason)
-					case Success(stateAfterValue) => StringOps.castToString(stateAfterValue.value) match {
-						case Some(valueString) =>
-							val property = PropertyRecord(name, valueString.value, Set.empty) // TODO actually use flags
+					case Success(stateAfterName) => stateAfterName.value match {
+						case Value.String(name) => ExpressionInterpreter.run(property.value)(stateAfterName) match {
+							case Failure(reason) => Failure(reason)
+							case Success(stateAfterValue) => StringOps.castToString(stateAfterValue.value) match {
+								case Some(valueString) =>
+									// .get because we're assuming we're inside the RootEnvironment, which, you know, should really better hold
+									val ruleStore: RuleStore = stateAfterValue.environment.lookup(RuleStoreSymbol).get
+									val propertyStore: PropertyStore = ruleStore.getOrElse(ruleContext, LinkedMap.empty)
+									val propertyRecord = PropertyRecord(name, valueString.value, Set.empty) // TODO actually use flags
 
-							stateAfterValue.withNewSymbol(PropertySymbol)(
-								property :: (stateAfterValue.environment.lookupCurrent(PropertySymbol) match {
-									case Some(properties) => properties
-									case None => List.empty
-								})
-							)
-						case None => stateAfterName.fail(IllegalPropertyValue, property.name)
+									val newPropertyRecords: List[PropertyRecord] = propertyStore.get(name) match {
+										case Some(propertyRecords) =>
+											propertyRecord :: propertyRecords
+										case None =>
+											propertyRecord :: Nil
+									}
+
+									stateAfterValue.withUpdatedSymbol(RuleStoreSymbol)(
+										ruleStore.updated(ruleContext, propertyStore.updated(name, newPropertyRecords))
+											.asInstanceOf[RuleStoreSymbol.Value]
+									)
+								case None => stateAfterName.fail(IllegalPropertyValue, property.name)
+							}
+						}
+						case _ => stateAfterName.fail(NonStringPropertyName, property.name)
 					}
 				}
-				case _ => stateAfterName.fail(NonStringPropertyName, property.name)
-			}
+			case None =>
+				state.fail(PropertyOutsideARule, property)
 		}
 
 	private def runNoOp()(implicit state: EnvWithValue): Try[EnvWithValue] = Success(state)

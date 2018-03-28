@@ -44,6 +44,7 @@ object ProgramError {
 	case object NonStringPropertyName extends SimpleError("The name of a property must be a string")
 	case object NonStringSelectorExpression extends SimpleError("Expression used as a part of a selector cannot be cast to string")
 	case object NotEnoughArguments extends SimpleError("Not enough arguments for function")
+	case object PropertyOutsideARule extends SimpleError("Using property outside a rule")
 	case object ReadingUndefinedVariable extends SimpleError("Reading of an undefined variable")
 	case object StackOverflow extends SimpleError("Stack overflow")
 	case object TooManyArguments extends SimpleError("Too many arguments for function")

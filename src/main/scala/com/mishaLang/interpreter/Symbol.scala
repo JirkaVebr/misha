@@ -1,7 +1,7 @@
 package com.mishaLang.interpreter
 
+import com.mishaLang.ast.Language
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.{Language, PropertyRecord}
 import com.mishaLang.interpreter.RuleContext.RuleContext
 
 object Symbol {
@@ -18,8 +18,8 @@ object Symbol {
 		override type Value = Value.Value
 	}
 
-	case object PropertySymbol extends Symbol {
-		override type Value = List[PropertyRecord]
+	case object RuleStoreSymbol extends Symbol {
+		override type Value = RuleStore
 	}
 
 	case object RuleContextSymbol extends Symbol {

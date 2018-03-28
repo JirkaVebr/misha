@@ -1,6 +1,6 @@
 package com.mishaLang.interpreter
 
-import Symbol.{PropertySymbol, RuleContextSymbol, TypeSymbol, ValueSymbol}
+import Symbol.{RuleStoreSymbol, RuleContextSymbol, TypeSymbol, ValueSymbol}
 import com.mishaLang.ast.Language
 import com.mishaLang.spec.types._
 
@@ -10,7 +10,7 @@ class RootEnvironment extends Environment {
 	override def lookupCurrent(name: Symbol.Symbol): Option[name.Value] = name match {
 		case TypeSymbol(typeName) => RootEnvironment.PreDefinedTypes.get(typeName).asInstanceOf[Option[name.Value]]
 		case ValueSymbol(valueName) => RootEnvironment.PreDefinedValues.get(valueName).asInstanceOf[Option[name.Value]]
-		case PropertySymbol => None
+		case RuleStoreSymbol => None // This is circumvented by the symbolTable
 		case RuleContextSymbol => None
 	}
 

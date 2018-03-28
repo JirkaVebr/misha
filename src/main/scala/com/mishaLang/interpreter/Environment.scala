@@ -3,6 +3,7 @@ package com.mishaLang.interpreter
 import com.mishaLang.interpreter.Environment._
 import com.mishaLang.interpreter.EnvironmentType.{EnvironmentType, FunctionEnvironment, RuleEnvironment, ScopeEnvironment}
 import com.mishaLang.interpreter.Symbol._
+import com.mishaLang.utils.LinkedMap
 
 import scala.annotation.tailrec
 
@@ -18,7 +19,9 @@ class Environment private
 
 
 	def this(parentEnvironment: Option[Environment] = None) =
-		this(EnvironmentMeta(Scope.rootScopeId, RuleEnvironment), parentEnvironment, Map(), Vector())
+		this(EnvironmentMeta(Scope.rootScopeId, RuleEnvironment), parentEnvironment, Map(
+			RuleStoreSymbol -> LinkedMap.empty[Symbol.RuleContextSymbol.Value, PropertyStore].asInstanceOf[RuleStoreSymbol.Value]
+		), Vector())
 
 
 	protected def cloneWithNewParent(newParent: Environment): Environment =

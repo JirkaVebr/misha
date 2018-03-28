@@ -7,8 +7,9 @@ import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.ast.PropertyRecord
 import com.mishaLang.ast.Selector.{Class, Complex, Id, SelectorList}
 import com.mishaLang.interpreter.RuleContext.RuleSelector
-import com.mishaLang.interpreter.Symbol.{PropertySymbol, RuleContextSymbol}
+import com.mishaLang.interpreter.Symbol.{RuleContextSymbol, RuleStoreSymbol}
 import com.mishaLang.spec.SelectorSeparator.Descendant
+import com.mishaLang.utils.LinkedMap
 
 class RuleInterpreterSpec extends BaseInterpreterSpec {
 
@@ -22,10 +23,11 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 		val ruleEnvironment = newState.environment.subEnvironments.head
 
 		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleSelector(Class("class")))
-		assert(ruleEnvironment.lookupCurrent(PropertySymbol).get === List(
-			PropertyRecord("width", "80%"),
-			PropertyRecord("line-height", "1.6")
-		))
+		assert(ruleEnvironment.lookup(RuleStoreSymbol).get ===
+			LinkedMap(RuleSelector(Class("class")) -> LinkedMap(
+				"width" -> List(PropertyRecord("width", "80%")),
+				"line-height" -> List(PropertyRecord("line-height", "1.6"))
+			)))
 	}
 
 	it should "correctly interpret rules with structured selectors" in {
@@ -46,15 +48,18 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 		)))
 		val ruleEnvironment = newState.environment.subEnvironments.head
 
-		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleSelector(
+		val expectedContext = RuleSelector(
 			SelectorList(Set(
 				Complex(Descendant, Class("myClass1"), Class("mySubclass")),
 				Complex(Descendant, Class("myClass2"), Class("mySubclass"))
 			))
-		))
-		assert(ruleEnvironment.lookupCurrent(PropertySymbol).get === List(
-			PropertyRecord("width", "80%")
-		))
+		)
+
+		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === expectedContext)
+		assert(ruleEnvironment.lookup(RuleStoreSymbol).get ===
+			LinkedMap(expectedContext -> LinkedMap(
+				"width" -> List(PropertyRecord("width", "80%"))
+			)))
 	}
 
 	it should "correctly interpret rules with implicit parent selectors" in {
