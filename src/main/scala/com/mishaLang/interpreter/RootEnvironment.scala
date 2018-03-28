@@ -3,6 +3,7 @@ package com.mishaLang.interpreter
 import Symbol.{RuleStoreSymbol, RuleContextSymbol, TypeSymbol, ValueSymbol}
 import com.mishaLang.ast.Language
 import com.mishaLang.spec.types._
+import com.mishaLang.spec.properties._
 
 class RootEnvironment extends Environment {
 
@@ -40,5 +41,6 @@ object RootEnvironment {
 
 
 	lazy final val PreDefinedValues: Map[String, Symbol.ValueSymbol#Value] =
+		SpecProperties ++
 		builtin.Builtins
 }
