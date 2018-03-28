@@ -26,8 +26,8 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleSelector(Class("class")))
 		assert(ruleEnvironment.lookup(RuleStoreSymbol).get ===
 			LinkedMap(RuleSelector(Class("class")) -> LinkedMap(
-				"width" -> List(PropertyRecord("width", "80%")),
-				"line-height" -> List(PropertyRecord("line-height", "1.6"))
+				"width" -> List(PropertyRecord("width", Value.Dimensioned(80, Percentage), "80%")),
+				"line-height" -> List(PropertyRecord("line-height", Value.Scalar(1.6), "1.6"))
 			)))
 	}
 
@@ -59,7 +59,7 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === expectedContext)
 		assert(ruleEnvironment.lookup(RuleStoreSymbol).get ===
 			LinkedMap(expectedContext -> LinkedMap(
-				"width" -> List(PropertyRecord("width", "80%"))
+				"width" -> List(PropertyRecord("width", Value.Dimensioned(80, Percentage), "80%"))
 			)))
 	}
 

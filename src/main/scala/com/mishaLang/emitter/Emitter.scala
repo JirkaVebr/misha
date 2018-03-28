@@ -35,7 +35,7 @@ class Emitter(val finalEnvironment: Environment) {
 
 	private def emitProperties(properties: List[PropertyRecord])(implicit builder: StringBuilder): StringBuilder =
 		properties.reverse.map((property: PropertyRecord) =>
-			'\t' + property.name + ": " + property.value + ";\n" // TODO handle flags
+			'\t' + property.name + ": " + property.output + ";\n" // TODO handle flags
 		).foldLeft(builder)(_.append(_))
 
 	//private def

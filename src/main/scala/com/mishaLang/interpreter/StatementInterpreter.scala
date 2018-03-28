@@ -104,7 +104,7 @@ object StatementInterpreter {
 									// .get because we're assuming we're inside the RootEnvironment, which, you know, should really better hold
 									val ruleStore: RuleStore = stateAfterValue.environment.lookup(RuleStoreSymbol).get
 									val propertyStore: PropertyStore = ruleStore.getOrElse(ruleContext, LinkedMap.empty)
-									val propertyRecord = PropertyRecord(name, valueString.value, Set.empty) // TODO actually use flags
+									val propertyRecord = PropertyRecord(name, stateAfterValue.value, valueString.value, Set.empty) // TODO actually use flags
 
 									val newPropertyRecords: List[PropertyRecord] = propertyStore.get(name) match {
 										case Some(propertyRecords) =>
