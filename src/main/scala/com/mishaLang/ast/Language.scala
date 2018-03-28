@@ -182,6 +182,7 @@ object Language {
 		case object ParentSelector extends MagicSymbol
 
 		case class Variable(name: ValueSymbol) extends Term
+		case class PropertyVariable(name: String) extends Term
 		case class FunctionCall(function: Expression, arguments: Seq[Expression] = scala.Vector.empty) extends Term
 		case class Function(recursiveName: Option[ValueSymbol], mandatoryArguments: Seq[ValueSymbolDeclaration[Unit]],
 												otherArguments: Seq[ValueSymbolDeclaration[Expression]],
