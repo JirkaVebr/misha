@@ -1,7 +1,7 @@
 package com.mishaLang.interpreter
 
 import com.mishaLang.interpreter.Environment._
-import com.mishaLang.interpreter.EnvironmentType.RuleEnvironment
+import com.mishaLang.interpreter.EnvironmentType.{EnvironmentType, FunctionEnvironment, RuleEnvironment, ScopeEnvironment}
 import com.mishaLang.interpreter.Symbol._
 
 import scala.annotation.tailrec
@@ -45,12 +45,22 @@ class Environment private
 
 
 	def pushSubScope(): Option[Environment] = {
-		pushSubScope(createSubScopeChild(Map()))
+		pushSubScope(createSubScopeChild(Map(), ScopeEnvironment))
 	}
 
 
 	def pushSubScope(context: RuleContextSymbol.Value): Option[Environment] = {
-		pushSubScope(createSubScopeChild(Map(RuleContextSymbol -> context)))
+		pushSubScope(createSubScopeChild(Map(RuleContextSymbol -> context), RuleEnvironment))
+	}
+
+
+	def pushFunctionScope(): Option[Environment] = {
+		pushSubScope(createSubScopeChild(Map(), FunctionEnvironment))
+	}
+
+
+	def pushFunctionScope(context: RuleContextSymbol.Value): Option[Environment] = {
+		pushSubScope(createSubScopeChild(Map(RuleContextSymbol -> context), FunctionEnvironment))
 	}
 
 
@@ -62,8 +72,12 @@ class Environment private
 	}
 
 
-	private def createSubScopeChild(childSymbols: Map[Symbol, Symbol#Value]): Environment =
-		createInstance(meta ~> (meta.id :+ subEnvironments.length), Some(this), childSymbols, Vector())
+	private def createSubScopeChild(childSymbols: Map[Symbol, Symbol#Value], environmentType: EnvironmentType): Environment =
+		createInstance(
+			EnvironmentMeta(meta.id :+ subEnvironments.length, environmentType),
+			Some(this), childSymbols,
+			Vector()
+		)
 
 
 	def popSubScope(): Option[Environment] = parentEnvironment

@@ -8,6 +8,7 @@ import com.mishaLang.ast.Language.{Term, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.Selector._
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
+import com.mishaLang.interpreter.EnvironmentType.FunctionEnvironment
 import com.mishaLang.interpreter.RuleContext.{AtRule, RuleSelector}
 import com.mishaLang.interpreter.ops.FunctionOps
 import com.mishaLang.interpreter.typing.{Subtype, Typing}
@@ -166,8 +167,8 @@ object TermInterpreter {
 				state.environment.getEnvironmentByScopeId(lambda.scopeId) match {
 					case Some(environment) =>
 						val subScope = state.environment.lookupContext() match {
-							case Some(context) => environment.pushSubScope(context)
-							case None => environment.pushSubScope()
+							case Some(context) => environment.pushFunctionScope(context)
+							case None => environment.pushFunctionScope()
 						}
 						subScope match {
 							case Some(newLambdaScope) =>
