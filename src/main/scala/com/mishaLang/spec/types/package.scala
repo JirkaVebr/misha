@@ -6,7 +6,8 @@ package object types {
 
 	lazy final val SpecTypes: Map[String, Symbol.TypeSymbol#Value] = Map(
 		Animatable.name -> Animatable(),
-		BlendMode.name -> BlendMode()
+		BlendMode.name -> BlendMode(),
+		Global.name -> Global(),
 	)
 
 }
