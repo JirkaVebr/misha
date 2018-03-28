@@ -12,6 +12,7 @@ package object types {
 		Margin.name -> Margin(),
 		Overflow.name -> Overflow(),
 		Padding.name -> Padding(),
+		Visibility.name -> Visibility(),
 		Width.name -> Width(),
 	)
 
