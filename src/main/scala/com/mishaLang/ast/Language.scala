@@ -44,7 +44,6 @@ object Language {
 		sealed abstract class Number(val value: Double) extends Primitive
 		case class Dimensioned(override val value: Double, unit: UnitOfMeasure) extends Number(value)
 		case class Scalar(override val value: Double) extends Number(value)
-		case class Percentage(override val value: Double) extends Number(value)
 
 
 		case class Boolean(value: scala.Boolean) extends Primitive

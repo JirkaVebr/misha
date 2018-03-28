@@ -2,7 +2,8 @@ package com.mishaLang.interpreter.ops
 
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Percentage, Scalar}
+import com.mishaLang.ast.Language.Value.Scalar
+import com.mishaLang.ast.NumberUnit.Percentage
 import com.mishaLang.interpreter.validators.NumberValidator
 import com.mishaLang.utils.MathUtils
 
@@ -33,8 +34,8 @@ object NumberOps {
 	def performNumericOperator(operator: NumericOperator, left: Scalar, right: Scalar): Scalar = {
 		Scalar(performOperation(operator, left.value, right.value))
 	}
-	def performNumericOperator(operator: NumericOperator, left: Percentage, right: Percentage): Percentage = {
-		Percentage(performOperation(operator, left.value, right.value))
+	def performNumericOperator(operator: NumericOperator, left: Value.Dimensioned, right: Value.Dimensioned): Value.Number = {
+		Value.Dimensioned(performOperation(operator, left.value, right.value), ???) // TODO
 	}
 
 
@@ -56,8 +57,8 @@ object NumberOps {
 	def isWhole(number: Value.Number): Value.Boolean =
 		Value.Boolean(NumberValidator.isInteger(number.value))
 
-	def toPercentage(number: Value.Number): Value.Percentage =
-		Value.Percentage(number.value)
+	def toPercentage(number: Value.Number): Value.Dimensioned =
+		Value.Dimensioned(number.value, Percentage)
 
 	def toScalar(number: Value.Number): Value.Scalar =
 		Value.Scalar(number.value)

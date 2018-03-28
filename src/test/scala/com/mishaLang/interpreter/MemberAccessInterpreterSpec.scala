@@ -2,6 +2,7 @@ package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Term.{FunctionCall, MemberAccess, Term}
 import com.mishaLang.ast.Language.Value
+import com.mishaLang.ast.NumberUnit.Percentage
 import com.mishaLang.error.NativeError
 
 class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
@@ -25,7 +26,7 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 			run(MemberAccess(Value.Scalar(-123.4), Value.String("isWhole"))).value === Value.Boolean(false)
 		)
 		assert(
-			run(MemberAccess(Value.Scalar(-123), Value.String("toPercentage"))).value === Value.Percentage(-123)
+			run(MemberAccess(Value.Scalar(-123), Value.String("toPercentage"))).value === Value.Dimensioned(-123, Percentage)
 		)
 	}
 
@@ -120,13 +121,13 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 			run(MemberAccess(Value.Rgba(214, 40, 100, 123), Value.String("inverted"))).value === Value.Rgba(41, 215, 155, 123)
 		)
 		assert(
-			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("lightness"))).value === Value.Percentage(51.961)
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("lightness"))).value === Value.Dimensioned(51.961, Percentage)
 		)
 		assert(
 			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("red"))).value === Value.Scalar(253)
 		)
 		assert(
-			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("saturation"))).value === Value.Percentage(98.367)
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("saturation"))).value === Value.Dimensioned(98.367, Percentage)
 		)
 	}
 
@@ -134,13 +135,13 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		assert(
 			run(FunctionCall(
 				MemberAccess(Value.Rgba(180, 212, 85), Value.String("darken")),
-				Vector(Value.Percentage(15)))
+				Vector(Value.Dimensioned(15, Percentage)))
 			).value === Value.Rgba(143, 176, 45)
 		)
 		assert(
 			run(FunctionCall(
 				MemberAccess(Value.Rgba(240, 70, 21), Value.String("lighten")),
-				Vector(Value.Percentage(25)))
+				Vector(Value.Dimensioned(25, Percentage)))
 			).value === Value.Rgba(248, 165, 141)
 		)
 	}

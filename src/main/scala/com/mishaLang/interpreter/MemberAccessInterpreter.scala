@@ -3,7 +3,7 @@ package com.mishaLang.interpreter
 import com.mishaLang.ast.Language.Expression.Expression
 import com.mishaLang.ast.Language.Term.MemberAccess
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Dimensioned, Flag, Callable, NativeFunctionCall, Number, Percentage, Primitive, Rgba, Scalar, Transparent, Tuple2, Unit}
+import com.mishaLang.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Dimensioned, Flag, Callable, NativeFunctionCall, Number, Primitive, Rgba, Scalar, Transparent, Tuple2, Unit}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError.NonStringMemberCastFail
 import com.mishaLang.interpreter.ops.{ColorOps, ListOps, NumberOps, StringOps}
@@ -80,7 +80,6 @@ object MemberAccessInterpreter {
 				number match { // Too bad is it impossible to just do number.copy(value = newValue). :/
 					case subClass: Dimensioned => Some(subClass.copy(value = newValue))
 					case subClass: Scalar => Some(subClass.copy(value = newValue))
-					case subClass: Percentage => Some(subClass.copy(value = newValue))
 				}
 		}
 		commonResult match {

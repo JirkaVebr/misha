@@ -1,8 +1,9 @@
 package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Expression._
-import com.mishaLang.ast.Language.Value.{Percentage, Rgba, Scalar}
+import com.mishaLang.ast.Language.Value.{Rgba, Scalar}
 import com.mishaLang.ast.Language.{Term, Value}
+import com.mishaLang.ast.NumberUnit.Percentage
 import com.mishaLang.error.ProgramError
 import com.mishaLang.interpreter.Symbol.ValueSymbol
 import com.mishaLang.interpreter.ops.{ColorOps, ListOps, StringOps}
@@ -42,7 +43,7 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "reject illegal comparisons" in {
 		assertThrows[ProgramError[_]](run(BinaryOperation(GreaterEquals, Scalar(456), Value.Boolean(true))))
-		assertThrows[ProgramError[_]](run(BinaryOperation(GreaterEquals, Scalar(456), Percentage(456))))
+		assertThrows[ProgramError[_]](run(BinaryOperation(GreaterEquals, Scalar(456), Value.Dimensioned(456, Percentage))))
 	}
 
 

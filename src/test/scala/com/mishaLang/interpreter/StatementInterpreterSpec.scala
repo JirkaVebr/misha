@@ -5,9 +5,9 @@ import com.mishaLang.ast.Language.Statement._
 import com.mishaLang.ast.Language.Term.Variable
 import com.mishaLang.ast.Language.Type.TypeAlias
 import com.mishaLang.ast.Language.{Type, Value, ValueSymbolDeclaration}
-import com.mishaLang.ast.PropertyRecord
+import com.mishaLang.ast.NumberUnit.Percentage
 import com.mishaLang.error.ProgramError
-import com.mishaLang.interpreter.Symbol.{RuleStoreSymbol, TypeSymbol, ValueSymbol}
+import com.mishaLang.interpreter.Symbol.{TypeSymbol, ValueSymbol}
 
 class StatementInterpreterSpec extends BaseInterpreterSpec {
 
@@ -94,7 +94,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 	it should "reject properties illegal in terms of types" in {
 		assertThrows[ProgramError[_]](run(Property(Value.Scalar(123), Value.Scalar(1.6))))
 		assertThrows[ProgramError[_]](run(
-			Property(Value.String("width"), Value.Tuple2(Value.Percentage(80), Value.Percentage(80))))
+			Property(Value.String("width"), Value.Tuple2(Value.Dimensioned(80, Percentage), Value.Dimensioned(80, Percentage))))
 		)
 	}
 

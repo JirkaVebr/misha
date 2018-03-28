@@ -1,6 +1,6 @@
 package com.mishaLang.interpreter.ops
 
-import com.mishaLang.ast.Language.Value.{Dimensioned, Native, Number, Percentage, Primitive, Rgba, Scalar, Value}
+import com.mishaLang.ast.Language.Value.{Dimensioned, Native, Number, Primitive, Rgba, Scalar, Value}
 import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.ast.NumberUnit
 import com.mishaLang.ast.NumberUnit.{Atomic, ComplexUnit, SimpleUnit}
@@ -22,8 +22,7 @@ object StringOps {
 		case primitive: Primitive => primitive match {
 			case Value.String(string) => Some(Value.String(string))
 			case number: Number => number match {
-				case Scalar(magnitude) => Some(Value.String(numberToString(magnitude)))
-				case Percentage(magnitude) => Some(Value.String(numberToString(magnitude) + '%'))
+				case Scalar(magnitude) => Some(Value.String(NumberOps.formatDouble(magnitude)))
 				case Dimensioned(magnitude, unit) => unit match {
 					case simple: SimpleUnit => simple match {
 						case Atomic(atomicUnit) =>

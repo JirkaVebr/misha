@@ -1,7 +1,8 @@
 package com.mishaLang.interpreter.ops
 
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Percentage, Rgba}
+import com.mishaLang.ast.Language.Value.{Dimensioned, Rgba}
+import com.mishaLang.ast.NumberUnit.Percentage
 import com.mishaLang.interpreter.BaseInterpreterSpec
 
 class ColorOpsSpec extends BaseInterpreterSpec{
@@ -19,9 +20,9 @@ class ColorOpsSpec extends BaseInterpreterSpec{
 	}
 
 	it should "correctly lighten/darken rgba colors" in {
-		assert(ColorOps.darken(Rgba(255, 255, 255), Percentage(10)) === Rgba(230, 230, 230))
-		assert(ColorOps.darken(Rgba(180, 212, 85), Percentage(15)) === Rgba(143, 176, 45))
-		assert(ColorOps.lighten(Rgba(240, 70, 21), Percentage(25)) === Rgba(248, 165, 141))
+		assert(ColorOps.darken(Rgba(255, 255, 255), Value.Dimensioned(10, Percentage)) === Rgba(230, 230, 230))
+		assert(ColorOps.darken(Rgba(180, 212, 85), Value.Dimensioned(15, Percentage)) === Rgba(143, 176, 45))
+		assert(ColorOps.lighten(Rgba(240, 70, 21), Value.Dimensioned(25, Percentage)) === Rgba(248, 165, 141))
 	}
 
 	it should "correctly cast colors to strings" in {

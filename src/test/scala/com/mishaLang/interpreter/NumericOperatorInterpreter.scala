@@ -2,19 +2,13 @@ package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Expression.{Addition, BinaryOperation, Multiplication, Subtraction}
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Percentage, Rgba, Scalar}
+import com.mishaLang.ast.Language.Value.{Rgba, Scalar}
 import com.mishaLang.error.ProgramError
 import com.mishaLang.interpreter.ops.{ColorOps, ListOps, StringOps}
 
 class NumericOperatorInterpreter extends BaseInterpreterSpec {
 
 	behavior of "Numeric operator interpreter"
-
-	it should "evaluate Color ± Percentage" in {
-		val (l, r) = (Rgba(240, 70, 21), Percentage(25))
-		assert(run(BinaryOperation(Addition, l, r)).value === ColorOps.lighten(l, r))
-		assert(run(BinaryOperation(Subtraction, l, r)).value === ColorOps.darken(l, r))
-	}
 
 	it should "evaluate Color ± Color" in {
 		val (l, r) = (Rgba(1, 2, 3, 4), Rgba(4, 3, 2, 1))

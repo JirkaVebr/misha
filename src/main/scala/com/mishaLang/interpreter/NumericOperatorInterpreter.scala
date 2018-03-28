@@ -88,12 +88,10 @@ object NumericOperatorInterpreter {
 												(implicit state: EnvWithValue): Try[EnvWithValue] = left match {
 		case leftRgba: Rgba => operator match {
 			case Addition => right match {
-				case percentage: Percentage => state ~> ColorOps.lighten(leftRgba, percentage)
 				case rightRgba: Rgba => state ~> ColorOps.addColors(leftRgba, rightRgba)
 				case _ => state.fail(IllegalNumericOperatorOperand, left, right)
 			}
 			case Subtraction => right match {
-				case percentage: Percentage => state ~> ColorOps.darken(leftRgba, percentage)
 				case rightRgba: Rgba => state ~> ColorOps.subtractColors(leftRgba, rightRgba)
 				case _ => state.fail(IllegalNumericOperatorOperand, left, right)
 			}

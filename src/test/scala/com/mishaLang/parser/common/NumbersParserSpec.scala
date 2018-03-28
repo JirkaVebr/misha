@@ -2,7 +2,7 @@ package com.mishaLang.parser.common
 
 import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.NodePosition
-import com.mishaLang.ast.NumberUnit.{Atomic, UnitOfMeasure}
+import com.mishaLang.ast.NumberUnit.{Atomic, Percentage, UnitOfMeasure}
 import com.mishaLang.parser.BaseParserSpec
 import com.mishaLang.spec.units.Time.{MiliSecond, Second}
 
@@ -59,17 +59,17 @@ class NumbersParserSpec extends BaseParserSpec {
 	}
 
 	it should "parse percentage as a number" in {
-		assert(parse("+0%") === Value.Percentage(0))
-		assert(parse("0%") === Value.Percentage(0))
-		assert(parse("123%") === Value.Percentage(123))
-		assert(parse("11.22%") === Value.Percentage(11.22))
+		assert(parse("+0%") === Value.Dimensioned(0, Percentage))
+		assert(parse("0%") === Value.Dimensioned(0, Percentage))
+		assert(parse("123%") === Value.Dimensioned(123, Percentage))
+		assert(parse("11.22%") === Value.Dimensioned(11.22, Percentage))
 	}
 
 	it should "parse percentage as a dedicated rule" in {
-		assert(parsePercentage("+0%") === Value.Percentage(0))
-		assert(parsePercentage("0%") === Value.Percentage(0))
-		assert(parsePercentage("123%") === Value.Percentage(123))
-		assert(parsePercentage("11.22%") === Value.Percentage(11.22))
+		assert(parsePercentage("+0%") === Value.Dimensioned(0, Percentage))
+		assert(parsePercentage("0%") === Value.Dimensioned(0, Percentage))
+		assert(parsePercentage("123%") === Value.Dimensioned(123, Percentage))
+		assert(parsePercentage("11.22%") === Value.Dimensioned(11.22, Percentage))
 	}
 
 	it should "parse number positioning" in {

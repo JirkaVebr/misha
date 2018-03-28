@@ -1,9 +1,9 @@
 package com.mishaLang.interpreter.typing
 
 import com.mishaLang.ast.Language.Type.{Any, Color, Flag, Formula, Function, Literal, Map, Subtraction, TypeAlias, Union}
-import com.mishaLang.ast.Language.Value.{Color, Composite, Dimensioned, Flag, NativeFunctionCall, Number, Percentage, Primitive, Scalar, String, Tuple2, Unit}
+import com.mishaLang.ast.Language.Value.{Color, Composite, Dimensioned, Flag, NativeFunctionCall, Number, Primitive, Scalar, String, Tuple2, Unit}
 import com.mishaLang.ast.Language.{Type, Value}
-import com.mishaLang.ast.NumberUnit.{Atomic, SimpleUnit}
+import com.mishaLang.ast.NumberUnit.{Atomic, Percentage, SimpleUnit}
 import com.mishaLang.interpreter.EnvWithValue
 import com.mishaLang.spec.units.Angle.Angle
 import com.mishaLang.spec.units.AtomicUnit
@@ -23,7 +23,6 @@ object Typing {
 			case number: Number => number match {
 				case Dimensioned(value, unit) => sys.error("todo") // TODO
 				case Scalar(_) => Type.Scalar
-				case Percentage(_) => Type.Percentage
 			}
 			case Value.Boolean(_) => Type.Boolean
 			case String(_) => Type.String
@@ -46,7 +45,7 @@ object Typing {
 			case Color => value.isInstanceOf[Value.Color]
 			case Literal(literalValue) => value == literalValue
 			case Type.Scalar => value.isInstanceOf[Value.Scalar]
-			case Type.Percentage => value.isInstanceOf[Value.Percentage] // TODO?
+			case Type.Percentage => value.isInstanceOf[Value.Dimensioned] && value.asInstanceOf[Value.Dimensioned].unit == Percentage
 			case Type.Angle => isUnit[Angle](value)
 			case Type.Flex => isUnit[Flex](value)
 			case Type.Time => isUnit[Time](value)

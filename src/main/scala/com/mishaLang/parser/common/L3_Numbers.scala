@@ -19,7 +19,7 @@ trait L3_Numbers { this: org.parboiled2.Parser
 		nodeStart ~ (atomic(base ~ optional(exponent) ~ optional(unitOfMeasure)) ~> (createNumber(_, _, _))) ~ nodeEnd
 	}
 
-	def Percentage: Rule1[Value.Percentage] = rule {
+	def Percentage: Rule1[Value.Dimensioned] = rule {
 		nodeStart ~ (atomic(base ~ optional(exponent) ~ percentageUnit) ~> (
 			(base: Double, exponent: Option[Double], unit: NumberUnit.SimpleUnit) =>
 				createNumber(base, exponent, Some(unit))
@@ -90,10 +90,7 @@ object L3_Numbers {
 	private def createNumber(base: Double, exponent: Option[Double], unitOfMeasure: Option[NumberUnit.UnitOfMeasure]): Value.Number = {
 		val value = getNumericValue(base, exponent)
 		unitOfMeasure match {
-			case Some(unit) => unit match {
-				case NumberUnit.Percentage => Value.Percentage(value)
-				case unit: UnitOfMeasure  => Value.Dimensioned(value, unit)
-			}
+			case Some(unit) => Value.Dimensioned(value, unit)
 			case None => Value.Scalar(value)
 		}
 	}

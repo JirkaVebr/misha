@@ -1,13 +1,12 @@
 package com.mishaLang.interpreter.validators
 
-import com.mishaLang.ast.Language.Value.{Percentage, Scalar}
+import com.mishaLang.ast.Language.Value
 
 object NumberValidator {
 
 	def isInteger(number: Double): Boolean =
 		number.abs <= Double.MaxValue && number.floor == number
 
-	def isInteger(number: Scalar): Boolean = isInteger(number.value)
-	def isInteger(number: Percentage): Boolean = isInteger(number.value)
+	def isInteger(number: Value.Number): Boolean = isInteger(number.value)
 
 }

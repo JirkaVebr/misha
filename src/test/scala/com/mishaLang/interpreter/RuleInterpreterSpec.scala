@@ -4,6 +4,7 @@ import com.mishaLang.ast.Language.Expression.Block
 import com.mishaLang.ast.Language.Statement.{Property, Rule, Sequence}
 import com.mishaLang.ast.Language.Term.ParentSelector
 import com.mishaLang.ast.Language.{Term, Value}
+import com.mishaLang.ast.NumberUnit.Percentage
 import com.mishaLang.ast.PropertyRecord
 import com.mishaLang.ast.Selector.{Class, Complex, Id, SelectorList}
 import com.mishaLang.interpreter.RuleContext.RuleSelector
@@ -18,7 +19,7 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 	it should "correctly interpret simple rules" in {
 		val newState = run(Rule(Vector(Left(".class")), Block(Sequence(
 			Property(Value.String("line-height"), Value.Scalar(1.6)),
-			Property(Value.String("width"), Value.Percentage(80))
+			Property(Value.String("width"), Value.Dimensioned(80, Percentage))
 		))))
 		val ruleEnvironment = newState.environment.subEnvironments.head
 
@@ -44,7 +45,7 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 			))),
 			Left(" .mySubclass")
 		), Block(
-			Property(Value.String("width"), Value.Percentage(80))
+			Property(Value.String("width"), Value.Dimensioned(80, Percentage))
 		)))
 		val ruleEnvironment = newState.environment.subEnvironments.head
 
@@ -65,7 +66,7 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 	it should "correctly interpret rules with implicit parent selectors" in {
 		val newState = run(Rule(Vector(Left(".myClass")), Block(Rule(
 			Vector(Left("#myId, .anotherClass")), Block(
-				Property(Value.String("width"), Value.Percentage(80))
+				Property(Value.String("width"), Value.Dimensioned(80, Percentage))
 			))
 		)))
 		val outerRuleEnvironment = newState.environment.subEnvironments.head
@@ -81,7 +82,7 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 	it should "correctly interpret rules with explicit parent selectors" in {
 		val newState = run(Rule(Vector(Left(".myClass1, .myClass2")), Block(Rule(
 			Vector(Right(ParentSelector), Left(" .anotherClass")), Block(
-				Property(Value.String("width"), Value.Percentage(80))
+				Property(Value.String("width"), Value.Dimensioned(80, Percentage))
 			))
 		)))
 		val outerRuleEnvironment = newState.environment.subEnvironments.head

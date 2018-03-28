@@ -1,6 +1,5 @@
 package com.mishaLang.ast.atRules
 
-import com.mishaLang.ast.Language.Value
 import com.mishaLang.interpreter.Symbol.ValueSymbol
 
 object Keyframes {
@@ -12,5 +11,5 @@ object Keyframes {
 
 	case object From extends KeyframeSelector
 	case object To extends KeyframeSelector
-	case class Percentage(value: Value.Percentage) extends KeyframeSelector
+	case class Percentage(value: Double) extends KeyframeSelector
 }

@@ -3,7 +3,7 @@ package com.mishaLang.interpreter
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Term.Term
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Dimensioned, Percentage, Scalar}
+import com.mishaLang.ast.Language.Value.{Dimensioned, Scalar}
 import com.mishaLang.error.ProgramError
 import com.mishaLang.error.ProgramError.{NonBooleanCondition, StackOverflow}
 
@@ -35,7 +35,6 @@ object ExpressionInterpreter {
 					case number: Value.Number =>  newState ~> (number match {
 						case Dimensioned(magnitude, unit) => Dimensioned(-magnitude, unit)
 						case Scalar(magnitude) => Scalar(-magnitude)
-						case Percentage(magnitude) => Percentage(-magnitude)
 					})
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}

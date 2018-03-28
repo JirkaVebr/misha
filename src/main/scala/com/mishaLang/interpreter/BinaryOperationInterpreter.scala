@@ -1,11 +1,11 @@
 package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Expression._
-import com.mishaLang.ast.Language.Value.{Dimensioned, Percentage, Scalar, Value}
+import com.mishaLang.ast.Language.Value.{Dimensioned, Scalar, Value}
 import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
-import com.mishaLang.interpreter.typing.{Subtype, Typing}
+import com.mishaLang.interpreter.typing.Typing
 
 import scala.util.{Failure, Success, Try}
 
@@ -67,8 +67,7 @@ object BinaryOperationInterpreter {
 			}
 			(left, right) match {
 				case (leftNumeric: Value.Number, rightNumeric: Value.Number) => (leftNumeric, rightNumeric) match {
-					case (Scalar(_), Scalar(_)) |
-							 (Percentage(_), Percentage(_)) =>
+					case (Scalar(_), Scalar(_)) =>
 						state ~> Value.Boolean(operation(leftNumeric.value, rightNumeric.value))
 					case (Dimensioned(_, _), Dimensioned(_, _)) => sys.error("todo") // TODO
 					case _ => state.fail(ComparingIncompatibleNumerics, left, right)
