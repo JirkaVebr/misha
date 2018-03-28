@@ -10,6 +10,7 @@ package object types {
 		Global.name -> Global(),
 		Margin.name -> Margin(),
 		Padding.name -> Padding(),
+		Width.name -> Width(),
 	)
 
 }
