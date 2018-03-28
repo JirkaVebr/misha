@@ -17,10 +17,10 @@ object ColorOps {
 
 
 	private def getPresentableAlpha(color: Rgba): Double =
-		MathUtils.round(color.a / 255d, AlphaPrecision)
+		NumberOps.normalizeDouble(color.a / 255d, AlphaPrecision)
 
 	private def getPresentablePercentage(percentage: Double): Double =
-		MathUtils.round(percentage, PercentagePrecision)
+		NumberOps.normalizeDouble(percentage, PercentagePrecision)
 
 	/**
 		*

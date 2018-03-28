@@ -4,10 +4,21 @@ import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.Language.Value.{Percentage, Scalar}
 import com.mishaLang.interpreter.validators.NumberValidator
+import com.mishaLang.utils.MathUtils
 
 object NumberOps {
 
 	final val NumericPrecision = 6
+
+
+	def normalizeDouble(double: Double, precision: Int = NumericPrecision): Double =
+		if (precision == 0) double.round
+		else MathUtils.round(double, precision)
+
+
+	def formatDouble(double: Double, precision: Int = NumericPrecision): String =
+		if (NumberValidator.isInteger(double)) double.toInt.toString
+		else normalizeDouble(double, precision).toString
 
 
 	private def performOperation(operator: NumericOperator, left: Double, right: Double): Double = operator match {
