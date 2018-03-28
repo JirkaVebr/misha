@@ -8,10 +8,10 @@ import com.mishaLang.ast.Language.{Term, Value, ValueSymbolDeclaration}
 import com.mishaLang.ast.Selector._
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
-import com.mishaLang.interpreter.EnvironmentType.FunctionEnvironment
 import com.mishaLang.interpreter.RuleContext.{AtRule, RuleSelector}
+import com.mishaLang.interpreter.Symbol.RuleStoreSymbol
 import com.mishaLang.interpreter.ops.FunctionOps
-import com.mishaLang.interpreter.typing.{Subtype, Typing}
+import com.mishaLang.interpreter.typing.Typing
 
 import scala.util.{Failure, Success, Try}
 
@@ -30,6 +30,7 @@ object TermInterpreter {
 		}
 		case symbol: MagicSymbol => runMagicSymbol(symbol)
 		case variable: Variable => runVariable(variable)
+		case variable: PropertyVariable => runPropertyVariable(variable)
 		case functionCall: FunctionCall => runFunctionCall(functionCall)
 		case function: Term.Function => runFunctionTerm(function)
 		case tuple: Term.Tuple2 => runTupleTerm(tuple)
@@ -77,6 +78,28 @@ object TermInterpreter {
 		variableValue match {
 			case Some(value) => state ~> value
 			case None => state.fail(ReadingUndefinedVariable, variable)
+		}
+	}
+
+	private def runPropertyVariable(variable: PropertyVariable)(implicit state: EnvWithValue): Try[EnvWithValue] = {
+		state.environment.lookupContext() match {
+			case Some(ruleContext) =>
+				state.environment.lookup(RuleStoreSymbol).get.get(ruleContext) match {
+					case Some(propertyStore) =>
+						propertyStore.get(variable.name) match {
+							case Some(propertyRecords) =>
+								if (propertyRecords.lengthCompare(1) == 0)
+									state ~> propertyRecords.head.original
+								else
+									state ~> Value.List(propertyRecords.map(propertyRecord => propertyRecord.original).toVector)
+							case None =>
+								??? // Undefined property
+						}
+					case None =>
+						??? // Empty rule
+				}
+			case None =>
+				??? // We aren't even in a rule
 		}
 	}
 
