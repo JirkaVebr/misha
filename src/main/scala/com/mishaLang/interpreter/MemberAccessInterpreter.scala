@@ -67,6 +67,7 @@ object MemberAccessInterpreter {
 			case "isOdd" => Some(NumberOps.isOdd(number))
 			case "isPositive" => Some(NumberOps.isPositive(number))
 			case "isWhole" => Some(NumberOps.isWhole(number))
+			case "sqrt" => NumberOps.sqrt(number)
 			case "toPercentage" => Some(NumberOps.toPercentage(number))
 			case "toScalar" => Some(NumberOps.toScalar(number))
 			case "toString" => StringOps.castToString(number)
@@ -79,7 +80,7 @@ object MemberAccessInterpreter {
 				}
 				number match { // Too bad is it impossible to just do number.copy(value = newValue). :/
 					case subClass: Dimensioned => Some(subClass.copy(value = newValue))
-					case subClass: Scalar => Some(subClass.copy(value = newValue))
+					case _: Scalar => Some(Scalar(newValue))
 				}
 		}
 		commonResult match {

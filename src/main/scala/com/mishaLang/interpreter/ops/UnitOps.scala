@@ -85,9 +85,10 @@ object UnitOps {
 		RaisedUnit(added)
 	}
 
-	def multiplyUnit(unit: RaisedUnit, factor: Int): RaisedUnit =
+
+	def multiplyUnit(unit: RaisedUnit, factor: Double): RaisedUnit =
 		RaisedUnit(unit.subUnits.map {
-			case (subUnit, exponent) => (subUnit, factor * exponent)
+			case (subUnit, exponent) => (subUnit, (factor * exponent).toInt)
 		})
 
 

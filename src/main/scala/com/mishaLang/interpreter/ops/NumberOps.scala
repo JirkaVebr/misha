@@ -119,6 +119,23 @@ object NumberOps {
 	def isWhole(number: Value.Number): Value.Boolean =
 		Value.Boolean(NumberValidator.isInteger(number.value))
 
+	def sqrt(number: Value.Number): Option[Value.Number] =
+		number match {
+			case Dimensioned(value, unit) =>
+				val raisedUnit = UnitOps.raiseUnit(unit)
+				val isSquare = raisedUnit.subUnits.forall {
+					case (_, exponent) => exponent % 2 == 0
+				}
+				if (isSquare)
+					Some(UnitOps.normalizeDimensioned(
+						Math.sqrt(value), UnitOps.multiplyUnit(raisedUnit, 0.5)
+					))
+				else
+					None
+			case Scalar(value) =>
+				Some(Scalar(Math.sqrt(value)))
+		}
+
 	def toPercentage(number: Value.Number): Value.Dimensioned =
 		Value.Dimensioned(number.value, Percentage)
 
