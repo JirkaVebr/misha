@@ -39,7 +39,7 @@ class SelectorPreprocessor(val rawSelector: RawRuleHead, val parentSelector: Vec
 	def preProcess(): String = {
 		val split = splitIntoSelectorList(rawSelector)
 
-		val x = split.map {
+		split.map {
 			selector => {
 				val withParents = selector.head match {
 					case Left(_) if parentSelector.nonEmpty => Right(parentSelector) +: Left(Descendant.symbol) +: selector
@@ -48,7 +48,6 @@ class SelectorPreprocessor(val rawSelector: RawRuleHead, val parentSelector: Vec
 				RuleHeadPreprocessor.explode(withParents)
 			}
 		}.mkString(SelectorListSeparator.symbol + ' ')
-		x
 	}
 
 }
