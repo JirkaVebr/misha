@@ -7,7 +7,7 @@ import com.mishaLang.ast.PropertyRecord
 import com.mishaLang.error.ProgramError._
 import com.mishaLang.interpreter.Symbol.RuleStoreSymbol
 import com.mishaLang.interpreter.ops.StringOps
-import com.mishaLang.interpreter.typing.{Subtype, Typing}
+import com.mishaLang.interpreter.typing.Typing
 import com.mishaLang.utils.LinkedMap
 
 import scala.util.{Failure, Success, Try}
@@ -37,11 +37,10 @@ object StatementInterpreter {
 	private def runTypeAliasDeclaration(typeAlias: TypeAliasDeclaration)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val existingType = state.environment.lookup(typeAlias.alias.name)
 
-		if (existingType.nonEmpty && !Subtype.isSubtypeOf(typeAlias.subType, existingType.get)) {
-			state.fail(NonNarrowingTypeAlias, typeAlias)
-		} else {
+		if (existingType.nonEmpty)
+			state.fail(DuplicateTypeDeclaration, typeAlias)
+		else
 			state.withNewSymbol(typeAlias.alias.name)(typeAlias.subType)
-		}
 	}
 
 
