@@ -73,7 +73,7 @@ object StatementInterpreter {
 		}
 
 
-		private def runVariableDeclaration(varDeclaration: VariableDeclaration)(implicit state: EnvWithValue): Try[EnvWithValue] = {
+	private def runVariableDeclaration(varDeclaration: VariableDeclaration)(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		val declaration = varDeclaration.declaration
 		if (state.environment.isInCurrentScope(declaration.name))
 			state.fail(DuplicateVariableDeclaration, varDeclaration)
