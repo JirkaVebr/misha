@@ -1,7 +1,8 @@
 package com.mishaLang.emitter
 
+import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.PropertyRecord
-import com.mishaLang.interpreter.Symbol.{RuleStoreSymbol, RuleContextSymbol}
+import com.mishaLang.interpreter.Symbol.{RuleContextSymbol, RuleStoreSymbol}
 import com.mishaLang.interpreter.Environment
 import com.mishaLang.interpreter.EnvironmentType.FunctionEnvironment
 
@@ -35,7 +36,10 @@ class Emitter(val finalEnvironment: Environment) {
 
 	private def emitProperties(properties: List[PropertyRecord])(implicit builder: StringBuilder): StringBuilder =
 		properties.reverse.map((property: PropertyRecord) =>
-			'\t' + property.name + ": " + property.output + ";\n" // TODO handle flags
+			'\t' + property.name + ": " + property.output + (
+				if (property.flags.contains(Value.Important)) " !important"
+				else ""
+			) + ";\n" // TODO handle flags
 		).foldLeft(builder)(_.append(_))
 
 	//private def
