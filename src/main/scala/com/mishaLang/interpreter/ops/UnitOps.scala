@@ -1,5 +1,7 @@
 package com.mishaLang.interpreter.ops
 
+import com.mishaLang.ast.Language.Value
+import com.mishaLang.ast.Language.Value.{Dimensioned, Scalar}
 import com.mishaLang.ast.NumberUnit._
 import com.mishaLang.spec.units.Angle._
 import com.mishaLang.spec.units.AtomicUnit
@@ -8,6 +10,8 @@ import com.mishaLang.spec.units.Frequency.{Frequency, Hertz, KiloHertz}
 import com.mishaLang.spec.units.Length._
 import com.mishaLang.spec.units.Resolution.Resolution
 import com.mishaLang.spec.units.Time.{MiliSecond, Second, Time}
+
+import scala.annotation.tailrec
 
 object UnitOps {
 
@@ -29,6 +33,62 @@ object UnitOps {
 		Pica -> 16d,
 		Point -> 4d / 3d
 	)
+
+
+	def normalizeDimensioned(value: Double, unit: UnitOfMeasure): Value.Number =
+		unit match {
+			case _: SimpleUnit => Dimensioned(value, unit)
+			case raised: RaisedUnit =>
+				if (raised.subUnits.isEmpty)
+					Scalar(value)
+				else {
+					val conclusive: Option[Value.Number] =
+						if (raised.subUnits.size == 1)
+							raised.subUnits.head match {
+								case (Percentage, 1) => Some(Dimensioned(value, Percentage))
+								case (atomic: Atomic, 1) => Some(Dimensioned(value, atomic))
+								case _ => None
+							}
+						else None
+					conclusive match {
+						case Some(number) => number
+						case None =>
+							val newSubUnits = raised.subUnits.filterNot {
+								case (_, exponent) => exponent == 0
+							}
+							if (newSubUnits.isEmpty) Scalar(value)
+							else Dimensioned(value, unit)
+					}
+				}
+		}
+
+	def raiseUnit(unit: UnitOfMeasure): RaisedUnit =
+		unit match {
+			case simple: SimpleUnit => RaisedUnit(Map(simple -> 1))
+			case raised: RaisedUnit => raised
+		}
+
+
+	def addUnits(left: RaisedUnit, right: RaisedUnit): RaisedUnit = {
+		@tailrec def add(leftUnits: SubUnits, rightUnits: SubUnits): SubUnits = {
+			if (rightUnits.isEmpty) leftUnits
+			else {
+				val head = rightUnits.head
+				val newExponent = head._2 + leftUnits.getOrElse(head._1, 0)
+				val tail = rightUnits.tail
+
+				if (newExponent == 0) add(leftUnits - head._1, tail)
+				else add(leftUnits.updated(head._1, newExponent), tail)
+			}
+		}
+		val added = add(left.subUnits, right.subUnits)
+		RaisedUnit(added)
+	}
+
+	def multiplyUnit(unit: RaisedUnit, factor: Int): RaisedUnit =
+		RaisedUnit(unit.subUnits.map {
+			case (subUnit, exponent) => (subUnit, factor * exponent)
+		})
 
 
 	def convert(value: Double, source: UnitOfMeasure, target: UnitOfMeasure): Option[Double] =
