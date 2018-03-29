@@ -8,6 +8,7 @@ import com.mishaLang.interpreter.ScopeId
 import com.mishaLang.interpreter.Symbol.{TypeSymbol, ValueSymbol}
 import com.mishaLang.interpreter.typing.Typing
 import com.mishaLang.spec.NativeFunction.NativeFunction
+import com.mishaLang.utils.ImmutableProduct
 
 import scala.collection.immutable.{Map => SMap}
 import scala.util.Try
@@ -22,9 +23,7 @@ object Language {
 		* but then all descendant traits would have to do this as well, and so we just naughtily rely on the case class
 		* leaves to override the appropriate methods
 		*/
-	sealed trait Node extends Product {
-
-		override lazy val hashCode: Int = scala.runtime.ScalaRunTime._hashCode(this)
+	sealed trait Node extends Product with ImmutableProduct {
 
 		protected var _position: Option[NodePosition] = None
 

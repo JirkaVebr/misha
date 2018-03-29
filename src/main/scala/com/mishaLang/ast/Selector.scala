@@ -6,6 +6,7 @@ import com.mishaLang.spec.PseudoClasses.NonFunctional.NonFunctionalPseudoClass
 import com.mishaLang.spec.PseudoClasses.{AnPlusB, Directionality, DropFilter}
 import com.mishaLang.spec.SelectorSeparator.Combinator
 import com.mishaLang.spec.{PseudoClasses, PseudoElements}
+import com.mishaLang.utils.ImmutableProduct
 
 
 object Selector {
@@ -13,8 +14,7 @@ object Selector {
 
 	/** Raw selectors exist because they can contain silly selectors such as "div#foo#bar.baz.baz::before span" */
 	sealed trait RawSelector extends Selector
-	sealed trait NormalizedSelector extends Selector with Product {
-		override lazy val hashCode: Int = scala.runtime.ScalaRunTime._hashCode(this)
+	sealed trait NormalizedSelector extends Selector with Product with ImmutableProduct {
 		override lazy val toString: String = SelectorEmitter.emit(this)(StringBuilder.newBuilder).mkString
 	}
 
