@@ -1,10 +1,15 @@
 package com.mishaLang.interpreter
 
-import com.mishaLang.ast.Language.Expression.{Addition, BinaryOperation, Multiplication, Subtraction}
+import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Rgba, Scalar}
+import com.mishaLang.ast.Language.Value.{Dimensioned, Formula, Rgba, Scalar}
+import com.mishaLang.ast.NumberUnit.{Atomic, RaisedUnit}
+import com.mishaLang.ast.SimpleExpression
+import com.mishaLang.ast.SimpleExpression.Term
 import com.mishaLang.error.ProgramError
 import com.mishaLang.interpreter.ops.{ColorOps, ListOps, StringOps}
+import com.mishaLang.spec.units.Angle.Turn
+import com.mishaLang.spec.units.Length.Pixel
 
 class NumericOperatorInterpreter extends BaseInterpreterSpec {
 
@@ -32,6 +37,38 @@ class NumericOperatorInterpreter extends BaseInterpreterSpec {
 		val (l, r) = (Value.List(Vector(Scalar(1), Scalar(2))), Scalar(3))
 		assert(run(BinaryOperation(Multiplication, l, r)).value === ListOps.repeat(l, r.value.toInt))
 		assertThrows[ProgramError[_]](run(BinaryOperation(Multiplication, l, Scalar(123.456))))
+	}
+
+	it should "evaluate Dimensioned op Dimensioned" in {
+		val TenPx = Dimensioned(10, Atomic(Pixel))
+		val FiveTurns = Dimensioned(5, Atomic(Turn))
+
+		assert(run(BinaryOperation(Division, TenPx, TenPx)).value === Scalar(1))
+		assert(run(BinaryOperation(Division, TenPx, FiveTurns)).value === Dimensioned(
+			2, RaisedUnit(Map(Atomic(Pixel) -> 1, Atomic(Turn) -> -1))
+		))
+
+		assert(run(BinaryOperation(Multiplication, TenPx, TenPx)).value === Dimensioned(
+			100, RaisedUnit(Map(Atomic(Pixel) -> 2))
+		))
+		assert(run(BinaryOperation(Multiplication, TenPx, FiveTurns)).value === Dimensioned(
+			50, RaisedUnit(Map(Atomic(Pixel) -> 1, Atomic(Turn) -> 1))
+		))
+
+		assert(run(BinaryOperation(Addition, TenPx, TenPx)).value === Dimensioned(20, Atomic(Pixel)))
+		assert(run(BinaryOperation(Addition, TenPx, FiveTurns)).value === Formula(
+			SimpleExpression.BinaryOperation(Addition, Term(TenPx), Term(FiveTurns))
+		))
+
+		assert(run(BinaryOperation(Subtraction, TenPx, TenPx)).value === Dimensioned(0, Atomic(Pixel)))
+		assert(run(BinaryOperation(Subtraction, TenPx, FiveTurns)).value === Formula(
+			SimpleExpression.BinaryOperation(Subtraction, Term(TenPx), Term(FiveTurns))
+		))
+
+		assertThrows[ProgramError[_]](run(BinaryOperation(Exponentiation, TenPx, TenPx)))
+		assertThrows[ProgramError[_]](run(BinaryOperation(Exponentiation, TenPx, FiveTurns)))
+		assertThrows[ProgramError[_]](run(BinaryOperation(Remainder, TenPx, TenPx)))
+		assertThrows[ProgramError[_]](run(BinaryOperation(Remainder, TenPx, FiveTurns)))
 	}
 
 

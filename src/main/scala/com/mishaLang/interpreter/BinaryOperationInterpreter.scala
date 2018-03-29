@@ -5,7 +5,6 @@ import com.mishaLang.ast.Language.Value.{Dimensioned, Scalar, Value}
 import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
-import com.mishaLang.interpreter.typing.Typing
 
 import scala.util.{Failure, Success, Try}
 

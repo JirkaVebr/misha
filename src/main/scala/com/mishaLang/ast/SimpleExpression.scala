@@ -5,6 +5,9 @@ import com.mishaLang.ast.Language.Value
 
 object SimpleExpression {
 
+	/**
+		* These expressions are to be used within calc()
+		*/
 	sealed trait SimpleExpression
 
 	case class BinaryOperation(operator: SimpleNumericOperator, left: SimpleExpression, right: SimpleExpression)

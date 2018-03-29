@@ -1,8 +1,9 @@
 package com.mishaLang.interpreter
 
-import com.mishaLang.ast.Language.Expression.{Addition, Multiplication, NumericOperator, Subtraction}
+import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.Language.Value._
+import com.mishaLang.ast.SimpleExpression
 import com.mishaLang.error.ProgramError._
 import com.mishaLang.interpreter.ops.{ColorOps, ListOps, NumberOps, StringOps}
 import com.mishaLang.interpreter.validators.NumberValidator
@@ -12,6 +13,7 @@ import scala.util.Try
 object NumericOperatorInterpreter {
 
 
+	// TODO division by zero
 	def run(operator: NumericOperator, left: Value, right: Value)
 				 (implicit state: EnvWithValue): Try[EnvWithValue] = left match {
 		case primitive: Primitive => primitive match {
@@ -53,7 +55,16 @@ object NumericOperatorInterpreter {
 				case _ =>
 					state.fail(IllegalNumericOperatorOperand, left, right)
 			}
-			case Formula(formula) => ???
+			case Formula(formula) =>
+				operator match {
+					case simpleOperator: SimpleNumericOperator =>
+						state ~> NumberOps.simplifyFormula(Formula(SimpleExpression.BinaryOperation(
+							simpleOperator,
+							SimpleExpression.Term(left), formula
+						)))
+					case _: ComplexNumericOperator =>
+						state.fail(IllegalNumericOperatorOperand, left, right)
+				}
 			case _ =>
 				state.fail(IllegalNumericOperatorOperand, left, right)
 		}
@@ -63,7 +74,26 @@ object NumericOperatorInterpreter {
 		(left, right) match {
 			case (leftScalar: Value.Scalar, rightScalar: Value.Scalar) =>
 				state ~> NumberOps.performNumericOperator(operator, leftScalar, rightScalar)
-			case _ => ???
+			case (leftDimensioned: Value.Dimensioned, rightDimensioned: Value.Dimensioned) =>
+				NumberOps.performNumericOperator(operator, leftDimensioned, rightDimensioned) match {
+					case Some(value) => state ~> value
+					case None => state.fail(IllegalNumericOperatorOperand, left, right)
+				}
+			case (leftDimensioned: Value.Dimensioned, rightScalar: Value.Scalar) =>
+				NumberOps.performNumericOperator(operator, leftDimensioned, rightScalar) match {
+					case Some(value) => state ~> value
+					case None => state.fail(IllegalNumericOperatorOperand, left, right)
+				}
+			case _ =>
+				operator match {
+					case simpleOperator: SimpleNumericOperator =>
+						state ~> NumberOps.simplifyFormula(Formula(SimpleExpression.BinaryOperation(
+							simpleOperator,
+							SimpleExpression.Term(left), SimpleExpression.Term(right)
+						)))
+					case _: ComplexNumericOperator =>
+						state.fail(IllegalNumericOperatorOperand, left, right)
+				}
 		}
 	}
 
