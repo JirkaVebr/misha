@@ -311,7 +311,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 				(',' ~
 					(
 						( // This subrule basically means that a newline can only appear after a comma.
-							capture(SingleLineWhitespace ~ '\n') ~> ((endOfLine: String) => appendSB("," + endOfLine))
+							capture(SingleLineWhitespace ~ '\n' ~ SingleLineWhitespace) ~> ((endOfLine: String) => appendSB(",\n"))
 						) |
 							appendSB(',')
 						)

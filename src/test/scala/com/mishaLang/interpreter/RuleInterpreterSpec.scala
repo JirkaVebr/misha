@@ -65,7 +65,7 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "correctly interpret rules with implicit parent selectors" in {
 		val newState = run(Rule(Vector(Left(".myClass")), Block(Rule(
-			Vector(Left("#myId, .anotherClass")), Block(
+			Vector(Left("#myId,\n.anotherClass")), Block(
 				Property(Value.String("width"), Value.Number(80, Percentage))
 			))
 		)))

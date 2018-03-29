@@ -1,6 +1,7 @@
 package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Value
+import com.mishaLang.spec.SelectorSeparator.SelectorListSeparator
 
 
 /**
@@ -12,7 +13,7 @@ import com.mishaLang.ast.Language.Value
 	*/
 object RuleHeadPreprocessor {
 
-	def explode(rawRuleHead: RawRuleHead, separator: String = ", "): String = {
+	def explode(rawRuleHead: RawRuleHead, separator: String = SelectorListSeparator.symbol + ' '): String = {
 		def rec(ruleHead: Vector[RawRuleHeadComponent]): Vector[String] =
 			if (ruleHead.isEmpty)
 				Vector.empty
@@ -23,11 +24,13 @@ object RuleHeadPreprocessor {
 						if (rest.isEmpty) Vector(string)
 						else rest.map(string + _)
 					case Right(values) =>
-						values.flatMap(
-							stringValue =>
-								if (rest.isEmpty) Vector(stringValue.value)
-								else rest.map(stringValue.value + _)
-						)
+						if (values.isEmpty) rest
+						else
+							values.flatMap(
+								stringValue =>
+									if (rest.isEmpty) Vector(stringValue.value)
+									else rest.map(stringValue.value + _)
+							)
 				}
 			}
 

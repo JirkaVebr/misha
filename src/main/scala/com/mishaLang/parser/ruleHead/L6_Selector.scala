@@ -34,7 +34,7 @@ trait L6_Selector { this: org.parboiled2.Parser
 	}
 
 	private def selectorList: Rule1[RawSelector] = rule {
-		oneOrMore(complexSelector).separatedBy(AnyWhitespaceAround(",")) ~> (
+		oneOrMore(complexSelector).separatedBy(WhitespaceAround(",")) ~> (
 			(selectors: Seq[RawComplexComponent]) =>
 				if (selectors.lengthCompare(1) == 0) selectors.head
 				else RawSelectorList(selectors)
