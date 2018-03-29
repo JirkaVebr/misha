@@ -5,7 +5,6 @@ import com.mishaLang.ast.Language.Value
 package object properties {
 
 
-	lazy final val SpecProperties: Map[String, Value.Callable] = Map(
-
-	)
+	lazy final val SpecProperties: Map[String, Value.Callable] =
+		BoxModel()
 }
