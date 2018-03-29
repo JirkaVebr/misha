@@ -83,16 +83,19 @@ object NumberOps {
 
 	def pow(base: Value.Number, exponent: Value.Number): Option[Value.Number] =
 		if (NumberValidator.isScalar(exponent)) {
-			val legalExponent = base.unit.forall {
-				case (_, unitExponent) => NumberValidator.isInteger(exponent.value * unitExponent)
+			if (exponent.value == 0 && base.value == 0) None
+			else {
+				val legalExponent = base.unit.forall {
+					case (_, unitExponent) => NumberValidator.isInteger(exponent.value * unitExponent)
+				}
+				if (legalExponent)
+					Some(UnitOps.normalizeUnit(
+						Math.pow(base.value, exponent.value),
+						UnitOps.multiplyUnit(base.unit, exponent.value)
+					))
+				else
+					None
 			}
-			if (legalExponent)
-				Some(UnitOps.normalizeUnit(
-					Math.pow(base.value, exponent.value),
-					UnitOps.multiplyUnit(base.unit, exponent.value)
-				))
-			else
-				None
 		} else
 			None
 

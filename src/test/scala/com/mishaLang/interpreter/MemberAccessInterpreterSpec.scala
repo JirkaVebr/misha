@@ -26,6 +26,9 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 			run(MemberAccess(Value.Number(-123.4), Value.String("isWhole"))).value === Value.Boolean(false)
 		)
 		assert(
+			run(MemberAccess(Value.Number(25), Value.String("sqrt"))).value === Value.Number(5)
+		)
+		assert(
 			run(MemberAccess(Value.Number(-123), Value.String("toPercentage"))).value === Value.Number(-123, Percentage)
 		)
 	}
