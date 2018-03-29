@@ -18,7 +18,14 @@ import scala.util.Try
 	*/
 object Language {
 
-	sealed abstract class Node {
+	/** It would have been better to do Node { this: Product =>
+		* but then all descendant traits would have to do this as well, and so we just naughtily rely on the case class
+		* leaves to override the appropriate methods
+		*/
+	sealed trait Node extends Product {
+
+		override lazy val hashCode: Int = scala.runtime.ScalaRunTime._hashCode(this)
+
 		protected var _position: Option[NodePosition] = None
 
 		def position: Option[NodePosition] = _position
@@ -32,12 +39,12 @@ object Language {
 	object Value {
 		import Term._
 
-		sealed abstract class Value extends Term
+		sealed trait Value extends Term
 
 		case object Unit extends Value
 
-		sealed abstract class Primitive extends Value
-		sealed abstract class Composite extends Value
+		sealed trait Primitive extends Value
+		sealed trait Composite extends Value
 
 		sealed abstract class Number(val value: Double) extends Primitive
 		case class Dimensioned(override val value: Double, unit: UnitOfMeasure) extends Number(value)
@@ -47,12 +54,12 @@ object Language {
 		case class Boolean(value: scala.Boolean) extends Primitive
 		case class String(value: java.lang.String) extends Primitive
 
-		sealed abstract class Color extends Primitive
+		sealed trait Color extends Primitive
 		case class Rgba(r: Int, g: Int, b: Int, a: Int = 255) extends Color
 		case object CurrentColor extends Color
 		case object Transparent extends Color
 
-		sealed abstract class Flag extends Primitive
+		sealed trait Flag extends Primitive
 		case object Important extends Flag
 		case object Duplicate extends Flag
 

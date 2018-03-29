@@ -13,7 +13,8 @@ object Selector {
 
 	/** Raw selectors exist because they can contain silly selectors such as "div#foo#bar.baz.baz::before span" */
 	sealed trait RawSelector extends Selector
-	sealed trait NormalizedSelector extends Selector {
+	sealed trait NormalizedSelector extends Selector with Product {
+		override lazy val hashCode: Int = scala.runtime.ScalaRunTime._hashCode(this)
 		override lazy val toString: String = SelectorEmitter.emit(this)(StringBuilder.newBuilder).mkString
 	}
 
