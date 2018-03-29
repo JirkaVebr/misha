@@ -103,22 +103,53 @@ object StatementInterpreter {
 							case Failure(reason) => Failure(reason)
 							case Success(stateAfterValue) => StringOps.castToString(stateAfterValue.value) match {
 								case Some(valueString) =>
-									// .get because we're assuming we're inside the RootEnvironment, which, you know, should really better hold
-									val ruleStore: RuleStore = stateAfterValue.environment.lookup(RuleStoreSymbol).get
-									val propertyStore: PropertyStore = ruleStore.getOrElse(ruleContext, LinkedMap.empty)
-									val propertyRecord = PropertyRecord(name, stateAfterValue.value, valueString.value, Set.empty) // TODO actually use flags
-
-									val newPropertyRecords: List[PropertyRecord] = propertyStore.get(name) match {
-										case Some(propertyRecords) =>
-											propertyRecord :: propertyRecords
+									val stateAfterFlags: Try[AugmentedEnvironment[Value.List]] = property.flags match {
+										case Some(flags) =>
+											ExpressionInterpreter.run(flags)(stateAfterValue) match {
+												case Failure(exception) => Failure(exception)
+												case Success(newestState) =>
+													Typing.canBeAssignedTo(newestState.value, Type.List(Type.Flag)) match {
+														case Some(list) =>
+															Success(AugmentedEnvironment[Value.List](
+																newestState.environment, list.asInstanceOf[Value.List]
+															))
+														case None =>
+															AugmentedEnvironment[Value.List](newestState.environment, Value.List(Vector()))
+																.fail(IllTypedFlagList, property)
+													}
+											}
 										case None =>
-											propertyRecord :: Nil
+											Success(AugmentedEnvironment[Value.List](stateAfterValue.environment, Value.List(Vector())))
 									}
+									stateAfterFlags match {
+										case Failure(exception) => Failure(exception)
+										case Success(stateWithFlags) =>
+											val flagSet = stateWithFlags.value.values.toSet.asInstanceOf[Set[Value.Flag]]
+											// .get because we're assuming we're inside the RootEnvironment, which, you know, should really better hold
+											val ruleStore: RuleStore = stateAfterValue.environment.lookup(RuleStoreSymbol).get
+											val propertyStore: PropertyStore = ruleStore.getOrElse(ruleContext, LinkedMap.empty)
+											val propertyRecord = PropertyRecord(name, stateAfterValue.value, valueString.value, flagSet)
 
-									stateAfterValue.withUpdatedSymbol(RuleStoreSymbol)(
-										ruleStore.updated(ruleContext, propertyStore.updated(name, newPropertyRecords))
-											.asInstanceOf[RuleStoreSymbol.Value]
-									)
+											val newPropertyRecords: Option[List[PropertyRecord]] = propertyStore.get(name) match {
+												case Some(propertyRecords) =>
+													if (flagSet.contains(Value.Duplicate))
+														Some(propertyRecord :: propertyRecords)
+													else
+														None
+												case None =>
+													Some(propertyRecord :: Nil)
+											}
+
+											newPropertyRecords match {
+												case Some(propertyRecords) =>
+													stateAfterValue.withUpdatedSymbol(RuleStoreSymbol)(
+														ruleStore.updated(ruleContext, propertyStore.updated(name, propertyRecords))
+															.asInstanceOf[RuleStoreSymbol.Value]
+													)
+												case None =>
+													EnvironmentWithValue(stateWithFlags.environment).fail(DuplicateProperty, property)
+											}
+									}
 								case None => stateAfterName.fail(IllegalPropertyValue, property.name)
 							}
 						}

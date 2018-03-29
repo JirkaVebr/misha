@@ -98,6 +98,35 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		)
 	}
 
+	it should "allow duplicate properties only with the !duplicate flag set" in {
+		noException should be thrownBy {
+			run(
+				Rule(Vector(Left(".myClass")), Block(
+					Sequence(
+						Property(Value.String("background"), Value.String("none")),
+						Property(Value.String("background"), Value.String("somethingFancy"), Some(Value.List(Vector(Value.Duplicate))))
+					)
+				))
+			)
+		}
+		assertThrows[ProgramError[_]](
+			run(Rule(Vector(Left(".myClass")), Block(
+				Sequence(
+					Property(Value.String("background"), Value.String("none")),
+					Property(Value.String("background"), Value.String("somethingFancy"))
+				)
+			)))
+		)
+		assertThrows[ProgramError[_]](
+			run(Rule(Vector(Left(".myClass")), Block(
+				Sequence(
+					Property(Value.String("background"), Value.String("none")),
+					Property(Value.String("background"), Value.String("somethingFancy"), Some(Value.Scalar(123)))
+				)
+			)))
+		)
+	}
+
 	it should "correctly run a no-op" in {
 		assert(run(NoOp).environment === testEnvironment)
 	}
