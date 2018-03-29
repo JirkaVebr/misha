@@ -1,7 +1,8 @@
 package com.mishaLang.interpreter.ops
 
+import com.mishaLang.ast
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Dimensioned, Scalar}
+import com.mishaLang.ast.Language.Value.Number
 import com.mishaLang.ast.NumberUnit._
 import com.mishaLang.spec.units.Angle._
 import com.mishaLang.spec.units.AtomicUnit
@@ -12,6 +13,7 @@ import com.mishaLang.spec.units.Resolution.Resolution
 import com.mishaLang.spec.units.Time.{MiliSecond, Second, Time}
 
 import scala.annotation.tailrec
+import scala.reflect.ClassTag
 
 object UnitOps {
 
@@ -35,65 +37,58 @@ object UnitOps {
 	)
 
 
-	def normalizeDimensioned(value: Double, unit: UnitOfMeasure): Value.Number =
-		unit match {
-			case _: SimpleUnit => Dimensioned(value, unit)
-			case raised: RaisedUnit =>
-				if (raised.subUnits.isEmpty)
-					Scalar(value)
-				else {
-					val conclusive: Option[Value.Number] =
-						if (raised.subUnits.size == 1)
-							raised.subUnits.head match {
-								case (Percentage, 1) => Some(Dimensioned(value, Percentage))
-								case (atomic: Atomic, 1) => Some(Dimensioned(value, atomic))
-								case _ => None
-							}
-						else None
-					conclusive match {
-						case Some(number) => number
-						case None =>
-							val newSubUnits = raised.subUnits.filterNot {
-								case (_, exponent) => exponent == 0
-							}
-							if (newSubUnits.isEmpty) Scalar(value)
-							else Dimensioned(value, unit)
-					}
+	def isAtomicUnit(unit: SubUnits): Boolean =
+		unit.size == 1 && unit.head._2 == 1
+
+
+	def isPercentage(unit: SubUnits): Boolean =
+		unit == ast.PercentageUnit
+
+
+	def isUnit[U <: AtomicUnit : ClassTag](value: Value.Value): Boolean = value match {
+		case number: Number =>
+			if (isAtomicUnit(number.unit))
+				number.unit.head._1 match {
+					case Atomic(atomicUnit) =>
+						implicitly[ClassTag[U]].runtimeClass.isInstance(atomicUnit)
+					case _ => false
 				}
-		}
-
-	def raiseUnit(unit: UnitOfMeasure): RaisedUnit =
-		unit match {
-			case simple: SimpleUnit => RaisedUnit(Map(simple -> 1))
-			case raised: RaisedUnit => raised
-		}
-
-
-	def addUnits(left: RaisedUnit, right: RaisedUnit): RaisedUnit = {
-		@tailrec def add(leftUnits: SubUnits, rightUnits: SubUnits): SubUnits = {
-			if (rightUnits.isEmpty) leftUnits
-			else {
-				val head = rightUnits.head
-				val newExponent = head._2 + leftUnits.getOrElse(head._1, 0)
-				val tail = rightUnits.tail
-
-				if (newExponent == 0) add(leftUnits - head._1, tail)
-				else add(leftUnits.updated(head._1, newExponent), tail)
-			}
-		}
-		val added = add(left.subUnits, right.subUnits)
-		RaisedUnit(added)
+			else
+				false
+		case _ => false
 	}
 
 
-	def multiplyUnit(unit: RaisedUnit, factor: Double): RaisedUnit =
-		RaisedUnit(unit.subUnits.map {
+	def normalizeUnit(value: Double, unit: SubUnits): Value.Number = {
+		val newSubUnits = unit.filterNot {
+			case (_, exponent) => exponent == 0
+		}
+		Number(value, newSubUnits)
+	}
+
+
+	@tailrec def addUnits(left: SubUnits, right: SubUnits): SubUnits = {
+		if (right.isEmpty) left
+		else {
+			val head = right.head
+			val newExponent = head._2 + left.getOrElse(head._1, 0)
+			val tail = right.tail
+
+			if (newExponent == 0) addUnits(left - head._1, tail)
+			else addUnits(left.updated(head._1, newExponent), tail)
+		}
+	}
+
+
+	def multiplyUnit(unit: SubUnits, factor: Double): SubUnits =
+		unit.map {
 			case (subUnit, exponent) => (subUnit, (factor * exponent).toInt)
-		})
+		}
 
 
-	def convert(value: Double, source: UnitOfMeasure, target: UnitOfMeasure): Option[Double] =
-		source match {
+	def convert(value: Double, source: SubUnits, target: SubUnits): Option[Double] =
+		???
+		/*source match {
 			case simple: SimpleUnit => simple match {
 				case Atomic(unit) =>
 					target match {
@@ -107,7 +102,7 @@ object UnitOps {
 					}
 			}
 			case _: RaisedUnit => None // TODO this may otherwise be valid for Hz ←→ s^-1
-		}
+		}*/
 
 
 	def convertAtomicUnit(value: Double, sourceUnit: AtomicUnit, targetUnit: AtomicUnit): Option[Double] =

@@ -39,7 +39,7 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 		val testTypeSymbol = TypeSymbol("test")
 		val testType = Color
 		val testValueSymbol = ValueSymbol("test")
-		val testValue = Value.Scalar(1)
+		val testValue = Value.Number(1)
 		val testContext = RuleSelector(Class("myClass"))
 
 		assert(environment.lookup(testTypeSymbol).isEmpty)
@@ -102,9 +102,9 @@ class EnvironmentSpec extends BaseInterpreterSpec {
 	it should "update the tree as appropriate" in {
 		val testVariable1 = ValueSymbol("foo1")
 		val testVariable2 = ValueSymbol("foo2")
-		val testValue1 = Value.Scalar(1)
-		val testValue2 = Value.Scalar(2)
-		val testValue3 = Value.Scalar(3)
+		val testValue1 = Value.Number(1)
+		val testValue2 = Value.Number(2)
+		val testValue3 = Value.Number(3)
 		val root = new Environment
 		var sub0 = root.pushSubScope().get.putNew(testVariable1)(testValue1)
 		var sub00 = sub0.pushSubScope().get.putNew(testVariable2)(testValue2)

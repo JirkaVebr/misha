@@ -2,7 +2,7 @@ package com.mishaLang.interpreter.ops
 
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Dimensioned, Formula, Scalar}
+import com.mishaLang.ast.Language.Value.{Formula, Number}
 import com.mishaLang.ast.NumberUnit._
 import com.mishaLang.ast.SimpleExpression
 import com.mishaLang.ast.SimpleExpression.{SimpleExpression, Term}
@@ -33,62 +33,47 @@ object NumberOps {
 		case Remainder => left % right
 	}
 
-	def performNumericOperator(operator: NumericOperator, left: Scalar, right: Scalar): Scalar = {
-		Scalar(performOperation(operator, left.value, right.value))
-	}
-
-	def performNumericOperator(operator: NumericOperator, left: Dimensioned, right: Dimensioned): Option[Value.Value] = {
-		val leftUnit: RaisedUnit = UnitOps.raiseUnit(left.unit)
-		val rightUnit: RaisedUnit = UnitOps.raiseUnit(right.unit)
+	def performNumericOperator(operator: NumericOperator, left: Number, right: Number): Option[Value.Value] = {
+		val leftUnit: SubUnits = left.unit
+		val rightUnit: SubUnits = right.unit
 
 		operator match {
 			case simple: SimpleNumericOperator => simple match {
 				case Addition | Subtraction =>
 					if (leftUnit == rightUnit)
-						Some(UnitOps.normalizeDimensioned(
+						Some(UnitOps.normalizeUnit(
 							performOperation(operator, left.value, right.value), leftUnit
 						))
 					else
-						Some(Formula(SimpleExpression.BinaryOperation(simple, Term(left), Term(right))))
+						Some(simplifyFormula(Formula(SimpleExpression.BinaryOperation(simple, Term(left), Term(right)))))
 
 				case Multiplication =>
-					Some(UnitOps.normalizeDimensioned(
+					Some(UnitOps.normalizeUnit(
 						left.value * right.value, UnitOps.addUnits(leftUnit, rightUnit)
 					))
 				case Division =>
-					Some(UnitOps.normalizeDimensioned(
+					Some(UnitOps.normalizeUnit(
 						left.value / right.value,
 						UnitOps.addUnits(leftUnit, UnitOps.multiplyUnit(rightUnit, -1))
 					))
 			}
-			case _: ComplexNumericOperator => None
-		}
-	}
-
-	def performNumericOperator(operator: NumericOperator, left: Dimensioned, right: Scalar): Option[Value.Value] =
-		operator match {
-			case simple: SimpleNumericOperator => simple match {
-				case Addition | Subtraction =>
-					Some(Formula(SimpleExpression.BinaryOperation(simple, Term(left), Term(right))))
-				case Multiplication | Division =>
-					Some(Dimensioned(performOperation(simple, left.value, right.value), left.unit))
-			}
 			case complex: ComplexNumericOperator =>
-				if (NumberValidator.isInteger(right)) {
+				if (NumberValidator.isInteger(right) && NumberValidator.isScalar(right)) {
 					val rightInteger = right.value.toInt
 
 					complex match {
 						case Exponentiation =>
-							Some(UnitOps.normalizeDimensioned(
+							Some(UnitOps.normalizeUnit(
 								Math.pow(left.value, rightInteger),
-								UnitOps.multiplyUnit(UnitOps.raiseUnit(left.unit), rightInteger)
+								UnitOps.multiplyUnit(left.unit, rightInteger)
 							))
 						case Remainder =>
-							Some(Dimensioned(left.value % rightInteger, left.unit))
+							Some(Number(left.value % rightInteger, left.unit))
 					}
 				} else
 					None
 		}
+	}
 
 
 	def simplifyFormula(formula: Formula): Value.Value = {
@@ -120,7 +105,8 @@ object NumberOps {
 		Value.Boolean(NumberValidator.isInteger(number.value))
 
 	def sqrt(number: Value.Number): Option[Value.Number] =
-		number match {
+		???
+		/*number match {
 			case Dimensioned(value, unit) =>
 				val raisedUnit = UnitOps.raiseUnit(unit)
 				val isSquare = raisedUnit.subUnits.forall {
@@ -134,12 +120,12 @@ object NumberOps {
 					None
 			case Scalar(value) =>
 				Some(Scalar(Math.sqrt(value)))
-		}
+		}*/
 
-	def toPercentage(number: Value.Number): Value.Dimensioned =
-		Value.Dimensioned(number.value, Percentage)
+	def toPercentage(number: Number): Number =
+		Number(number.value, Percentage)
 
-	def toScalar(number: Value.Number): Value.Scalar =
-		Value.Scalar(number.value)
+	def toScalar(number: Value.Number): Number =
+		Number(number.value)
 
 }

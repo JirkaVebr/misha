@@ -2,7 +2,7 @@ package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Statement.VariableDeclaration
-import com.mishaLang.ast.Language.Value.Scalar
+import com.mishaLang.ast.Language.Value.Number
 import com.mishaLang.ast.Language.{Term, Value, ValueSymbolDeclaration}
 import com.mishaLang.error.ProgramError
 import com.mishaLang.interpreter.Symbol.ValueSymbol
@@ -18,13 +18,13 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 	it should "correctly negate numbers" in {
-		assert(run(UnaryOperation(ArithmeticNegation, Value.Scalar(123))).value === Value.Scalar(-123))
+		assert(run(UnaryOperation(ArithmeticNegation, Value.Number(123))).value === Value.Number(-123))
 		assertThrows[ProgramError[_]](run(UnaryOperation(LogicalNegation, Value.String("I shall not be negated"))))
 	}
 
 	it should "correctly execute conditional expressions" in {
-		val consequent = Value.Scalar(123)
-		val alternative = Value.Scalar(456)
+		val consequent = Value.Number(123)
+		val alternative = Value.Number(456)
 
 		assert(run(Conditional(Value.Boolean(true), consequent, None)).value === consequent)
 		assert(run(Conditional(Value.Boolean(true), consequent, Some(alternative))).value === consequent)
@@ -35,8 +35,8 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 	it should "correctly execute assignments within blocks" in {
 		val symbol = ValueSymbol("myVar")
 		val variable = Term.Variable(symbol)
-		val outerValue = Scalar(123)
-		val innerValue = Scalar(456)
+		val outerValue = Number(123)
+		val innerValue = Number(456)
 
 		val newState: EnvWithValue =
 			state.withNewSymbol(symbol)(outerValue).get
@@ -49,8 +49,8 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "correctly execute declarations within blocks" in {
 		val symbol = ValueSymbol("myVar")
-		val outerValue = Scalar(123)
-		val innerValue = Scalar(456)
+		val outerValue = Number(123)
+		val innerValue = Number(456)
 
 		val newState: EnvWithValue =
 			state.withNewSymbol(symbol)(outerValue).get
@@ -64,8 +64,8 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 	it should "evaluate functions with static scope" in {
 		val testVariable = ValueSymbol("testVariable")
 		val testLambda = ValueSymbol("testLambda")
-		val testValue1 = Scalar(123)
-		val testValue2 = Scalar(456)
+		val testValue1 = Number(123)
+		val testValue2 = Number(456)
 
 		val root = testEnvironment.putNew(testVariable)(testValue1)
 		var sub0 = root.pushSubScope().get
@@ -93,7 +93,7 @@ class ExpressionInterpreterSpec extends BaseInterpreterSpec {
 			if (n == 0) expression
 			else Block(wrap(expression, n - 1))
 
-		assertThrows[ProgramError[_]](run(wrap(Value.Scalar(1), 100)))
+		assertThrows[ProgramError[_]](run(wrap(Value.Number(1), 100)))
 	}
 
 

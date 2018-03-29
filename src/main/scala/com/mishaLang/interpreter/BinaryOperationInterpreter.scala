@@ -1,7 +1,7 @@
 package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Expression._
-import com.mishaLang.ast.Language.Value.{Dimensioned, Scalar, Value}
+import com.mishaLang.ast.Language.Value.Value
 import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
@@ -61,12 +61,11 @@ object BinaryOperationInterpreter {
 				case GreaterEquals => _ >= _
 			}
 			(left, right) match {
-				case (leftNumeric: Value.Number, rightNumeric: Value.Number) => (leftNumeric, rightNumeric) match {
-					case (Scalar(_), Scalar(_)) =>
+				case (leftNumeric: Value.Number, rightNumeric: Value.Number) =>
+					if (leftNumeric.unit == rightNumeric.unit) // TODO unit conversions
 						state ~> Value.Boolean(operation(leftNumeric.value, rightNumeric.value))
-					case (Dimensioned(_, _), Dimensioned(_, _)) => sys.error("todo") // TODO
-					case _ => state.fail(ComparingIncompatibleNumerics, left, right)
-				}
+					else
+						state.fail(ComparingIncompatibleNumerics, left, right)
 				case _ => state.fail(ComparingNonNumber, left, right)
 			}
 	}

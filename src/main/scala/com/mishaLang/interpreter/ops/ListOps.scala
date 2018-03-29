@@ -24,7 +24,7 @@ object ListOps {
 
 	// Properties
 
-	def length(list: Value.List): Value.Scalar =
-		Value.Scalar(list.values.length)
+	def length(list: Value.List): Value.Number =
+		Value.Number(list.values.length)
 
 }

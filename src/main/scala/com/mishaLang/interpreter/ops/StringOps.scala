@@ -1,9 +1,8 @@
 package com.mishaLang.interpreter.ops
 
-import com.mishaLang.ast.Language.Value.{Dimensioned, Native, Number, Primitive, Rgba, Scalar, Value}
+import com.mishaLang.ast.Language.Value.{Native, Number, Primitive, Rgba, Value}
 import com.mishaLang.ast.Language.{Type, Value}
-import com.mishaLang.ast.NumberUnit
-import com.mishaLang.ast.NumberUnit.{Atomic, RaisedUnit, SimpleUnit}
+import com.mishaLang.ast.NumberUnit.{Atomic, Percentage}
 import com.mishaLang.error.NativeError
 import com.mishaLang.error.NativeError.StringIndexOutOfBounds
 import com.mishaLang.spec.units.Length.Length
@@ -16,24 +15,25 @@ object StringOps {
 	def castToString(value: Value.Value): Option[Value.String] = value match {
 		case primitive: Primitive => primitive match {
 			case Value.String(string) => Some(Value.String(string))
-			case number: Number => number match {
-				case Scalar(magnitude) => Some(Value.String(NumberOps.formatDouble(magnitude)))
-				case Dimensioned(magnitude, unit) => unit match {
-					case simple: SimpleUnit => simple match {
-						case Atomic(atomicUnit) =>
-							atomicUnit match {
-								case lengthUnit: Length =>
-									if (magnitude == 0d) Some(Value.String("0"))
-									else Some(Value.String(NumberOps.formatDouble(magnitude) + lengthUnit.symbol))
-								case _ =>
-									Some(Value.String(NumberOps.formatDouble(magnitude) + atomicUnit.symbol))
-							}
-						case NumberUnit.Percentage =>
-							Some(Value.String(NumberOps.formatDouble(magnitude) + '%'))
+			case number: Number =>
+				val baseOutput =  NumberOps.formatDouble(number.value)
+
+				if (number.unit.isEmpty)
+					Some(baseOutput)
+				else if (UnitOps.isAtomicUnit(number.unit)) {
+					val atomic = number.unit.head._1
+
+					atomic match {
+						case Atomic(unit) => unit match {
+							case _: Length if number.value == 0d =>
+								Some(baseOutput)
+							case _ =>
+								Some(baseOutput + unit.symbol)
+						}
+						case Percentage =>
+							Some(baseOutput + '%')
 					}
-					case _: RaisedUnit => None // Assuming the unit has been normalized
-				}
-			}
+				} else None
 			case color: Rgba => Some(ColorOps.toString(color))
 			case _ => None
 		}
@@ -46,15 +46,15 @@ object StringOps {
 	/**
 		* Be sure to check NumberValidator.isInteger(factor) beforehand.
 		*/
-	def multiply(string: Value.String, factor: Scalar): Value.String =
+	def multiply(string: Value.String, factor: Number): Value.String =
 		Value.String(string.value * factor.value.toInt)
 
 
 
 	// Properties
 
-	def length(string: Value.String): Value.Scalar =
-		Value.Scalar(string.value.length)
+	def length(string: Value.String): Value.Number =
+		Value.Number(string.value.length)
 
 	def toLowerCase(string: Value.String): Value.String =
 		Value.String(string.value.toLowerCase)
@@ -70,7 +70,7 @@ object StringOps {
 
 	def getCharAt(string: Value.String): Native =
 		Native(Vector(Type.Scalar), (arguments: Vector[Value]) => {
-			val position = arguments(0).asInstanceOf[Scalar].value
+			val position = arguments(0).asInstanceOf[Number].value
 
 			if (position >= string.value.length || position < 0)
 				Failure(NativeError(StringIndexOutOfBounds))

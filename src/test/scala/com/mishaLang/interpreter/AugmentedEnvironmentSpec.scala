@@ -13,7 +13,7 @@ class AugmentedEnvironmentSpec extends BaseInterpreterSpec {
 		assert(augmented.environment === environment)
 		assert(augmented.value === Value.Unit)
 
-		val numberValue = Value.Scalar(123)
+		val numberValue = Value.Number(123)
 		val newState = augmented ~> numberValue
 
 		assert(newState.get.environment === environment)

@@ -1,10 +1,12 @@
 package com.mishaLang.interpreter.typing
 
 import com.mishaLang.ast.Language.Type.{Any, Color, Flag, Formula, Function, Literal, Map, Subtraction, TypeAlias, Union}
-import com.mishaLang.ast.Language.Value.{Dimensioned, Number, Tuple2}
+import com.mishaLang.ast.Language.Value.{Number, Tuple2}
 import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.ast.NumberUnit.{Atomic, Percentage, SimpleUnit}
 import com.mishaLang.interpreter.EnvWithValue
+import com.mishaLang.interpreter.ops.UnitOps
+import com.mishaLang.interpreter.validators.NumberValidator
 import com.mishaLang.spec.units.Angle.Angle
 import com.mishaLang.spec.units.AtomicUnit
 import com.mishaLang.spec.units.Flex.Flex
@@ -29,31 +31,34 @@ object Typing {
 			case Type.String =>
 				if (value.isInstanceOf[Value.String]) Some(value) else None
 			case Type.Length =>
-				Some(value).filter(isUnit[Length])
+				Some(value).filter(UnitOps.isUnit[Length])
 			case Color =>
 				if (value.isInstanceOf[Value.Color]) Some(value) else None
 			case Literal(literalValue) =>
 				if (value == literalValue) Some(value) else None
 			case Type.Scalar =>
-				if (value.isInstanceOf[Value.Scalar]) Some(value) else None
+				value match {
+					case number: Value.Number if NumberValidator.isScalar(number) => Some(number)
+					case _ => None
+				}
 			case Type.Percentage => value match {
-				case dimensioned: Dimensioned if dimensioned.unit == Percentage => Some(value)
+				case number: Value.Number if NumberValidator.isPercentage(number) => Some(number)
 				case _ => None
 			}
 			case Type.Angle =>
-				Some(value).filter(isUnit[Angle])
+				Some(value).filter(UnitOps.isUnit[Angle])
 			case Type.Flex =>
-				Some(value).filter(isUnit[Flex])
+				Some(value).filter(UnitOps.isUnit[Flex])
 			case Type.Time =>
-				Some(value).filter(isUnit[Time])
+				Some(value).filter(UnitOps.isUnit[Time])
 			case Type.Resolution =>
-				Some(value).filter(isUnit[Resolution])
+				Some(value).filter(UnitOps.isUnit[Resolution])
 			case Type.Boolean =>
 				if (value.isInstanceOf[Value.Boolean]) Some(value) else None
 			case Flag =>
 				if (value.isInstanceOf[Value.Flag]) Some(value) else None
 			case Type.Frequency =>
-				Some(value).filter(isUnit[Frequency])
+				Some(value).filter(UnitOps.isUnit[Frequency])
 			case Type.Unit =>
 				if (value == Value.Unit) Some(value) else None
 		}
@@ -94,21 +99,5 @@ object Typing {
 		}
 		case TypeAlias(name) => ???
 		case Any => Some(value)
-	}
-
-
-	private def isUnit[U <: AtomicUnit : ClassTag](value: Value.Value): Boolean = value match {
-		case number: Number => number match {
-			case Dimensioned(_, dimensionedUnit) => dimensionedUnit match {
-				case simple: SimpleUnit => simple match {
-					case Atomic(atomicUnit) =>
-						implicitly[ClassTag[U]].runtimeClass.isInstance(atomicUnit)
-					case _ => false
-				}
-				case _ => false
-			}
-			case _ => false
-		}
-		case _ => false
 	}
 }

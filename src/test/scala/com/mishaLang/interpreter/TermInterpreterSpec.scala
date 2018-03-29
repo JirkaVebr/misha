@@ -20,7 +20,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "correctly read existing variables" in {
 		val symbol = ValueSymbol("myVar")
-		val varValue = Value.Scalar(123)
+		val varValue = Value.Number(123)
 		val variable = Variable(symbol)
 		val newState = state.withNewSymbol(symbol)(varValue).get
 
@@ -42,7 +42,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 	it should "correctly interpret lists" in {
 		assert(run(Term.List(List(
 			BinaryOperation(Addition, Value.String("123"), Value.String("456")),
-			BinaryOperation(IsEqualTo, Value.Scalar(10), Value.Scalar(10))
+			BinaryOperation(IsEqualTo, Value.Number(10), Value.Number(10))
 		))).value === Value.List(Vector(
 			Value.String("123456"),
 			Value.Boolean(true)
@@ -59,32 +59,32 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "correctly invoke native functions" in {
 		val multiply = Native(Vector(Scalar, Scalar), (values: Vector[Value]) => {
-			val (a, b) = (values(0).asInstanceOf[Value.Scalar], values(1).asInstanceOf[Value.Scalar])
-			Success(Value.Scalar(a.value * b.value))
+			val (a, b) = (values(0).asInstanceOf[Value.Number], values(1).asInstanceOf[Value.Number])
+			Success(Value.Number(a.value * b.value))
 		})
 
 		assert(run(FunctionCall(
-			multiply, Vector(Value.Scalar(3), Value.Scalar(5))
-		)).value === Value.Scalar(15))
+			multiply, Vector(Value.Number(3), Value.Number(5))
+		)).value === Value.Number(15))
 
 		assertThrows[ProgramError[_]](run(FunctionCall(
-			multiply, Vector(Value.Scalar(3))
+			multiply, Vector(Value.Number(3))
 		)))
 
 		assertThrows[ProgramError[_]](run(FunctionCall(
-			multiply, Vector(Value.Scalar(3), Value.Scalar(3), Value.Scalar(3))
+			multiply, Vector(Value.Number(3), Value.Number(3), Value.Number(3))
 		)))
 
 		assertThrows[ProgramError[_]](run(FunctionCall(
-			multiply, Vector(Value.Scalar(3), Value.String("bad type"))
+			multiply, Vector(Value.Number(3), Value.String("bad type"))
 		)))
 	}
 
 	it should "correctly invoke nullary lambdas" in {
 		val lambda = Lambda(None, Vector(), Vector(), None, Block(
-			Value.Scalar(123)
+			Value.Number(123)
 		), scopeId)
-		assert(run(FunctionCall(lambda, Vector())).value === Value.Scalar(123))
+		assert(run(FunctionCall(lambda, Vector())).value === Value.Number(123))
 	}
 
 
@@ -108,7 +108,7 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "reject lambda function calls with ill-typed arguments" in {
 		assertThrows[ProgramError[_]](run(FunctionCall(
-			concatenateStrings, Vector(Value.Scalar(1), Value.String("foo"))
+			concatenateStrings, Vector(Value.Number(1), Value.String("foo"))
 		)))
 	}
 
@@ -165,16 +165,16 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 			ValueSymbolDeclaration[Unit]("n", None, Unit)
 		), Vector(), None, Block(
 			Conditional(
-				BinaryOperation(IsEqualTo, Variable("n"), Value.Scalar(0)),
-				Value.Scalar(1),
+				BinaryOperation(IsEqualTo, Variable("n"), Value.Number(0)),
+				Value.Number(1),
 				Some(BinaryOperation(Multiplication, Variable("n"), FunctionCall(
 					Variable("factorial"), Vector(
-						BinaryOperation(Subtraction, Variable("n"), Value.Scalar(1))
+						BinaryOperation(Subtraction, Variable("n"), Value.Number(1))
 					)
 				)))
 			)
 		), scopeId)
-		assert(run(FunctionCall(lambda, Vector(Value.Scalar(5)))).value === Value.Scalar(120))
+		assert(run(FunctionCall(lambda, Vector(Value.Number(5)))).value === Value.Number(120))
 	}
 
 	it should "pass parent context to lambdas" in {
@@ -218,8 +218,8 @@ class TermInterpreterSpec extends BaseInterpreterSpec {
 			Value.String("abc"), Value.String("def")
 		))).value === Value.String("abcdef"))
 		assert(run(FunctionCall(add, Vector(
-			Value.Scalar(123), Value.Scalar(456)
-		))).value === Value.Scalar(579))
+			Value.Number(123), Value.Number(456)
+		))).value === Value.Number(579))
 	}
 
 	protected def run(term: Term)(implicit state: EnvWithValue): EnvWithValue =

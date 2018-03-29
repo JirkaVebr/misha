@@ -3,7 +3,7 @@ package com.mishaLang.interpreter
 import com.mishaLang.ast.Language.Expression.Expression
 import com.mishaLang.ast.Language.Term.MemberAccess
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Dimensioned, Flag, Callable, NativeFunctionCall, Number, Primitive, Rgba, Scalar, Transparent, Tuple2, Unit}
+import com.mishaLang.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Flag, Callable, NativeFunctionCall, Number, Primitive, Rgba, Transparent, Tuple2, Unit}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError.NonStringMemberCastFail
 import com.mishaLang.interpreter.ops.{ColorOps, ListOps, NumberOps, StringOps}
@@ -78,10 +78,7 @@ object MemberAccessInterpreter {
 					case "floor" => number.value.floor
 					case "round" => number.value.round
 				}
-				number match { // Too bad is it impossible to just do number.copy(value = newValue). :/
-					case subClass: Dimensioned => Some(subClass.copy(value = newValue))
-					case _: Scalar => Some(Scalar(newValue))
-				}
+				Some(number.copy(value = newValue))
 		}
 		commonResult match {
 			case Some(x) => state ~> x
@@ -119,18 +116,18 @@ object MemberAccessInterpreter {
 			case rgba: Rgba => memberName match {
 				case "adjustHue" => ???
 				case "alpha" => Some(ColorOps.alpha(rgba))
-				case "blue" => Some(Value.Scalar(rgba.b))
+				case "blue" => Some(Value.Number(rgba.b))
 				case "complement" => Some(ColorOps.complement(rgba))
 				case "darken" => Some(ColorOps.getDarken(rgba))
 				case "desaturate" => ???
-				case "green" => Some(Value.Scalar(rgba.g))
+				case "green" => Some(Value.Number(rgba.g))
 				case "hue" => Some(ColorOps.hue(rgba))
 				case "inverted" => Some(ColorOps.inverted(rgba))
 				case "isDark" => Some(ColorOps.isDark(rgba))
 				case "isLight" => Some(ColorOps.isLight(rgba))
 				case "lighten" => Some(ColorOps.getLighten(rgba))
 				case "lightness" => Some(ColorOps.lightness(rgba))
-				case "red" => Some(Value.Scalar(rgba.r))
+				case "red" => Some(Value.Number(rgba.r))
 				case "saturate" => ???
 				case "saturation" => Some(ColorOps.saturation(rgba))
 			}

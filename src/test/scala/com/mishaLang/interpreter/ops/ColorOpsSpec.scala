@@ -20,9 +20,9 @@ class ColorOpsSpec extends BaseInterpreterSpec{
 	}
 
 	it should "correctly lighten/darken rgba colors" in {
-		assert(ColorOps.darken(Rgba(255, 255, 255), Value.Dimensioned(10, Percentage)) === Rgba(230, 230, 230))
-		assert(ColorOps.darken(Rgba(180, 212, 85), Value.Dimensioned(15, Percentage)) === Rgba(143, 176, 45))
-		assert(ColorOps.lighten(Rgba(240, 70, 21), Value.Dimensioned(25, Percentage)) === Rgba(248, 165, 141))
+		assert(ColorOps.darken(Rgba(255, 255, 255), Value.Number(10, Percentage)) === Rgba(230, 230, 230))
+		assert(ColorOps.darken(Rgba(180, 212, 85), Value.Number(15, Percentage)) === Rgba(143, 176, 45))
+		assert(ColorOps.lighten(Rgba(240, 70, 21), Value.Number(25, Percentage)) === Rgba(248, 165, 141))
 	}
 
 	it should "correctly cast colors to strings" in {

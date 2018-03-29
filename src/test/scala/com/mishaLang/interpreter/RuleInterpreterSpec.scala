@@ -18,16 +18,16 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "correctly interpret simple rules" in {
 		val newState = run(Rule(Vector(Left(".class")), Block(Sequence(
-			Property(Value.String("line-height"), Value.Scalar(1.6)),
-			Property(Value.String("width"), Value.Dimensioned(80, Percentage))
+			Property(Value.String("line-height"), Value.Number(1.6)),
+			Property(Value.String("width"), Value.Number(80, Percentage))
 		))))
 		val ruleEnvironment = newState.environment.subEnvironments.head
 
 		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleSelector(Class("class")))
 		assert(ruleEnvironment.lookup(RuleStoreSymbol).get ===
 			LinkedMap(RuleSelector(Class("class")) -> LinkedMap(
-				"width" -> List(PropertyRecord("width", Value.Dimensioned(80, Percentage), "80%")),
-				"line-height" -> List(PropertyRecord("line-height", Value.Scalar(1.6), "1.6"))
+				"width" -> List(PropertyRecord("width", Value.Number(80, Percentage), "80%")),
+				"line-height" -> List(PropertyRecord("line-height", Value.Number(1.6), "1.6"))
 			)))
 	}
 
@@ -45,7 +45,7 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 			))),
 			Left(" .mySubclass")
 		), Block(
-			Property(Value.String("width"), Value.Dimensioned(80, Percentage))
+			Property(Value.String("width"), Value.Number(80, Percentage))
 		)))
 		val ruleEnvironment = newState.environment.subEnvironments.head
 
@@ -59,14 +59,14 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === expectedContext)
 		assert(ruleEnvironment.lookup(RuleStoreSymbol).get ===
 			LinkedMap(expectedContext -> LinkedMap(
-				"width" -> List(PropertyRecord("width", Value.Dimensioned(80, Percentage), "80%"))
+				"width" -> List(PropertyRecord("width", Value.Number(80, Percentage), "80%"))
 			)))
 	}
 
 	it should "correctly interpret rules with implicit parent selectors" in {
 		val newState = run(Rule(Vector(Left(".myClass")), Block(Rule(
 			Vector(Left("#myId, .anotherClass")), Block(
-				Property(Value.String("width"), Value.Dimensioned(80, Percentage))
+				Property(Value.String("width"), Value.Number(80, Percentage))
 			))
 		)))
 		val outerRuleEnvironment = newState.environment.subEnvironments.head
@@ -82,7 +82,7 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 	it should "correctly interpret rules with explicit parent selectors" in {
 		val newState = run(Rule(Vector(Left(".myClass1, .myClass2")), Block(Rule(
 			Vector(Right(ParentSelector), Left(" .anotherClass")), Block(
-				Property(Value.String("width"), Value.Dimensioned(80, Percentage))
+				Property(Value.String("width"), Value.Number(80, Percentage))
 			))
 		)))
 		val outerRuleEnvironment = newState.environment.subEnvironments.head

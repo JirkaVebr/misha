@@ -12,34 +12,34 @@ class TrigonometrySpec extends BaseBuiltinSpec {
 
 	it should "correctly evaluate the sin function" in {
 		assert(run(FunctionCall(
-			Variable("sin"), Vector(Value.Scalar(Math.PI / 2))
-		)).value === Value.Scalar(1))
+			Variable("sin"), Vector(Value.Number(Math.PI / 2))
+		)).value === Value.Number(1))
 
 		assert(run(FunctionCall(
-			Variable("sin"), Vector(Value.Dimensioned(45, Atomic(Degree)))
-		)).value.asInstanceOf[Value.Scalar].value === (Math.sqrt(2) / 2))
+			Variable("sin"), Vector(Value.Number(45, Atomic(Degree)))
+		)).value.asInstanceOf[Value.Number].value === (Math.sqrt(2) / 2))
 
 		assert(run(FunctionCall(
-			Variable("sin"), Vector(Value.Dimensioned(Math.PI, Atomic(Radian)))
-		)).value.asInstanceOf[Value.Scalar].value === 0d)
+			Variable("sin"), Vector(Value.Number(Math.PI, Atomic(Radian)))
+		)).value.asInstanceOf[Value.Number].value === 0d)
 
 		assert(run(FunctionCall(
-			Variable("sin"), Vector(Value.Dimensioned(.25, Atomic(Turn)))
-		)).value === Value.Scalar(1))
+			Variable("sin"), Vector(Value.Number(.25, Atomic(Turn)))
+		)).value === Value.Number(1))
 
 		assert(run(FunctionCall(
-			Variable("sin"), Vector(Value.Dimensioned(100, Atomic(Gradian)))
-		)).value === Value.Scalar(1))
+			Variable("sin"), Vector(Value.Number(100, Atomic(Gradian)))
+		)).value === Value.Number(1))
 	}
 
 	it should "correctly evaluate other trigonometric functions" in {
 		assert(run(FunctionCall(
-			Variable("cos"), Vector(Value.Dimensioned(45, Atomic(Degree)))
-		)).value.asInstanceOf[Value.Scalar].value === (Math.sqrt(2) / 2))
+			Variable("cos"), Vector(Value.Number(45, Atomic(Degree)))
+		)).value.asInstanceOf[Value.Number].value === (Math.sqrt(2) / 2))
 
 		assert(run(FunctionCall(
-			Variable("tan"), Vector(Value.Dimensioned(45, Atomic(Degree)))
-		)).value.asInstanceOf[Value.Scalar].value === 1d)
+			Variable("tan"), Vector(Value.Number(45, Atomic(Degree)))
+		)).value.asInstanceOf[Value.Number].value === 1d)
 	}
 
 }

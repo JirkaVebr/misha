@@ -3,7 +3,6 @@ package com.mishaLang.interpreter.ops
 import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.ast.Language.Value.{Native, Rgba, Value}
 import com.mishaLang.ast.NumberUnit.Percentage
-import com.mishaLang.utils.MathUtils
 
 import scala.util.Success
 
@@ -118,7 +117,7 @@ object ColorOps {
 		* @param amount It's really a percentage point
 		* @return
 		*/
-	private def adjustLightness(color: Rgba, amount: Value.Dimensioned, combine: (Double, Double) => Double): Rgba = {
+	private def adjustLightness(color: Rgba, amount: Value.Number, combine: (Double, Double) => Double): Rgba = {
 		val hsla = toHsla(color)
 
 		hslaToRgba(Hsla(
@@ -131,15 +130,15 @@ object ColorOps {
 
 	def subtractColors(x: Rgba, y: Rgba): Rgba = combineColors(x, y, _ - _, _ max 0)
 
-	def lighten(color: Rgba, amount: Value.Dimensioned): Rgba = adjustLightness(color, amount, _ + _)
+	def lighten(color: Rgba, amount: Value.Number): Rgba = adjustLightness(color, amount, _ + _)
 
-	def darken(color: Rgba, amount: Value.Dimensioned): Rgba = adjustLightness(color, amount, _ - _)
+	def darken(color: Rgba, amount: Value.Number): Rgba = adjustLightness(color, amount, _ - _)
 
 
 	// Properties
 
-	def alpha(color: Rgba): Value.Scalar =
-		Value.Scalar(getPresentableAlpha(color))
+	def alpha(color: Rgba): Value.Number =
+		Value.Number(getPresentableAlpha(color))
 
 	def complement(color: Rgba): Rgba = {
 		val hsla = toHsla(color)
@@ -147,8 +146,8 @@ object ColorOps {
 		hslaToRgba(complement)
 	}
 
-	def hue(color: Rgba): Value.Scalar =
-		Value.Scalar(toHsla(color).h.round)
+	def hue(color: Rgba): Value.Number =
+		Value.Number(toHsla(color).h.round)
 
 	def inverted(color: Rgba): Value.Rgba =
 		color.copy(r = 255 - color.r, g = 255 - color.g, b = 255 - color.b) // Preserving alpha
@@ -159,11 +158,11 @@ object ColorOps {
 	def isLight(color: Rgba): Value.Boolean =
 		Value.Boolean(toHsla(color).l >= 0.5)
 
-	def lightness(color: Rgba): Value.Dimensioned =
-		Value.Dimensioned(getPresentablePercentage(toHsla(color).l * 100), Percentage)
+	def lightness(color: Rgba): Value.Number =
+		Value.Number(getPresentablePercentage(toHsla(color).l * 100), Percentage)
 
-	def saturation(color: Rgba): Value.Dimensioned =
-		Value.Dimensioned(getPresentablePercentage(toHsla(color).s * 100), Percentage)
+	def saturation(color: Rgba): Value.Number =
+		Value.Number(getPresentablePercentage(toHsla(color).s * 100), Percentage)
 
 	def toString(color: Rgba): Value.String = {
 		if (color.a == 255) {
@@ -185,14 +184,14 @@ object ColorOps {
 
 	def getDarken(color: Rgba): Native =
 		Native(Vector(Type.Percentage), (arguments: Vector[Value]) => {
-			val delta = arguments(0).asInstanceOf[Value.Dimensioned]
+			val delta = arguments(0).asInstanceOf[Value.Number]
 
 			Success(darken(color, delta))
 		})
 
 	def getLighten(color: Rgba): Native =
 		Native(Vector(Type.Percentage), (arguments: Vector[Value]) => {
-			val delta = arguments(0).asInstanceOf[Value.Dimensioned]
+			val delta = arguments(0).asInstanceOf[Value.Number]
 
 			Success(lighten(color, delta))
 		})

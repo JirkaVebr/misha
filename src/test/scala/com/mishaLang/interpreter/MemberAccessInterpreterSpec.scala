@@ -11,28 +11,28 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "interpret common number members" in {
 		assert(
-			run(MemberAccess(Value.Scalar(12), Value.String("isEven"))).value === Value.Boolean(true)
+			run(MemberAccess(Value.Number(12), Value.String("isEven"))).value === Value.Boolean(true)
 		)
 		assert(
-			run(MemberAccess(Value.Scalar(123), Value.String("isNegative"))).value === Value.Boolean(false)
+			run(MemberAccess(Value.Number(123), Value.String("isNegative"))).value === Value.Boolean(false)
 		)
 		assert(
-			run(MemberAccess(Value.Scalar(-123), Value.String("isOdd"))).value === Value.Boolean(true)
+			run(MemberAccess(Value.Number(-123), Value.String("isOdd"))).value === Value.Boolean(true)
 		)
 		assert(
-			run(MemberAccess(Value.Scalar(-123), Value.String("isPositive"))).value === Value.Boolean(false)
+			run(MemberAccess(Value.Number(-123), Value.String("isPositive"))).value === Value.Boolean(false)
 		)
 		assert(
-			run(MemberAccess(Value.Scalar(-123.4), Value.String("isWhole"))).value === Value.Boolean(false)
+			run(MemberAccess(Value.Number(-123.4), Value.String("isWhole"))).value === Value.Boolean(false)
 		)
 		assert(
-			run(MemberAccess(Value.Scalar(-123), Value.String("toPercentage"))).value === Value.Dimensioned(-123, Percentage)
+			run(MemberAccess(Value.Number(-123), Value.String("toPercentage"))).value === Value.Number(-123, Percentage)
 		)
 	}
 
 	it should "interpret string members" in {
 		assert(
-			run(MemberAccess(Value.String("abc"), Value.String("length"))).value === Value.Scalar(3)
+			run(MemberAccess(Value.String("abc"), Value.String("length"))).value === Value.Number(3)
 		)
 		assert(
 			run(MemberAccess(Value.String("ABC"), Value.String("toLowerCase"))).value === Value.String("abc")
@@ -52,16 +52,16 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		assert(
 			run(FunctionCall(
 				MemberAccess(Value.String("abc"), Value.String("charAt")),
-				Vector(Value.Scalar(1)))
+				Vector(Value.Number(1)))
 			).value === Value.String("b")
 		)
 		assertThrows[NativeError](run(FunctionCall(
 			MemberAccess(Value.String("abc"), Value.String("charAt")),
-			Vector(Value.Scalar(-1)))
+			Vector(Value.Number(-1)))
 		))
 		assertThrows[NativeError](run(FunctionCall(
 			MemberAccess(Value.String("abc"), Value.String("charAt")),
-			Vector(Value.Scalar(3)))
+			Vector(Value.Number(3)))
 		))
 	}
 
@@ -97,19 +97,19 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "interpret color members" in {
 		assert(
-			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("alpha"))).value === Value.Scalar(0.482353)
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("alpha"))).value === Value.Number(0.482353)
 		)
 		assert(
-			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("blue"))).value === Value.Scalar(199)
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("blue"))).value === Value.Number(199)
 		)
 		assert(
 			run(MemberAccess(Value.Rgba(253, 12, 199), Value.String("complement"))).value === Value.Rgba(12, 253, 66)
 		)
 		assert(
-			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("green"))).value === Value.Scalar(12)
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("green"))).value === Value.Number(12)
 		)
 		assert(
-			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("hue"))).value === Value.Scalar(313)
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("hue"))).value === Value.Number(313)
 		)
 		assert(
 			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("isDark"))).value === Value.Boolean(false)
@@ -121,13 +121,13 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 			run(MemberAccess(Value.Rgba(214, 40, 100, 123), Value.String("inverted"))).value === Value.Rgba(41, 215, 155, 123)
 		)
 		assert(
-			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("lightness"))).value === Value.Dimensioned(51.961, Percentage)
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("lightness"))).value === Value.Number(51.961, Percentage)
 		)
 		assert(
-			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("red"))).value === Value.Scalar(253)
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("red"))).value === Value.Number(253)
 		)
 		assert(
-			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("saturation"))).value === Value.Dimensioned(98.367, Percentage)
+			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("saturation"))).value === Value.Number(98.367, Percentage)
 		)
 	}
 
@@ -135,13 +135,13 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		assert(
 			run(FunctionCall(
 				MemberAccess(Value.Rgba(180, 212, 85), Value.String("darken")),
-				Vector(Value.Dimensioned(15, Percentage)))
+				Vector(Value.Number(15, Percentage)))
 			).value === Value.Rgba(143, 176, 45)
 		)
 		assert(
 			run(FunctionCall(
 				MemberAccess(Value.Rgba(240, 70, 21), Value.String("lighten")),
-				Vector(Value.Dimensioned(25, Percentage)))
+				Vector(Value.Number(25, Percentage)))
 			).value === Value.Rgba(248, 165, 141)
 		)
 	}

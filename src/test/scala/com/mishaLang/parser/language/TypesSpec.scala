@@ -64,23 +64,23 @@ class TypesSpec extends BaseParserSpec {
 	}
 
 	it should "parse a literal type" in {
-		assert(parse("123") === Type.Literal(Value.Scalar(123)))
+		assert(parse("123") === Type.Literal(Value.Number(123)))
 		assert(parse("true") === Type.Literal(Value.Boolean(true)))
 	}
 
 	it should "parse a literal type in a union" in {
-		assert(parse("Scalar | 123") === Type.Union(Set(Type.Scalar, Type.Literal(Value.Scalar(123)))))
+		assert(parse("Scalar | 123") === Type.Union(Set(Type.Scalar, Type.Literal(Value.Number(123)))))
 	}
 
 	it should "parse a basic subtraction type" in {
-		assert(parse("Scalar -- 123") === Type.Subtraction(Type.Scalar, Type.Literal(Value.Scalar(123))))
+		assert(parse("Scalar -- 123") === Type.Subtraction(Type.Scalar, Type.Literal(Value.Number(123))))
 	}
 
 	it should "parse a complex subtraction type" in {
 		assert(parse("Scalar | String | Boolean -- 123 | true") ===
 			Type.Subtraction(
 				Type.Union(Set(Type.Scalar, Type.String, Type.Boolean)),
-				Type.Union(Set(Type.Literal(Value.Scalar(123)), Type.Literal(Value.Boolean(true))))
+				Type.Union(Set(Type.Literal(Value.Number(123)), Type.Literal(Value.Boolean(true))))
 			)
 		)
 	}

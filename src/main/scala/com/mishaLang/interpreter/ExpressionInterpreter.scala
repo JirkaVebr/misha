@@ -3,7 +3,6 @@ package com.mishaLang.interpreter
 import com.mishaLang.ast.Language.Expression._
 import com.mishaLang.ast.Language.Term.Term
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Dimensioned, Scalar}
 import com.mishaLang.error.ProgramError
 import com.mishaLang.error.ProgramError.{NonBooleanCondition, StackOverflow}
 
@@ -32,10 +31,7 @@ object ExpressionInterpreter {
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
 				case ArithmeticNegation => newState.value match {
-					case number: Value.Number =>  newState ~> (number match {
-						case Dimensioned(magnitude, unit) => Dimensioned(-magnitude, unit)
-						case Scalar(magnitude) => Scalar(-magnitude)
-					})
+					case number: Value.Number => newState ~> number.copy(value = -number.value)
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
 			}

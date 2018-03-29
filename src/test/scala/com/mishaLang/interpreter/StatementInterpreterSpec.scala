@@ -15,7 +15,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "correctly declare variables" in {
 		val symbol = ValueSymbol("myVar")
-		val varValue = Value.Scalar(123)
+		val varValue = Value.Number(123)
 
 		val newState = run(VariableDeclaration(ValueSymbolDeclaration(symbol, None, varValue)))
 		assert(newState.environment.isInCurrentScope(symbol))
@@ -24,7 +24,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "reject declaration of existing variables" in {
 		val symbol = ValueSymbol("myVar")
-		val varValue = Value.Scalar(123)
+		val varValue = Value.Number(123)
 		val newState = state.withNewSymbol(symbol)(varValue).get
 
 		assertThrows[ProgramError[_]](run(VariableDeclaration(ValueSymbolDeclaration(symbol, None, varValue)))(newState))
@@ -32,7 +32,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "reject declarations with wrong type annotations" in {
 		val symbol = ValueSymbol("myVar")
-		val varValue = Value.Scalar(123)
+		val varValue = Value.Number(123)
 		val varType = Type.Boolean // Deliberately wrong type … that's the point here
 
 		assertThrows[ProgramError[_]](run(VariableDeclaration(ValueSymbolDeclaration(symbol, Some(varType), varValue))))
@@ -41,9 +41,9 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 	it should "correctly run a sequence" in {
 		val symbol1 = ValueSymbol("myVar1")
 		val symbol2 = ValueSymbol("myVar2")
-		val varValue1 = Value.Scalar(123)
-		val consequent = Value.Scalar(111)
-		val alternative = Value.Scalar(222)
+		val varValue1 = Value.Number(123)
+		val consequent = Value.Number(111)
+		val alternative = Value.Number(222)
 
 		assert(run(
 			Sequence(
@@ -92,9 +92,9 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 	}
 
 	it should "reject properties illegal in terms of types" in {
-		assertThrows[ProgramError[_]](run(Property(Value.Scalar(123), Value.Scalar(1.6))))
+		assertThrows[ProgramError[_]](run(Property(Value.Number(123), Value.Number(1.6))))
 		assertThrows[ProgramError[_]](run(
-			Property(Value.String("width"), Value.Tuple2(Value.Dimensioned(80, Percentage), Value.Dimensioned(80, Percentage))))
+			Property(Value.String("width"), Value.Tuple2(Value.Number(80, Percentage), Value.Number(80, Percentage))))
 		)
 	}
 
@@ -121,7 +121,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 			run(Rule(Vector(Left(".myClass")), Block(
 				Sequence(
 					Property(Value.String("background"), Value.String("none")),
-					Property(Value.String("background"), Value.String("somethingFancy"), Some(Value.Scalar(123)))
+					Property(Value.String("background"), Value.String("somethingFancy"), Some(Value.Number(123)))
 				)
 			)))
 		)
@@ -135,26 +135,26 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		assert(run(
 			Sequence(
 				Sequence(
-					VariableDeclaration(ValueSymbolDeclaration("n", None, Value.Scalar(123))),
+					VariableDeclaration(ValueSymbolDeclaration("n", None, Value.Number(123))),
 					Each(
 						Variable("i"), Value.List(Vector()), Block(
-							BinaryOperation(Equals, Variable("n"), Value.Scalar(456))
+							BinaryOperation(Equals, Variable("n"), Value.Number(456))
 						)
 					)
 				),
 				Variable("n")
 			)
-		).value === Value.Scalar(123))
+		).value === Value.Number(123))
 	}
 
 	it should "correctly execute each loops" in {
 		assert(run(
 			Sequence(
 				Sequence(
-					VariableDeclaration(ValueSymbolDeclaration("n", None, Value.Scalar(0))),
+					VariableDeclaration(ValueSymbolDeclaration("n", None, Value.Number(0))),
 					Each(
 						Variable("i"), Value.List(Vector(
-							Value.Scalar(1), Value.Scalar(2), Value.Scalar(3), Value.Scalar(4), Value.Scalar(5)
+							Value.Number(1), Value.Number(2), Value.Number(3), Value.Number(4), Value.Number(5)
 						)), Block(
 							BinaryOperation(Equals, Variable("n"), BinaryOperation(Addition, Variable("n"), Variable("i")))
 						)
@@ -162,7 +162,7 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 				),
 				Variable("n")
 			)
-		).value === Value.Scalar(15))
+		).value === Value.Number(15))
 	}
 
 

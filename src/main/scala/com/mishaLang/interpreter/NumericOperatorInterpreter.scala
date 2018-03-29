@@ -71,29 +71,9 @@ object NumericOperatorInterpreter {
 
 	private def runOnTwoNumbers(operator: NumericOperator, left: Value.Number, right: Value.Number)
 														 (implicit state: EnvWithValue): Try[EnvWithValue] = {
-		(left, right) match {
-			case (leftScalar: Value.Scalar, rightScalar: Value.Scalar) =>
-				state ~> NumberOps.performNumericOperator(operator, leftScalar, rightScalar)
-			case (leftDimensioned: Value.Dimensioned, rightDimensioned: Value.Dimensioned) =>
-				NumberOps.performNumericOperator(operator, leftDimensioned, rightDimensioned) match {
-					case Some(value) => state ~> value
-					case None => state.fail(IllegalNumericOperatorOperand, left, right)
-				}
-			case (leftDimensioned: Value.Dimensioned, rightScalar: Value.Scalar) =>
-				NumberOps.performNumericOperator(operator, leftDimensioned, rightScalar) match {
-					case Some(value) => state ~> value
-					case None => state.fail(IllegalNumericOperatorOperand, left, right)
-				}
-			case _ =>
-				operator match {
-					case simpleOperator: SimpleNumericOperator =>
-						state ~> NumberOps.simplifyFormula(Formula(SimpleExpression.BinaryOperation(
-							simpleOperator,
-							SimpleExpression.Term(left), SimpleExpression.Term(right)
-						)))
-					case _: ComplexNumericOperator =>
-						state.fail(IllegalNumericOperatorOperand, left, right)
-				}
+		NumberOps.performNumericOperator(operator, left, right) match {
+			case Some(value) => state ~> value
+			case None => state.fail(IllegalNumericOperatorOperand, left, right)
 		}
 	}
 
@@ -104,11 +84,13 @@ object NumericOperatorInterpreter {
 			case None => state.fail(IllegalStringConcatenationOperand, left, right)
 		}
 		case Multiplication => right match {
-			case scalar: Scalar =>
-				if (NumberValidator.isInteger(scalar))
-					state ~> StringOps.multiply(left, scalar)
-				else state.fail(MultiplyingStringByNonInt, left, right)
-			case _ => state.fail(MultiplyingStringByNonScalar, left, right)
+			case number: Number =>
+				if (NumberValidator.isScalar(number))
+					if (NumberValidator.isInteger(number))
+						state ~> StringOps.multiply(left, number)
+					else state.fail(MultiplyingStringByNonInt, left, right)
+				else state.fail(MultiplyingStringByNonScalar, left, right)
+			case _ => state.fail(MultiplyingStringByNonNumber, left, right)
 		}
 		case _ => state.fail(IllegalNumericOperatorOperand, left, right)
 	}
@@ -140,9 +122,11 @@ object NumericOperatorInterpreter {
 			}
 		case Multiplication =>
 			right match {
-				case Value.Scalar(n) =>
-					if (NumberValidator.isInteger(n)) state ~> ListOps.repeat(left, n.toInt)
-					else state.fail(NonIntListRepeat, left, right)
+				case number: Value.Number =>
+					if (NumberValidator.isInteger(number) && NumberValidator.isScalar(number))
+						state ~> ListOps.repeat(left, number.value.toInt)
+					else
+						state.fail(NonIntScalarListRepeat, left, right)
 				case _ => state.fail(IllegalNumericOperatorOperand, left, right)
 			}
 		case _ => state.fail(IllegalNumericOperatorOperand, left, right)

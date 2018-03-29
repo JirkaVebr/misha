@@ -2,7 +2,6 @@ package com.mishaLang.parser.common
 
 import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.NumberUnit
-import com.mishaLang.ast.NumberUnit.UnitOfMeasure
 import com.mishaLang.spec.units
 import org.parboiled2._
 
@@ -19,7 +18,7 @@ trait L3_Numbers { this: org.parboiled2.Parser
 		nodeStart ~ (atomic(base ~ optional(exponent) ~ optional(unitOfMeasure)) ~> (createNumber(_, _, _))) ~ nodeEnd
 	}
 
-	def Percentage: Rule1[Value.Dimensioned] = rule {
+	def Percentage: Rule1[Value.Number] = rule {
 		nodeStart ~ (atomic(base ~ optional(exponent) ~ percentageUnit) ~> (
 			(base: Double, exponent: Option[Double], unit: NumberUnit.SimpleUnit) =>
 				createNumber(base, exponent, Some(unit))
@@ -59,7 +58,7 @@ trait L3_Numbers { this: org.parboiled2.Parser
 		'%' ~ push(NumberUnit.Percentage)
 	}
 
-	private def unitOfMeasure: Rule1[NumberUnit.UnitOfMeasure] = rule {
+	private def unitOfMeasure: Rule1[NumberUnit.SimpleUnit] = rule {
 		percentageUnit | (
 			valueMap(units.UnitsMap) ~> NumberUnit.Atomic
 		)
@@ -87,11 +86,11 @@ object L3_Numbers {
 	private def getNumericValue(base: Double, exponent: Option[Double]) =
 		if (exponent.isEmpty) base else base * Math.pow(10, exponent.get)
 
-	private def createNumber(base: Double, exponent: Option[Double], unitOfMeasure: Option[NumberUnit.UnitOfMeasure]): Value.Number = {
+	private def createNumber(base: Double, exponent: Option[Double], unitOfMeasure: Option[NumberUnit.SimpleUnit]): Value.Number = {
 		val value = getNumericValue(base, exponent)
 		unitOfMeasure match {
-			case Some(unit) => Value.Dimensioned(value, unit)
-			case None => Value.Scalar(value)
+			case Some(unit) => Value.Number(value, Map(unit -> 1))
+			case None => Value.Number(value)
 		}
 	}
 }

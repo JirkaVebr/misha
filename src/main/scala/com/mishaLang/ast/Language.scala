@@ -2,11 +2,10 @@ package com.mishaLang.ast
 
 import com.mishaLang.ast.Language.Expression.{Block, Expression}
 import com.mishaLang.ast.Language.Term.Variable
-import com.mishaLang.ast.NumberUnit.UnitOfMeasure
+import com.mishaLang.ast.NumberUnit.SubUnits
 import com.mishaLang.ast.SimpleExpression.SimpleExpression
 import com.mishaLang.interpreter.ScopeId
 import com.mishaLang.interpreter.Symbol.{TypeSymbol, ValueSymbol}
-import com.mishaLang.interpreter.typing.Typing
 import com.mishaLang.spec.NativeFunction.NativeFunction
 import com.mishaLang.utils.ImmutableProduct
 
@@ -47,11 +46,7 @@ object Language {
 		sealed trait Primitive extends Value
 		sealed trait Composite extends Value
 
-		sealed abstract class Number(val value: Double) extends Primitive
-		case class Dimensioned(override val value: Double, unit: UnitOfMeasure) extends Number(value)
-		case class Scalar(override val value: Double) extends Number(value)
-
-
+		case class Number(value: Double, unit: SubUnits = Map()) extends Primitive
 		case class Boolean(value: scala.Boolean) extends Primitive
 		case class String(value: java.lang.String) extends Primitive
 
