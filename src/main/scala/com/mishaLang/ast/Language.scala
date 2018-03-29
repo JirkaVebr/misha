@@ -93,7 +93,7 @@ object Language {
 		case class Tuple2(first: Any, second: Any) extends Composite
 		case class Subtraction(minuend: Any, subtrahend: Any) extends Composite
 
-		case class List(of: Any) extends Composite
+		case class List(of: Any = Any) extends Composite
 		case class Map(key: Any, value: Any, mandatoryEntries: Option[SMap[Any, Any]] = None) extends Composite
 		case class Formula(subtype: Any) extends Composite // e.g. 100% - 10px
 

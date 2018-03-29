@@ -76,8 +76,19 @@ object Typing {
 			case Subtraction(minuend, subtrahend) =>
 				val minuendValue = canBeAssignedTo(value, minuend)
 				if (minuendValue.isDefined && canBeAssignedTo(value, subtrahend).isEmpty) minuendValue else None
-			case Type.List(_) =>
-				if (value.isInstanceOf[Value.List]) Some(value) else None // TODO
+			case Type.List(of) =>
+				value match {
+					case list: Value.List =>
+						if (of == Type.Any) Some(value)
+						else {
+							val assignedVector = list.values.flatMap {
+								item => canBeAssignedTo(item, of)
+							}
+							if (assignedVector.length == list.values.length) Some(Value.List(assignedVector))
+							else None
+						}
+					case _ => None
+				}
 			case Map(key, value, mandatoryEntries) => ???
 			case Formula(subtype) => ???
 		}
