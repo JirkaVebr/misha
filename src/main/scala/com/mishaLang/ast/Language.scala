@@ -22,6 +22,8 @@ object Language {
 	/** It would have been better to do Node { this: Product =>
 		* but then all descendant traits would have to do this as well, and so we just naughtily rely on the case class
 		* leaves to override the appropriate methods
+		*
+		* @todo Some of the descendants contain Seq[] but Parboiled2 potentially supplies mutable implementations
 		*/
 	sealed trait Node extends Product with ImmutableProduct {
 
