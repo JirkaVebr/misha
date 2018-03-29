@@ -5,18 +5,18 @@ import com.mishaLang.ast.Language.Statement.Property
 import com.mishaLang.ast.Language.Term.Variable
 import com.mishaLang.ast.Language.{Type, Value, ValueSymbolDeclaration}
 import com.mishaLang.interpreter.Scope
+import com.mishaLang.interpreter.Symbol.ValueSymbol
 
 trait Module {
 
-	def apply(): Map[String, Value.Callable]
+	def apply(): Map[ValueSymbol, Value.Callable]
 
-	final val UnaryArgumentVariable: String = "arg"
 
-	protected def generateUnary(argumentType: Type.Any): Value.Lambda =
+	protected def generateUnary(name: String, argumentType: Type.Any): Value.Lambda =
 		Value.Lambda(
-			None, Vector(ValueSymbolDeclaration[Unit](UnaryArgumentVariable, Some(argumentType), Unit)), Vector(),
+			None, Vector(ValueSymbolDeclaration[Unit](name, Some(argumentType), Unit)), Vector(),
 			None, Block(
-				Property(UnaryArgumentVariable, Variable(UnaryArgumentVariable))
+				Property(name, Variable(name))
 			), Scope.rootScopeId
 		)
 

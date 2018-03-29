@@ -1,21 +1,17 @@
 package com.mishaLang.interpreter.typing
 
-import com.mishaLang.ast.Language.Type.{Any, Color, Flag, Formula, Function, Literal, Map, Subtraction, TypeAlias, Union}
-import com.mishaLang.ast.Language.Value.{Number, Tuple2}
+import com.mishaLang.ast.Language.Type._
+import com.mishaLang.ast.Language.Value.Tuple2
 import com.mishaLang.ast.Language.{Type, Value}
-import com.mishaLang.ast.NumberUnit.{Atomic, Percentage, SimpleUnit}
 import com.mishaLang.interpreter.EnvWithValue
 import com.mishaLang.interpreter.ops.UnitOps
 import com.mishaLang.interpreter.validators.NumberValidator
 import com.mishaLang.spec.units.Angle.Angle
-import com.mishaLang.spec.units.AtomicUnit
 import com.mishaLang.spec.units.Flex.Flex
 import com.mishaLang.spec.units.Frequency.Frequency
 import com.mishaLang.spec.units.Length.Length
 import com.mishaLang.spec.units.Resolution.Resolution
 import com.mishaLang.spec.units.Time.Time
-
-import scala.reflect.ClassTag
 
 object Typing {
 
@@ -97,7 +93,10 @@ object Typing {
 			case Map(key, value, mandatoryEntries) => ???
 			case Formula(subtype) => ???
 		}
-		case TypeAlias(name) => ???
+		case TypeAlias(name) => state.environment.lookup(name) match {
+			case Some(aliasedType) => canBeAssignedTo(value, aliasedType)
+			case None => None
+		}
 		case Any => Some(value)
 	}
 }

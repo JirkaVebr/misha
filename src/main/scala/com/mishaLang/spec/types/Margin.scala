@@ -1,11 +1,12 @@
 package com.mishaLang.spec.types
 import com.mishaLang.ast.Language.Type
 import com.mishaLang.ast.Language.Type.{Literal, TypeAlias}
+import com.mishaLang.interpreter.Symbol.TypeSymbol
 
 object Margin extends Type {
 
 
-	override def name: String = "Margin"
+	override def name: TypeSymbol = "Margin"
 
 	override def apply(): Type.Any = Type.Union(Set(
 		Type.Length,

@@ -1,12 +1,13 @@
 package com.mishaLang.spec.types
 import com.mishaLang.ast.Language.Type
+import com.mishaLang.interpreter.Symbol.TypeSymbol
 
 /**
 	* @see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animated_properties
 	*/
 object Animatable extends Type {
 
-	override def name: String = "Animatable"
+	override def name: TypeSymbol = "Animatable"
 
 	override def apply(): Type.Any = Type.Union(Set(
 			Type.Literal("all"),

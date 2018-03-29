@@ -2,9 +2,10 @@ package com.mishaLang.interpreter.builtin
 
 import com.mishaLang.ast.Language.Value.{Native, Value}
 import com.mishaLang.ast.Language.{Type, Value}
-import com.mishaLang.ast.NumberUnit.{Atomic, Percentage}
+import com.mishaLang.ast.NumberUnit.Atomic
 import com.mishaLang.error.CompilerError
 import com.mishaLang.interpreter.Symbol
+import com.mishaLang.interpreter.Symbol.ValueSymbol
 import com.mishaLang.interpreter.ops.UnitOps
 import com.mishaLang.interpreter.validators.NumberValidator
 import com.mishaLang.spec.units.Angle.{Angle, Radian}
@@ -13,10 +14,10 @@ import scala.util.{Failure, Success}
 
 object Trigonometry {
 
-	lazy final val Trigonometry: Map[String, Symbol.ValueSymbol#Value] = Map(
-		"sin" -> Sin,
-		"cos" -> Cos,
-		"tan" -> Tan
+	lazy final val Trigonometry: Map[ValueSymbol, Symbol.ValueSymbol#Value] = Map(
+		ValueSymbol("sin") -> Sin,
+		ValueSymbol("cos") -> Cos,
+		ValueSymbol("tan") -> Tan
 	)
 
 

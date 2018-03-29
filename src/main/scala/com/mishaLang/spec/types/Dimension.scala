@@ -2,6 +2,7 @@ package com.mishaLang.spec.types
 
 import com.mishaLang.ast.Language.Type
 import com.mishaLang.ast.Language.Type.TypeAlias
+import com.mishaLang.interpreter.Symbol.TypeSymbol
 
 /**
 	* This is for both the "width" as well as the "height" property
@@ -9,7 +10,7 @@ import com.mishaLang.ast.Language.Type.TypeAlias
 object Dimension extends Type {
 
 
-	override def name: String = "Dimension"
+	override def name: TypeSymbol = "Dimension"
 
 	override def apply(): Type.Any = Type.Union(Set(
 		Type.Length,

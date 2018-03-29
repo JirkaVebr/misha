@@ -9,8 +9,6 @@ class RuleSpec extends BaseIntegrationSpec {
 			"""@let $color = ($color: Color) =>
 				|	@property("color", $color)
 				|.foo
-				|	@let $width = ($length: Length) =>
-				|		@property("width", $length)
 				|	color blue
 				|	width 123px
 				|""".stripMargin) ===
@@ -26,8 +24,6 @@ class RuleSpec extends BaseIntegrationSpec {
 		assert(run(
 			"""@let $color = ($color: Color) =>
 				|	@property("color", $color)
-				|@let $width = ($length: Length) =>
-				|	@property("width", $length)
 				|@let $border-radius = ($radius: Length) =>
 				|	@property("border-radius", $radius)
 				|.foo
@@ -51,8 +47,6 @@ class RuleSpec extends BaseIntegrationSpec {
 		assert(run(
 			"""@let $color = ($color: Color) =>
 				|	@property("color", $color)
-				|@let $width = ($length: Length) =>
-				|	@property("width", $length)
 				|@let $button = ($c: Color) =>
 				|	color $c
 				|	width 100px

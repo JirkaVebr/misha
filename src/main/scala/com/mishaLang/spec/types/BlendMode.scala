@@ -3,10 +3,11 @@ package com.mishaLang.spec.types
 import com.mishaLang.ast.Language.Type.{Literal, Union}
 import com.mishaLang.ast.Language.Value
 import com.mishaLang.interpreter.Symbol
+import com.mishaLang.interpreter.Symbol.TypeSymbol
 
 object BlendMode extends Type {
 
-	override def name: String = "BlendMode"
+	override def name: TypeSymbol = "BlendMode"
 
 	override def apply(): Symbol.TypeSymbol#Value = Union(Set(
 		Literal("color"),

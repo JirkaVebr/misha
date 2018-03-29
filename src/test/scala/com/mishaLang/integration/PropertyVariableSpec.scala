@@ -8,11 +8,7 @@ class PropertyVariableSpec extends BaseIntegrationSpec {
 
 	they should "correctly evaluate property variables" in {
 		assert(run(
-			"""@let $width = ($length: Length) =>
-				|	@property("width", $length)
-				|@let $height = ($length: Length) =>
-				|	@property("height", $length)
-				|.foo
+			""".foo
 				|	width 123px
 				|	height $$width
 				|""".stripMargin) ===
@@ -22,11 +18,7 @@ class PropertyVariableSpec extends BaseIntegrationSpec {
 				|}
 				|""".stripMargin)
 		assert(run(
-			"""@let $width = ($length: Length) =>
-				|	@property("width", $length)
-				|@let $height = ($length: Length) =>
-				|	@property("height", $length)
-				|.foo
+			""".foo
 				|	width 123px
 				|.foo
 				|	height $$width

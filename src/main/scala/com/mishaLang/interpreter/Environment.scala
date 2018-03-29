@@ -19,9 +19,7 @@ class Environment private
 
 
 	def this(parentEnvironment: Option[Environment] = None) =
-		this(EnvironmentMeta(Scope.rootScopeId, RuleEnvironment), parentEnvironment, Map(
-			RuleStoreSymbol -> LinkedMap.empty[Symbol.RuleContextSymbol.Value, PropertyStore].asInstanceOf[RuleStoreSymbol.Value]
-		), Vector())
+		this(EnvironmentMeta(Scope.rootScopeId, RuleEnvironment), parentEnvironment, RootEnvironment.RootEnvironmentSymbolTable, Vector())
 
 
 	protected def cloneWithNewParent(newParent: Environment): Environment =

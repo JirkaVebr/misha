@@ -2,6 +2,7 @@ package com.mishaLang.parser.language
 
 import com.mishaLang.ast.Language
 import com.mishaLang.interpreter.RootEnvironment
+import com.mishaLang.interpreter.Symbol.TypeSymbol
 import com.mishaLang.parser.common.{L0_Whitespace, L1_AstNode, L2_Strings, L3_Numbers}
 import org.parboiled2._
 
@@ -40,11 +41,19 @@ trait L4_Types { this: org.parboiled2.Parser
 	}
 
 	private def nonCompoundType: Rule1[Language.Type.Any] = rule {
-		simpleCompositeType | nonCompositeType | TypeAlias | literalType
+		simpleCompositeType | nonCompositeType | literalType
 	}
 
 	private def nonCompositeType: Rule1[Language.Type.Any] = rule {
-		valueMap(RootEnvironment.PreDefinedTypes)
+		capture(CharPredicate.UpperAlpha ~ zeroOrMore(CharPredicate.AlphaNum)) ~> (
+			(alias: String) => {
+				val symbol = TypeSymbol(alias)
+				RootEnvironment.PreDefinedTypes.get(symbol) match {
+					case Some(value) => value
+					case None => Language.Type.TypeAlias(symbol)
+				}
+			}
+		)
 	}
 
 	def TypeAlias: Rule1[Language.Type.TypeAlias] = rule {

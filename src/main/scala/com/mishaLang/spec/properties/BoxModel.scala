@@ -1,30 +1,31 @@
 package com.mishaLang.spec.properties
 import com.mishaLang.ast.Language.Value
+import com.mishaLang.interpreter.Symbol.ValueSymbol
 
 object BoxModel extends Module {
 
 
-	override def apply(): Map[String, Value.Callable] = Map(
-		"height" -> generateUnary("Dimension"),
+	override def apply(): Map[ValueSymbol, Value.Callable] = Map(
+		ValueSymbol("height") -> generateUnary("height", "Dimension"),
 		// margin
-		"margin-bottom" -> generateUnary("Margin"),
-		"margin-left" -> generateUnary("Margin"),
-		"margin-right" -> generateUnary("Margin"),
-		"margin-top" -> generateUnary("Margin"),
-		"max-height" -> generateUnary("DimensionLimit"),
-		"max-width" -> generateUnary("DimensionLimit"),
-		"overflow" -> generateUnary("Overflow"),
-		"overflow-x" -> generateUnary("Overflow"),
-		"overflow-y" -> generateUnary("Overflow"),
+		ValueSymbol("margin-bottom") -> generateUnary("margin-bottom", "Margin"),
+		ValueSymbol("margin-left") -> generateUnary("margin-left", "Margin"),
+		ValueSymbol("margin-right") -> generateUnary("margin-right", "Margin"),
+		ValueSymbol("margin-top") -> generateUnary("margin-top", "Margin"),
+		ValueSymbol("max-height") -> generateUnary("max-height", "DimensionLimit"),
+		ValueSymbol("max-width") -> generateUnary("max-width", "DimensionLimit"),
+		ValueSymbol("overflow") -> generateUnary("overflow", "Overflow"),
+		ValueSymbol("overflow-x") -> generateUnary("overflow-x", "Overflow"),
+		ValueSymbol("overflow-y") -> generateUnary("overflow-y", "Overflow"),
 		// overscroll-behavior
 		// overscroll-behavior-x
 		// overscroll-behavior-y
 		// padding
-		"padding-bottom" -> generateUnary("Padding"),
-		"padding-left" -> generateUnary("Padding"),
-		"padding-right" -> generateUnary("Padding"),
-		"padding-top" -> generateUnary("Padding"),
-		"visibility" -> generateUnary("Visibility"),
-		"width" -> generateUnary("Dimension"),
+		ValueSymbol("padding-bottom") -> generateUnary("padding-bottom", "Padding"),
+		ValueSymbol("padding-left") -> generateUnary("padding-left", "Padding"),
+		ValueSymbol("padding-right") -> generateUnary("padding-right", "Padding"),
+		ValueSymbol("padding-top") -> generateUnary("padding-top", "Padding"),
+		ValueSymbol("visibility") -> generateUnary("visibility", "Visibility"),
+		ValueSymbol("width") -> generateUnary("width", "Dimension"),
 	)
 }

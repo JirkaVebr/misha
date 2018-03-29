@@ -2,11 +2,12 @@ package com.mishaLang.spec.types
 
 import com.mishaLang.ast.Language.Type
 import com.mishaLang.ast.Language.Type.{Literal, TypeAlias}
+import com.mishaLang.interpreter.Symbol.TypeSymbol
 
 object Overflow extends Type {
 
 
-	override def name: String = "Overflow"
+	override def name: TypeSymbol = "Overflow"
 
 	override def apply(): Type.Any = Type.Union(Set(
 		Literal("visible"),

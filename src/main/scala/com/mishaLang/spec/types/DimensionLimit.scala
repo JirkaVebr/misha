@@ -2,6 +2,7 @@ package com.mishaLang.spec.types
 
 import com.mishaLang.ast.Language.Type
 import com.mishaLang.ast.Language.Type.TypeAlias
+import com.mishaLang.interpreter.Symbol.TypeSymbol
 
 /**
 	* The idea of this is to have only one type for {min-max}{width-height}
@@ -9,7 +10,7 @@ import com.mishaLang.ast.Language.Type.TypeAlias
 object DimensionLimit extends Type {
 
 
-	override def name: String = "DimensionLimit"
+	override def name: TypeSymbol = "DimensionLimit"
 
 	override def apply(): Type.Any = Type.Union(Set(
 		Type.Length,

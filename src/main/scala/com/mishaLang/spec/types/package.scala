@@ -1,10 +1,11 @@
 package com.mishaLang.spec
 
 import com.mishaLang.interpreter.Symbol
+import com.mishaLang.interpreter.Symbol.TypeSymbol
 
 package object types {
 
-	lazy final val SpecTypes: Map[String, Symbol.TypeSymbol#Value] = Map(
+	lazy final val SpecTypes: Map[TypeSymbol, Symbol.TypeSymbol#Value] = Map(
 		Animatable.name -> Animatable(),
 		BlendMode.name -> BlendMode(),
 		Dimension.name -> Dimension(),
