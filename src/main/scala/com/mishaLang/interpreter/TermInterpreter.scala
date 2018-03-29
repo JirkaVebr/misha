@@ -10,8 +10,7 @@ import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
 import com.mishaLang.interpreter.RuleContext.{AtRule, RuleSelector}
 import com.mishaLang.interpreter.Symbol.RuleStoreSymbol
-import com.mishaLang.interpreter.ops.FunctionOps
-import com.mishaLang.interpreter.typing.Typing
+import com.mishaLang.interpreter.ops.{FunctionOps, TypeOps}
 
 import scala.util.{Failure, Success, Try}
 
@@ -205,7 +204,7 @@ object TermInterpreter {
 												)
 												lambda.returnType match {
 													case Some(returnType) =>
-														Typing.canBeAssignedTo(callSiteState.value, returnType) match {
+														TypeOps.canBeAssignedTo(callSiteState.value, returnType) match {
 															case Some(assignedValue) =>
 																callSiteState ~> assignedValue
 															case None =>

@@ -1,10 +1,9 @@
-package com.mishaLang.interpreter.typing
+package com.mishaLang.interpreter.ops
 
 import com.mishaLang.ast.Language.Type._
 import com.mishaLang.ast.Language.Value.Tuple2
 import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.interpreter.EnvWithValue
-import com.mishaLang.interpreter.ops.UnitOps
 import com.mishaLang.interpreter.validators.NumberValidator
 import com.mishaLang.spec.units.Angle.Angle
 import com.mishaLang.spec.units.Flex.Flex
@@ -13,7 +12,7 @@ import com.mishaLang.spec.units.Length.Length
 import com.mishaLang.spec.units.Resolution.Resolution
 import com.mishaLang.spec.units.Time.Time
 
-object Typing {
+object TypeOps {
 
 	/**
 		* The idea of this method is to essentially just check whether a value satisfies a given type. However, the result

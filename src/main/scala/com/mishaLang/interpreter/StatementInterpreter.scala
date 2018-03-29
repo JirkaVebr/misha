@@ -6,8 +6,7 @@ import com.mishaLang.ast.Language.{Statement, Type, Value, ValueSymbolDeclaratio
 import com.mishaLang.ast.PropertyRecord
 import com.mishaLang.error.ProgramError._
 import com.mishaLang.interpreter.Symbol.RuleStoreSymbol
-import com.mishaLang.interpreter.ops.StringOps
-import com.mishaLang.interpreter.typing.Typing
+import com.mishaLang.interpreter.ops.{StringOps, TypeOps}
 import com.mishaLang.utils.LinkedMap
 
 import scala.util.{Failure, Success, Try}
@@ -80,7 +79,7 @@ object StatementInterpreter {
 			case Failure(exception) => Failure(exception)
 			case Success(stateAfterValue) => declaration.typeAnnotation match {
 				case Some(annotatedType) =>
-					Typing.canBeAssignedTo(stateAfterValue.value, annotatedType) match {
+					TypeOps.canBeAssignedTo(stateAfterValue.value, annotatedType) match {
 						case Some(newValue) =>
 							stateAfterValue.withNewSymbol(declaration.name)(newValue)
 						case None =>
@@ -107,7 +106,7 @@ object StatementInterpreter {
 											ExpressionInterpreter.run(flags)(stateAfterValue) match {
 												case Failure(exception) => Failure(exception)
 												case Success(newestState) =>
-													Typing.canBeAssignedTo(newestState.value, Type.List(Type.Flag)) match {
+													TypeOps.canBeAssignedTo(newestState.value, Type.List(Type.Flag)) match {
 														case Some(list) =>
 															Success(AugmentedEnvironment[Value.List](
 																newestState.environment, list.asInstanceOf[Value.List]

@@ -4,7 +4,6 @@ import com.mishaLang.ast.Language.Value
 import com.mishaLang.ast.Language.Value.{Lambda, Native}
 import com.mishaLang.error.ProgramError.{IllTypedArgument, NotEnoughArguments, ProgramErrorCode, TooManyArguments}
 import com.mishaLang.interpreter.EnvWithValue
-import com.mishaLang.interpreter.typing.Typing
 
 object FunctionOps {
 
@@ -28,7 +27,7 @@ object FunctionOps {
 		if (arityComparison == 0) {
 			val zipped = native.expectedType.zip(arguments)
 			val incorrectlyTyped = zipped.filter {
-				case (expected, value) => Typing.canBeAssignedTo(value, expected).isEmpty
+				case (expected, value) => TypeOps.canBeAssignedTo(value, expected).isEmpty
 			}
 			if (incorrectlyTyped.isEmpty) {
 				None
@@ -56,7 +55,7 @@ object FunctionOps {
 			val zipped = (lambda.mandatoryArguments ++ lambda.otherArguments).zip(arguments)
 			val incorrectlyTyped = zipped.filter {
 				case (declaration, value) => declaration.typeAnnotation match {
-					case Some(annotation) => Typing.canBeAssignedTo(value, annotation).isEmpty
+					case Some(annotation) => TypeOps.canBeAssignedTo(value, annotation).isEmpty
 					case None => false
 				}
 			}
