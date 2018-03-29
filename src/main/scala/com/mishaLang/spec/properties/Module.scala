@@ -20,4 +20,6 @@ trait Module {
 			), Scope.rootScopeId
 		)
 
+	protected implicit def string2Type(string: String): Type.Any = Type.TypeAlias(string)
+
 }
