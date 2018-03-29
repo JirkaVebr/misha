@@ -24,13 +24,11 @@ object NumberOps {
 		else normalizeDouble(double, precision).toString
 
 
-	private def performOperation(operator: NumericOperator, left: Double, right: Double): Double = operator match {
+	private def performOperation(operator: SimpleNumericOperator, left: Double, right: Double): Double = operator match {
 		case Addition => left + right
 		case Subtraction => left - right
 		case Multiplication => left * right
 		case Division => left / right
-		case Exponentiation => Math.pow(left, right)
-		case Remainder => left % right
 	}
 
 	def performNumericOperator(operator: NumericOperator, left: Number, right: Number): Option[Value.Value] = {
@@ -42,7 +40,7 @@ object NumberOps {
 				case Addition | Subtraction =>
 					if (leftUnit == rightUnit)
 						Some(UnitOps.normalizeUnit(
-							performOperation(operator, left.value, right.value), leftUnit
+							performOperation(simple, left.value, right.value), leftUnit
 						))
 					else
 						Some(simplifyFormula(Formula(SimpleExpression.BinaryOperation(simple, Term(left), Term(right)))))
@@ -58,17 +56,14 @@ object NumberOps {
 					))
 			}
 			case complex: ComplexNumericOperator =>
-				if (NumberValidator.isInteger(right) && NumberValidator.isScalar(right)) {
-					val rightInteger = right.value.toInt
-
+				if (NumberValidator.isScalar(right)) {
 					complex match {
 						case Exponentiation =>
-							Some(UnitOps.normalizeUnit(
-								Math.pow(left.value, rightInteger),
-								UnitOps.multiplyUnit(left.unit, rightInteger)
-							))
+							pow(left, right)
 						case Remainder =>
-							Some(Number(left.value % rightInteger, left.unit))
+							if (NumberValidator.isInteger(right))
+								Some(Number(left.value % right.value.toInt, left.unit))
+							else None
 					}
 				} else
 					None
@@ -84,6 +79,22 @@ object NumberOps {
 			case Term(value) => value
 		}
 	}
+
+
+	def pow(base: Value.Number, exponent: Value.Number): Option[Value.Number] =
+		if (NumberValidator.isScalar(exponent)) {
+			val legalExponent = base.unit.forall {
+				case (_, unitExponent) => NumberValidator.isInteger(exponent.value * unitExponent)
+			}
+			if (legalExponent)
+				Some(UnitOps.normalizeUnit(
+					Math.pow(base.value, exponent.value),
+					UnitOps.multiplyUnit(base.unit, exponent.value)
+				))
+			else
+				None
+		} else
+			None
 
 
 
@@ -105,22 +116,7 @@ object NumberOps {
 		Value.Boolean(NumberValidator.isInteger(number.value))
 
 	def sqrt(number: Value.Number): Option[Value.Number] =
-		???
-		/*number match {
-			case Dimensioned(value, unit) =>
-				val raisedUnit = UnitOps.raiseUnit(unit)
-				val isSquare = raisedUnit.subUnits.forall {
-					case (_, exponent) => exponent % 2 == 0
-				}
-				if (isSquare)
-					Some(UnitOps.normalizeDimensioned(
-						Math.sqrt(value), UnitOps.multiplyUnit(raisedUnit, 0.5)
-					))
-				else
-					None
-			case Scalar(value) =>
-				Some(Scalar(Math.sqrt(value)))
-		}*/
+		pow(number, Value.Number(.5))
 
 	def toPercentage(number: Number): Number =
 		Number(number.value, Percentage)

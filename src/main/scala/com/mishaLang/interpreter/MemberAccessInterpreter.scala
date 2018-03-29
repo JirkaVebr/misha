@@ -72,7 +72,7 @@ object MemberAccessInterpreter {
 			case "toScalar" => Some(NumberOps.toScalar(number))
 			case "toString" => StringOps.castToString(number)
 			case _ =>
-				val newValue = memberName match { // TODO
+				val newValue = memberName match {
 					case "abs" => number.value.abs
 					case "ceil" => number.value.ceil
 					case "floor" => number.value.floor

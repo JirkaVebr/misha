@@ -80,6 +80,9 @@ object UnitOps {
 	}
 
 
+	/**
+		* Careful! This method doesn't perform any checks!
+		*/
 	def multiplyUnit(unit: SubUnits, factor: Double): SubUnits =
 		unit.map {
 			case (subUnit, exponent) => (subUnit, (factor * exponent).toInt)
