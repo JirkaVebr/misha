@@ -6,16 +6,11 @@ import com.mishaLang.ast.NumberUnit
 import com.mishaLang.ast.NumberUnit.{Atomic, RaisedUnit, SimpleUnit}
 import com.mishaLang.error.NativeError
 import com.mishaLang.error.NativeError.StringIndexOutOfBounds
-import com.mishaLang.interpreter.validators.NumberValidator
 import com.mishaLang.spec.units.Length.Length
 
 import scala.util.{Failure, Success}
 
 object StringOps {
-
-	private def numberToString(number: Double): String =
-		if (NumberValidator.isInteger(number)) number.toInt.toString
-		else number.toString
 
 
 	def castToString(value: Value.Value): Option[Value.String] = value match {
