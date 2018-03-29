@@ -138,7 +138,7 @@ object NumberOps {
 					complex match {
 						case Exponentiation =>
 							Some(normalizeDimensioned(
-								left.value % rightInteger,
+								Math.pow(left.value, rightInteger),
 								multiplyUnit(raiseUnit(left.unit), rightInteger)
 							))
 						case Remainder =>

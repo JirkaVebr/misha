@@ -39,9 +39,10 @@ class NumericOperatorInterpreter extends BaseInterpreterSpec {
 		assertThrows[ProgramError[_]](run(BinaryOperation(Multiplication, l, Scalar(123.456))))
 	}
 
+	private val TenPx = Dimensioned(10, Atomic(Pixel))
+	private val FiveTurns = Dimensioned(5, Atomic(Turn))
+
 	it should "evaluate Dimensioned op Dimensioned" in {
-		val TenPx = Dimensioned(10, Atomic(Pixel))
-		val FiveTurns = Dimensioned(5, Atomic(Turn))
 
 		assert(run(BinaryOperation(Division, TenPx, TenPx)).value === Scalar(1))
 		assert(run(BinaryOperation(Division, TenPx, FiveTurns)).value === Dimensioned(
@@ -69,6 +70,30 @@ class NumericOperatorInterpreter extends BaseInterpreterSpec {
 		assertThrows[ProgramError[_]](run(BinaryOperation(Exponentiation, TenPx, FiveTurns)))
 		assertThrows[ProgramError[_]](run(BinaryOperation(Remainder, TenPx, TenPx)))
 		assertThrows[ProgramError[_]](run(BinaryOperation(Remainder, TenPx, FiveTurns)))
+	}
+
+
+	it should "evaluate Dimensioned op Scalar" in {
+		assert(run(BinaryOperation(Addition, TenPx, Scalar(123))).value === Formula(
+			SimpleExpression.BinaryOperation(Addition, Term(TenPx), Term(Scalar(123)))
+		))
+		assert(run(BinaryOperation(Subtraction, TenPx, Scalar(123))).value === Formula(
+			SimpleExpression.BinaryOperation(Subtraction, Term(TenPx), Term(Scalar(123)))
+		))
+		assert(run(BinaryOperation(Multiplication, TenPx, Scalar(3))).value === Dimensioned(
+			30, Atomic(Pixel)
+		))
+		assert(run(BinaryOperation(Division, TenPx, Scalar(2))).value === Dimensioned(
+			5, Atomic(Pixel)
+		))
+		assert(run(BinaryOperation(Exponentiation, TenPx, Scalar(3))).value === Dimensioned(
+			1000, RaisedUnit(Map(Atomic(Pixel) -> 3))
+		))
+		assert(run(BinaryOperation(Remainder, TenPx, Scalar(3))).value === Dimensioned(
+			1, Atomic(Pixel)
+		))
+		assertThrows[ProgramError[_]](run(BinaryOperation(Exponentiation, TenPx, Scalar(123.456))))
+		assertThrows[ProgramError[_]](run(BinaryOperation(Remainder, TenPx, Scalar(123.456))))
 	}
 
 
