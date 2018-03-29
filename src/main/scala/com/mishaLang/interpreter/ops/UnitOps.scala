@@ -45,7 +45,7 @@ object UnitOps {
 						case _ => None
 					}
 			}
-			case _: ComplexUnit => None // TODO this may otherwise be valid for Hz ←→ s^-1
+			case _: RaisedUnit => None // TODO this may otherwise be valid for Hz ←→ s^-1
 		}
 
 

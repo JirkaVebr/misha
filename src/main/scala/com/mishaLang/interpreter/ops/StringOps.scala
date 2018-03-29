@@ -3,7 +3,7 @@ package com.mishaLang.interpreter.ops
 import com.mishaLang.ast.Language.Value.{Dimensioned, Native, Number, Primitive, Rgba, Scalar, Value}
 import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.ast.NumberUnit
-import com.mishaLang.ast.NumberUnit.{Atomic, ComplexUnit, SimpleUnit}
+import com.mishaLang.ast.NumberUnit.{Atomic, RaisedUnit, SimpleUnit}
 import com.mishaLang.error.NativeError
 import com.mishaLang.error.NativeError.StringIndexOutOfBounds
 import com.mishaLang.interpreter.validators.NumberValidator
@@ -36,7 +36,7 @@ object StringOps {
 						case NumberUnit.Percentage =>
 							Some(Value.String(NumberOps.formatDouble(magnitude) + '%'))
 					}
-					case _: ComplexUnit => None
+					case _: RaisedUnit => None // Assuming the unit has been normalized
 				}
 			}
 			case color: Rgba => Some(ColorOps.toString(color))
