@@ -10,12 +10,13 @@ trait Module {
 
 	def apply(): Map[String, Value.Callable]
 
+	final val UnaryArgumentVariable: String = "arg"
 
-	protected def generateUnary(name: String, argumentType: Type.Any): Value.Lambda =
+	protected def generateUnary(argumentType: Type.Any): Value.Lambda =
 		Value.Lambda(
-			None, Vector(ValueSymbolDeclaration[Unit](name, Some(argumentType), Unit)), Vector(),
+			None, Vector(ValueSymbolDeclaration[Unit](UnaryArgumentVariable, Some(argumentType), Unit)), Vector(),
 			None, Block(
-				Property(name, Variable(name))
+				Property(UnaryArgumentVariable, Variable(UnaryArgumentVariable))
 			), Scope.rootScopeId
 		)
 
