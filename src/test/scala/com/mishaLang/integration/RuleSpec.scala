@@ -6,9 +6,7 @@ class RuleSpec extends BaseIntegrationSpec {
 
 	they should "correctly evaluate simple functions" in {
 		assert(run(
-			"""@let $color = ($color: Color) =>
-				|	@property("color", $color)
-				|.foo
+			""".foo
 				|	color blue
 				|	width 123px
 				|""".stripMargin) ===
@@ -22,9 +20,7 @@ class RuleSpec extends BaseIntegrationSpec {
 
 	they should "correctly evaluate nested rules" in {
 		assert(run(
-			"""@let $color = ($color: Color) =>
-				|	@property("color", $color)
-				|@let $border-radius = ($radius: Length) =>
+			"""@let $border-radius = ($radius: Length) =>
 				|	@property("border-radius", $radius)
 				|.foo
 				|	color blue
@@ -45,9 +41,7 @@ class RuleSpec extends BaseIntegrationSpec {
 
 	they should "correctly evaluate repeated applications of the same mixin" in {
 		assert(run(
-			"""@let $color = ($color: Color) =>
-				|	@property("color", $color)
-				|@let $button = ($c: Color) =>
+			"""@let $button = ($c: Color) =>
 				|	color $c
 				|	width 100px
 				|	& span
