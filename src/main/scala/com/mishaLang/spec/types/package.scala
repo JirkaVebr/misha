@@ -10,6 +10,7 @@ package object types {
 		BlendMode.name -> BlendMode(),
 		Dimension.name -> Dimension(),
 		DimensionLimit.name -> DimensionLimit(),
+		Display.name -> Display(),
 		Global.name -> Global(),
 		Margin.name -> Margin(),
 		Overflow.name -> Overflow(),

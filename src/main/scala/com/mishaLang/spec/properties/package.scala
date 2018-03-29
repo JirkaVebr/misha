@@ -8,5 +8,6 @@ package object properties {
 
 	lazy final val SpecProperties: Map[ValueSymbol, Value.Callable] =
 		BoxModel() ++
-		Color()
+		Color() ++
+		Display()
 }
