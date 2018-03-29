@@ -39,9 +39,8 @@ class Emitter(val finalEnvironment: Environment) {
 			'\t' + property.name + ": " + property.output + (
 				if (property.flags.contains(Value.Important)) " !important"
 				else ""
-			) + ";\n" // TODO handle flags
+			) + ";\n"
 		).foldLeft(builder)(_.append(_))
 
-	//private def
 
 }
