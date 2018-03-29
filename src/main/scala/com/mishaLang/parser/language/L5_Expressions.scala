@@ -281,10 +281,6 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		(ruleHead ~ SingleLineWhitespace ~ block) ~> Language.Statement.Rule
 	}
 
-	sealed trait Paren
-	case class LParen() extends Paren
-	case class RParen() extends Paren
-
 	private def ruleHead: Rule1[RuleHead] = rule {
 		SingleLineWhitespace ~ oneOrMore( // Consume leading whitespace
 			ruleHeadExpression | ruleHeadString
