@@ -227,18 +227,20 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		sequenceNode ~ zeroOrMore(sequenceNode ~> Sequence)
 	}
 
-	private def sequenceNode: Rule1[Statement] = rule {
-		// Can't factor out the EndOfLine rules as that would have a different meaning
+	private def statementEnd: Rule0 = rule {
+		test(lastChar == DEDENT) | EndOfLine
+	}
 
-		// TODO all these optional() calls are a hack: they're for rules that could end with a block
-		(typeAliasDeclaration ~ EndOfLine) |
-		(variableDeclaration ~ optional(EndOfLine)) |
-		(property ~ EndOfLine) |
-		(each ~ optional(EndOfLine)) |
-		(Expression ~ EndOfLine) |
-		(rule ~ optional(EndOfLine)) |
-		(propertyFunctionCall ~ EndOfLine) |
-		(noOp ~ EndOfLine)
+	private def sequenceNode: Rule1[Statement] = rule {
+		// Can't factor out the statementEnd rules as that would have a different meaning
+		(typeAliasDeclaration ~ statementEnd) |
+		(variableDeclaration ~ statementEnd) |
+		(property ~ statementEnd) |
+		(each ~ statementEnd) |
+		(Expression ~ statementEnd) |
+		(rule ~ statementEnd) |
+		(propertyFunctionCall ~ statementEnd) |
+		(noOp ~ statementEnd)
 	}
 
 	private def typeAliasDeclaration: Rule1[TypeAliasDeclaration] = rule {
