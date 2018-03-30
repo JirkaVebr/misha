@@ -113,14 +113,6 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 			run(Rule(Vector(Left(".myClass")), Block(
 				Sequence(
 					Property(Value.String("background"), Value.String("none")),
-					Property(Value.String("background"), Value.String("somethingFancy"))
-				)
-			)))
-		)
-		assertThrows[ProgramError[_]](
-			run(Rule(Vector(Left(".myClass")), Block(
-				Sequence(
-					Property(Value.String("background"), Value.String("none")),
 					Property(Value.String("background"), Value.String("somethingFancy"), Some(Value.Number(123)))
 				)
 			)))

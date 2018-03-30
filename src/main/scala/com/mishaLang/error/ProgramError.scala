@@ -22,7 +22,6 @@ object ProgramError {
 	case object AssigningToNonVariable extends SimpleError("Assignment to a non-variable")
 	case object ComparingIncompatibleNumerics extends SimpleError("Numerical comparison of incompatible numerical values")
 	case object ComparingNonNumber extends SimpleError("Numerical comparison of non-numerical values")
-	case object DuplicateProperty extends SimpleError("Duplicate property. Use !duplicate if necessary.")
 	case object DuplicateTypeDeclaration extends SimpleError("Re-declaring a type name")
 	case object DuplicateVariableDeclaration extends SimpleError("Duplicate declaration of a variable within the same scope")
 	case object IllTypedArgument extends SimpleError("Type of argument value does not conform to the expected type")

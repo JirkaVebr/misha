@@ -128,25 +128,20 @@ object StatementInterpreter {
 											val propertyStore: PropertyStore = ruleStore.getOrElse(ruleContext, LinkedMap.empty)
 											val propertyRecord = PropertyRecord(name, stateAfterValue.value, valueString.value, flagSet)
 
-											val newPropertyRecords: Option[List[PropertyRecord]] = propertyStore.get(name) match {
+											val newPropertyRecords: List[PropertyRecord] = propertyStore.get(name) match {
 												case Some(propertyRecords) =>
 													if (flagSet.contains(Value.Duplicate))
-														Some(propertyRecord :: propertyRecords)
+														propertyRecord :: propertyRecords
 													else
-														None
+														propertyRecord :: Nil
 												case None =>
-													Some(propertyRecord :: Nil)
+													propertyRecord :: Nil
 											}
 
-											newPropertyRecords match {
-												case Some(propertyRecords) =>
-													stateAfterValue.withUpdatedSymbol(RuleStoreSymbol)(
-														ruleStore.updated(ruleContext, propertyStore.updated(name, propertyRecords))
-															.asInstanceOf[RuleStoreSymbol.Value]
-													)
-												case None =>
-													EnvironmentWithValue(stateWithFlags.environment).fail(DuplicateProperty, property)
-											}
+											stateAfterValue.withUpdatedSymbol(RuleStoreSymbol)(
+												ruleStore.updated(ruleContext, propertyStore.updated(name, newPropertyRecords))
+													.asInstanceOf[RuleStoreSymbol.Value]
+											)
 									}
 								case None => stateAfterName.fail(IllegalPropertyValue, property.name)
 							}
