@@ -1,6 +1,7 @@
 package com.mishaLang
 
 import com.mishaLang.emitter.Emitter
+import com.mishaLang.error.{ProgramError, SelectorError}
 import com.mishaLang.interpreter.Interpreter
 import com.mishaLang.parser.language.LanguageParser
 import org.parboiled2._
@@ -22,8 +23,11 @@ class Compiler(val input: String) {
 						val emitter = new Emitter(finalEnvironment.environment)
 						emitter.emit().mkString
 					case Failure(error) =>
-						throw error // TODO
-						"Unexpected interpreter error" // TODO
+						error match {
+							case e: ProgramError[_] => e.errorCode.message()
+							case e: SelectorError => e.errorCode.message()
+							case _ => "Unexpected interpreter error"
+						}
 				}
 			case Failure(error: ParseError) =>
 				"Parse error: " + error.format(parser)
