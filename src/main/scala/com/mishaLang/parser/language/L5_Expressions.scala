@@ -265,7 +265,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def propertyFunctionCall: Rule1[FunctionCall] = rule {
-		Identifier ~ MandatorySingleLineWhitespace ~ oneOrMore(propertyFunctionArgument).separatedBy(MandatorySingleLineWhitespace) ~> (
+		Identifier ~ optional(':') ~ MandatorySingleLineWhitespace ~ oneOrMore(propertyFunctionArgument).separatedBy(MandatorySingleLineWhitespace) ~> (
 			(identifier: String, arguments: Seq[Expression]) =>
 				FunctionCall(Term.Variable(identifier), arguments)
 		)
