@@ -237,8 +237,9 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		(variableDeclaration ~ statementEnd) |
 		(property ~ statementEnd) |
 		(each ~ statementEnd) |
-		(Expression ~ statementEnd) |
+		(conditional ~ statementEnd) |
 		(rule ~ statementEnd) |
+		(Expression ~ statementEnd) |
 		(propertyFunctionCall ~ statementEnd) |
 		(noOp ~ statementEnd)
 	}
