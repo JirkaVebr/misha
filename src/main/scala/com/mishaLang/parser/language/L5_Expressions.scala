@@ -249,7 +249,9 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def variableDeclaration: Rule1[VariableDeclaration] = rule {
-		(Token("@let") ~ MandatorySingleLineWhitespace ~ Variable ~ TypeAnnotation ~ WhitespaceAround("=") ~!~ Expression) ~> (
+		(Token("@let") ~ MandatorySingleLineWhitespace ~
+			(optional('$') ~ variableName ~> Term.Variable) ~
+			TypeAnnotation ~ WhitespaceAround("=") ~!~ Expression) ~> (
 			(variable: Variable, typeAnnotation: Option[Language.Type.Any], value: Expression) =>
 				VariableDeclaration(ValueSymbolDeclaration(variable.name, typeAnnotation, value))
 			)
