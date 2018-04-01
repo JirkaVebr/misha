@@ -31,7 +31,7 @@ trait L0_Whitespace extends org.parboiled2.Parser {
 	}
 
 	def EndOfLine: Rule0 = rule {
-		SingleLineWhitespace ~ End
+		SingleLineWhitespace ~ '\n'
 	}
 
 	def SingleLineString(stringToken: String): Rule0 = rule {
@@ -67,7 +67,6 @@ trait L0_Whitespace extends org.parboiled2.Parser {
 object L0_Whitespace {
 	import Characters._
 
-	private val End: CharPredicate = CharPredicate('\n') ++ Characters.EOI
 	private val SingleLineWhitespaceChar = CharPredicate(" \f\r\t")
 	private val MultiLineWhitespaceChar: CharPredicate = SingleLineWhitespaceChar ++ '\n'
 	private val AnyWhiteSpaceChar: CharPredicate = MultiLineWhitespaceChar ++ CharPredicate(s"$INDENT$DEDENT")
