@@ -172,7 +172,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def subExpression: Rule1[Expression] = rule {
-		SingleLineWhitespace ~ '(' ~ AnyWhitespace ~ Expression ~ AnyWhitespace ~ ')'
+		SingleLineWhitespace ~ '(' ~ SingleLineWhitespace ~ Expression ~ SingleLineWhitespace ~ ')'
 	}
 
 	private def conditional: Rule1[Conditional] = rule {
@@ -237,9 +237,8 @@ trait L5_Expressions { this: org.parboiled2.Parser
 		(variableDeclaration ~ statementEnd) |
 		(property ~ statementEnd) |
 		(each ~ statementEnd) |
-		(conditional ~ statementEnd) |
-		(rule ~ statementEnd) |
 		(Expression ~ statementEnd) |
+		(rule ~ statementEnd) |
 		(propertyFunctionCall ~ statementEnd) |
 		(noOp ~ statementEnd)
 	}
