@@ -29,8 +29,8 @@ trait L2_Strings { this: org.parboiled2.Parser
 	}
 
 	private def quotedStringInner(body: (CharPredicate) => Rule1[String]): Rule1[Value.String] = rule {
-		(('\'' ~ body(SingleQuoteOrBackslash) ~ '\'') |
-			('"' ~ body(DoubleQuoteOrBackslash) ~ '"')
+		(('\'' ~ body(SingleQuoteNewlineBackslash) ~ '\'') |
+			('"' ~ body(DoubleQuoteNewlineBackslash) ~ '"')
 			) ~> Value.String
 	}
 
@@ -60,7 +60,7 @@ trait L2_Strings { this: org.parboiled2.Parser
 object L2_Strings {
 	val AlphaNumUnderscore: CharPredicate = CharPredicate.AlphaNum ++ '_'
 	val AlphaNumDashUnderscore: CharPredicate = AlphaNumUnderscore ++ '-'
-	val SingleQuoteOrBackslash = CharPredicate("'\\")
-	val DoubleQuoteOrBackslash = CharPredicate("\"\\")
+	val SingleQuoteNewlineBackslash = CharPredicate("'\n\\")
+	val DoubleQuoteNewlineBackslash = CharPredicate("\"\n\\")
 	val StringDelimiterOrBackslash = CharPredicate("\"\\'")
 }
