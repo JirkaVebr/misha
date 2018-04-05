@@ -41,10 +41,10 @@ object Language {
 
 		sealed trait Value extends Term
 
-		case object Unit extends Value
-
 		sealed trait Primitive extends Value
 		sealed trait Composite extends Value
+
+		case object Unit extends Primitive
 
 		case class Number(value: Double, unit: SubUnits = Map()) extends Primitive
 		case class Boolean(value: scala.Boolean) extends Primitive

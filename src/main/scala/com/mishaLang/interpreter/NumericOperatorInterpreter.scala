@@ -23,7 +23,7 @@ object NumericOperatorInterpreter {
 				runOnString(operator, string, right)
 			case color: Color =>
 				runOnColor(operator, color, right)
-			case _: Flag | _: Value.Boolean | _: NativeFunctionCall =>
+			case _: Flag | _: Value.Boolean | _: NativeFunctionCall | Unit =>
 				state.fail(IllegalNumericOperatorOperand, left, right)
 		}
 		case composite: Composite => composite match {
@@ -35,8 +35,6 @@ object NumericOperatorInterpreter {
 			case _ =>
 				state.fail(IllegalNumericOperatorOperand, left, right)
 		}
-		case Value.Unit =>
-			state.fail(IllegalNumericOperatorOperand, left, right)
 	}
 
 	private def runOnNumber(operator: NumericOperator, left: Value.Number, right: Value)

@@ -48,6 +48,7 @@ object MemberAccessInterpreter {
 			case color: Color => runColor(color, memberName)
 			case _: Flag => ???
 			case _: NativeFunctionCall => ???
+			case Value.Unit => ???
 		}
 
 
