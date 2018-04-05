@@ -80,22 +80,22 @@ trait L5_Expressions { this: org.parboiled2.Parser
 
 	private def addition: Rule1[Expression] = rule { // Left associative
 		multiplication ~ zeroOrMore(
-			(WhitespaceAround("+") ~!~ multiplication ~> ((l: Expression, r: Expression) => BinaryOperation(Addition, l, r))) |
-			(WhitespaceAround("-") ~!~ multiplication ~> ((l: Expression, r: Expression) => BinaryOperation(Subtraction, l, r)))
+			(WhitespaceAround("+") ~ multiplication ~> ((l: Expression, r: Expression) => BinaryOperation(Addition, l, r))) |
+			(WhitespaceAround("-") ~ multiplication ~> ((l: Expression, r: Expression) => BinaryOperation(Subtraction, l, r)))
 		)
 	}
 
 	private def multiplication: Rule1[Expression] = rule { // Left associative
 		exponentiation ~ zeroOrMore(
-			(WhitespaceAround("*") ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Multiplication, l, r))) |
-			(WhitespaceAround("/") ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Division, l, r))) |
-			(WhitespaceAround("%") ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Remainder, l, r)))
+			(WhitespaceAround("*") ~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Multiplication, l, r))) |
+			(WhitespaceAround("/") ~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Division, l, r))) |
+			(WhitespaceAround("%") ~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Remainder, l, r)))
 		)
 	}
 
 	private def exponentiation: Rule1[Expression] = rule { // Right associative
 		expressionFunctionCall ~ zeroOrMore(
-			WhitespaceAround("^") ~!~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Exponentiation, l, r))
+			WhitespaceAround("^") ~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Exponentiation, l, r))
 		)
 	}
 
