@@ -38,6 +38,7 @@ trait L2_Strings { this: org.parboiled2.Parser
 		StringDelimiterOrBackslash ~ appendSB()
 			| 'n' ~ appendSB('\n')
 			| 'r' ~ appendSB('\r')
+			| 'f' ~ appendSB('\f')
 			| 't' ~ appendSB('\t')
 			| unicodeSequence ~> { (code: Int) => sb.append(code.asInstanceOf[Char]); () }
 	)
