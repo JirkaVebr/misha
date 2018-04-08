@@ -94,9 +94,15 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def exponentiation: Rule1[Expression] = rule { // Right associative
-		expressionFunctionCall ~ zeroOrMore(
+		unaryOperation ~ zeroOrMore(
 			WhitespaceAround("^") ~ exponentiation ~> ((l: Expression, r: Expression) => BinaryOperation(Exponentiation, l, r))
 		)
+	}
+
+	private def unaryOperation: Rule1[Expression] = rule {
+		(Token("-") ~ Expression ~> ((e: Expression) => UnaryOperation(ArithmeticNegation, e))) |
+		(!Flag ~ Token("!") ~ Expression ~> ((e: Expression) => UnaryOperation(LogicalNegation, e))) |
+		expressionFunctionCall
 	}
 
 	private def expressionFunctionCall: Rule1[Expression] = rule {
@@ -114,13 +120,8 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def factor: Rule1[Expression] = rule {
-		sugaredFunctionCall | conditional | delimitedList | unaryOperation | PropertyVariable | Variable |
+		sugaredFunctionCall | conditional | delimitedList | PropertyVariable | Variable |
 		anonymousFunction | subExpression | magicSymbol | PrimitiveLiteral | block
-	}
-
-	private def unaryOperation: Rule1[UnaryOperation] = rule {
-		("-" ~ Expression ~> ((e: Expression) => UnaryOperation(ArithmeticNegation, e))) |
-		(!Flag ~ "!" ~ Expression ~> ((e: Expression) => UnaryOperation(LogicalNegation, e)))
 	}
 
 	def Variable: Rule1[Term.Variable] = rule {
