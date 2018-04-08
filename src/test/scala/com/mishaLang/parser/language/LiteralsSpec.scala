@@ -59,5 +59,5 @@ class LiteralsSpec extends BaseParserSpec {
 	}
 
 
-	protected def parse(input: String): Value.Value = parseLanguageRule(input, _.Literal)
+	protected def parse(input: String): Value.Value = parseLanguageRule(input, _.PrimitiveLiteral)
 }

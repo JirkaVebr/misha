@@ -14,7 +14,7 @@ class LanguageParser(val input: IndentDedentParserInput) extends org.parboiled2.
 	with L1_AstNode
 	with L2_Strings
 	with L3_Numbers
-	with L3_Literals
+	with L3_PrimitiveLiterals
 	with L4_Types
 	with L5_Expressions
 	with L6_TopLevel

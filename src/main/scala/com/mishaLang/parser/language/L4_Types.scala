@@ -12,7 +12,7 @@ trait L4_Types { this: org.parboiled2.Parser
 	with L1_AstNode
 	with L2_Strings
 	with L3_Numbers
-	with L3_Literals =>
+	with L3_PrimitiveLiterals =>
 
 	def TypeAnnotation: Rule1[Option[Language.Type.Any]] = rule {
 		optional(":" ~!~ Type)
@@ -63,7 +63,7 @@ trait L4_Types { this: org.parboiled2.Parser
 	}
 
 	private def literalType: Rule1[Language.Type.Literal] = rule {
-		Literal ~> Language.Type.Literal
+		PrimitiveLiteral ~> Language.Type.Literal
 	}
 
 	private def simpleCompositeType: Rule1[Language.Type.Composite] = rule {

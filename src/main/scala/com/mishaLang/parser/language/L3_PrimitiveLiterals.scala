@@ -7,7 +7,7 @@ import com.mishaLang.spec.ColorKeywords
 import org.parboiled2._
 
 
-trait L3_Literals { this: org.parboiled2.Parser
+trait L3_PrimitiveLiterals { this: org.parboiled2.Parser
 	with StringBuilding
 	with L0_Whitespace
 	with L1_AstNode
@@ -15,10 +15,10 @@ trait L3_Literals { this: org.parboiled2.Parser
 	with L3_Numbers =>
 
 	import CharPredicate.HexDigit
-	import L3_Literals._
+	import L3_PrimitiveLiterals._
 
 
-	def Literal: Rule1[Primitive] = rule {
+	def PrimitiveLiteral: Rule1[Primitive] = rule {
 		Number | (nodeStart ~ (Flag | boolean | QuotedString | color | UnquotedString) ~ nodeEnd)
 	}
 
@@ -54,7 +54,7 @@ trait L3_Literals { this: org.parboiled2.Parser
 
 }
 
-object L3_Literals {
+object L3_PrimitiveLiterals {
 	private def convertHexToColor(hex: String): Rgba = {
 		val isShort = hex.length == 3 || hex.length == 4
 		val hasAlpha = hex.length == 4 || hex.length == 8

@@ -17,7 +17,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	with L1_AstNode
 	with L2_Strings
 	with L3_Numbers
-	with L3_Literals
+	with L3_PrimitiveLiterals
 	with L4_Types =>
 
 	import Characters._
@@ -115,7 +115,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 
 	private def factor: Rule1[Expression] = rule {
 		sugaredFunctionCall | conditional | delimitedList | unaryOperation | PropertyVariable | Variable |
-		anonymousFunction | subExpression | magicSymbol | Literal | block
+		anonymousFunction | subExpression | magicSymbol | PrimitiveLiteral | block
 	}
 
 	private def unaryOperation: Rule1[UnaryOperation] = rule {

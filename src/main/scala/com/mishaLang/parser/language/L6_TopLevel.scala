@@ -10,7 +10,7 @@ trait L6_TopLevel { this: org.parboiled2.Parser
 	with L1_AstNode
 	with L2_Strings
 	with L3_Numbers
-	with L3_Literals
+	with L3_PrimitiveLiterals
 	with L4_Types
 	with L5_Expressions =>
 
