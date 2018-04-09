@@ -32,6 +32,7 @@ object ExpressionInterpreter {
 				}
 				case ArithmeticNegation => newState.value match {
 					case number: Value.Number => newState ~> number.copy(value = -number.value)
+					// TODO do the same for formulas
 					case _ => newState.fail(ProgramError.NegatingNonBoolean)
 				}
 			}
@@ -49,7 +50,7 @@ object ExpressionInterpreter {
 					else
 						conditional.alternative match {
 							case Some(alternative) => run(alternative)(stateAfterCondition)
-							case None => Success(stateAfterCondition)
+							case None => stateAfterCondition ~> Value.Unit
 						}
 				case _ => stateAfterCondition.fail(NonBooleanCondition)
 			}
