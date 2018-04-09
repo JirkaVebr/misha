@@ -1,7 +1,7 @@
 package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Expression._
-import com.mishaLang.ast.Language.Value.Value
+import com.mishaLang.ast.Language.Value.{Composite, Primitive, Value}
 import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
@@ -74,19 +74,21 @@ object BinaryOperationInterpreter {
 																(implicit state: EnvWithValue): Try[EnvWithValue] = {
 		ExpressionInterpreter.run(left) match {
 			case Failure(exception) => Failure(exception)
-			case Success(stateAfterLeft) => ExpressionInterpreter.run(right)(stateAfterLeft) match {
-				case Failure(exception) => Failure(exception)
-				case Success(stateAfterRight) => (stateAfterLeft.value, stateAfterRight.value) match {
-					case (Value.Boolean(leftValue), Value.Boolean(rightValue)) => operator match {
-						case LogicalAnd =>
-							if (leftValue) stateAfterRight ~> Value.Boolean(rightValue)
-							else stateAfterLeft ~> Value.Boolean(leftValue)
-						case LogicalOr =>
-							if (leftValue) stateAfterLeft ~> Value.Boolean(leftValue)
-							else stateAfterRight ~> Value.Boolean(rightValue)
-					}
-					case (leftNode, rightNode) => stateAfterRight.fail(LogicOnNonBooleans, leftNode, rightNode)
-				}
+			case Success(stateAfterLeft) =>
+				stateAfterLeft.value match {
+					case Value.Boolean(leftValue) =>
+						if (operator == LogicalAnd && leftValue || operator == LogicalOr && !leftValue)
+							ExpressionInterpreter.run(right)(stateAfterLeft) match {
+								case Failure(exception) => Failure(exception)
+								case Success(stateAfterRight) => stateAfterRight.value match {
+									case Value.Boolean(rightValue) =>
+										stateAfterRight ~> Value.Boolean(rightValue)
+									case _ => stateAfterLeft.fail(LogicOnNonBooleans, left, right)
+								}
+							}
+						else
+							stateAfterLeft ~> Value.Boolean(leftValue)
+					case _ => stateAfterLeft.fail(LogicOnNonBooleans, left, right)
 			}
 		}
 	}

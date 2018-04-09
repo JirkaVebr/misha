@@ -62,10 +62,9 @@ class BinaryOperationInterpreterSpec extends BaseInterpreterSpec {
 		assert(run(BinaryOperation(or, f, f)).value === f)
 	}
 
-	it should "reject illegal logical operation operands" in {
-		// It should check the numbers despite not technically having to evaluate them
-		assertThrows[ProgramError[_]](run(BinaryOperation(and, f, Value.Number(123))).value === f)
-		assertThrows[ProgramError[_]](run(BinaryOperation(or, t, Value.Number(123))).value === t)
+	it should "sometimes ignore illegal logical operation operands due to laziness" in {
+		assert(run(BinaryOperation(and, f, Value.Number(123))).value === f)
+		assert(run(BinaryOperation(or, t, Value.Number(123))).value === t)
 	}
 
 	it should "evaluate logical operations lazily" in {
