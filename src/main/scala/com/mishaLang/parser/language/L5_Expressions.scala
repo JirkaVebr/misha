@@ -198,7 +198,7 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def noOp: Rule1[Statement] = rule {
-		atomic(ignoreCase("@no") ~ optional('-') ~ ignoreCase("op")) ~ push(NoOp)
+		atomic(ignoreCase("@no") ~ optional('-') ~ optional(ignoreCase('o')) ~ ignoreCase('p')) ~ push(NoOp)
 	}
 
 	private def anonymousFunction: Rule1[Expression] = rule {
