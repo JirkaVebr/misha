@@ -1,11 +1,12 @@
 package com.mishaLang.interpreter
 
 import com.mishaLang.ast.Language.Expression.Expression
-import com.mishaLang.ast.Language.Term.MemberAccess
+import com.mishaLang.ast.Language.Term.{MemberAccess, Variable}
 import com.mishaLang.ast.Language.Value
-import com.mishaLang.ast.Language.Value.{Boolean, Color, Composite, CurrentColor, Flag, Callable, NativeFunctionCall, Number, Primitive, Rgba, Transparent, Tuple2, Unit}
+import com.mishaLang.ast.Language.Value.{Boolean, Callable, Color, Composite, CurrentColor, Flag, NativeFunctionCall, Number, Primitive, Rgba, Transparent, Tuple2, Unit}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError.NonStringMemberCastFail
+import com.mishaLang.interpreter.Symbol.ValueSymbol
 import com.mishaLang.interpreter.ops.{ColorOps, ListOps, NumberOps, StringOps}
 
 import scala.util.{Failure, Success, Try}
@@ -92,6 +93,12 @@ object MemberAccessInterpreter {
 		val result = memberName match {
 			case "charAt" => Some(StringOps.getCharAt(string))
 			case "concat" => Some(StringOps.getConcat(string))
+			case "dereference" =>
+				TermInterpreter.run(Variable(ValueSymbol(string.value))) match {
+					case Failure(_) => None // TODO
+					case Success(newState) =>
+						Some(newState.value)
+				}
 			case "endsWith" => Some(StringOps.getEndsWith(string))
 			case "indexOf" => ???
 			case "length" => Some(StringOps.length(string))
