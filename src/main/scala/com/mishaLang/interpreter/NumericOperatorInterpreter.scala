@@ -43,7 +43,7 @@ object NumericOperatorInterpreter {
 			case primitive: Primitive => primitive match {
 				case number: Number =>
 					runOnTwoNumbers(operator, left, number)
-				case rightString: String =>
+				case rightString: String => // TODO check the operator!! :D
 					StringOps.castToString(left) match {
 						case Some(leftString) =>
 							state ~> StringOps.concatenate(leftString, rightString)
