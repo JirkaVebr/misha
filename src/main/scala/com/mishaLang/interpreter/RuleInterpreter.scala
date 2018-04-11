@@ -87,7 +87,7 @@ object RuleInterpreter {
 					case Success(strings) => value match {
 						case list: Value.List =>
 							if (list.values.forall(_.isInstanceOf[Value.String]))
-								Success(strings ++ list.values.asInstanceOf[List[Value.String]])
+								Success(strings ++ list.values.toList.asInstanceOf[List[Value.String]])
 							else
 								Failure(ProgramError(NonStringSelectorExpression, state, value))
 						case _ => StringOps.castToString(value) match {
