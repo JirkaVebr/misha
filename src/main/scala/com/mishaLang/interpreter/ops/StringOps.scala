@@ -92,4 +92,11 @@ object StringOps {
 			Success(Value.Boolean(string.value.endsWith(otherString)))
 		})
 
+	def getStartsWith(string: Value.String): Native =
+		Native(Vector(Type.String), (arguments: Vector[Value]) => {
+			val otherString = arguments(0).asInstanceOf[Value.String].value
+
+			Success(Value.Boolean(string.value.startsWith(otherString)))
+		})
+
 }

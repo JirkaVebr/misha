@@ -105,6 +105,7 @@ object MemberAccessInterpreter {
 			case "repeat" => ???
 			case "replace" => ???
 			case "split" => ???
+			case "startsWith" => Some(StringOps.getStartsWith(string))
 			case "substring" => ???
 			case "toLowerCase" => Some(StringOps.toLowerCase(string))
 			case "toString" => Some(string)
@@ -138,6 +139,7 @@ object MemberAccessInterpreter {
 				case "red" => Some(Value.Number(rgba.r))
 				case "saturate" => ???
 				case "saturation" => Some(ColorOps.saturation(rgba))
+				case "toString" => Some(ColorOps.toString(rgba))
 			}
 			case CurrentColor => None
 			case Transparent => ???
