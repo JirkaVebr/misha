@@ -30,6 +30,10 @@ trait L6_Selector { this: org.parboiled2.Parser
 	with L5_AnPlusB =>
 
 	def Selector: Rule1[RawSelector] = rule {
+		selectorList ~ SingleLineWhitespace ~ EOI
+	}
+
+	private def subSelector: Rule1[RawSelector] = rule {
 		selectorList
 	}
 
@@ -146,11 +150,11 @@ trait L6_Selector { this: org.parboiled2.Parser
 			val normalized = identifier.value.toLowerCase
 
 			PseudoClasses.SubSelectors.get(normalized) match {
-				case Some(subSelector) => Selector ~> (RawSubSelector(subSelector, _))
+				case Some(sub) => subSelector ~> (RawSubSelector(sub, _))
 				case None => PseudoClasses.NthPseudoClasses.get(normalized) match {
 					case Some(nth) =>
 						AnPlusB ~ optional(
-							MandatorySingleLineWhitespace ~ Token("of") ~ MandatorySingleLineWhitespace ~ Selector
+							MandatorySingleLineWhitespace ~ Token("of") ~ MandatorySingleLineWhitespace ~ subSelector
 						) ~> (RawNth(nth, _, _))
 					case None => normalized match {
 						case PseudoClasses.Dir.name => dirPseudoClass
