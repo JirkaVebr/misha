@@ -27,10 +27,13 @@ object Interpreter {
 
 	def chainRun[V <: Language.Node](items: scala.List[V], state: EnvWithValue, evaluate: (V, EnvWithValue) => Try[EnvWithValue]):
 	Try[EnvWithValues] =
-		_chainRun(items, new EnvWithValues(state.environment, List.empty), evaluate, state.value)
+		_chainRun(items, new EnvWithValues(state.environment, List.empty), evaluate, state.value) match {
+			case Failure(reason) => Failure(reason)
+			case Success(newEnvironment) => Success(new EnvWithValues(newEnvironment.environment, newEnvironment.value.reverse))
+	}
 
 	@tailrec
-	def _chainRun[V <: Language.Node](items: scala.List[V], state: EnvWithValues, evaluate: (V, EnvWithValue) => Try[EnvWithValue], originalValue: Value):
+	private def _chainRun[V <: Language.Node](items: scala.List[V], state: EnvWithValues, evaluate: (V, EnvWithValue) => Try[EnvWithValue], originalValue: Value):
 	Try[EnvWithValues] =
 		items match {
 			case Nil => Success(state)
@@ -39,8 +42,7 @@ object Interpreter {
 				evaluationResult match {
 					case Failure(reason) => Failure(reason)
 					case Success(newValueEnvironment) => {
-						// TODO The append (+:) operation has O(n) complexity. 
-						_chainRun(tail, new EnvWithValues(newValueEnvironment.environment, state.value.:+(newValueEnvironment.value)), evaluate, originalValue)
+						_chainRun(tail, new EnvWithValues(newValueEnvironment.environment, state.value.::(newValueEnvironment.value)), evaluate, originalValue)
 					}
 				}
 		}
