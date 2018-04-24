@@ -19,7 +19,7 @@ object BinaryOperationInterpreter {
 			Interpreter.chainRun[Expression](chain, state, ExpressionInterpreter.run(_)(_)) match {
 				case Failure(exception) => Failure(exception)
 				case Success(newEnvironment) =>
-					val (left :: right :: Nil) = newEnvironment.value
+					val (right :: left :: Nil) = newEnvironment.value
 					val newState = EnvironmentWithValue(newEnvironment.environment)
 
 					binaryOperation.operator match {

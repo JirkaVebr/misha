@@ -19,7 +19,7 @@ object MemberAccessInterpreter {
 		), state, ExpressionInterpreter.run(_)(_)) match {
 			case Failure(exception) => Failure(exception)
 			case Success(newEnvironment) =>
-				val (container :: name :: Nil) = newEnvironment.value
+				val (name :: container :: Nil) = newEnvironment.value
 				val newState = EnvironmentWithValue(newEnvironment.environment)
 
 				val memberName: Option[String] = name match {

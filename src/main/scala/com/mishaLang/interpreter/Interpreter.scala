@@ -26,6 +26,11 @@ object Interpreter {
 	type Evaluator[V <: Language.Node] = (V, EnvWithValue) => Try[EnvWithValue]
 
 
+	/**
+		* !!! The items are returned in *reversed* order !!!
+		* For actual sequences this is more convenient anyway and for artificial sequences such as binary operations,
+		* a polymorphic implementation is planned anyway.
+		*/
 	def chainRun[V <: Language.Node](items: scala.List[V], state: EnvWithValue, evaluate: Evaluator[V]): Try[EnvWithValues] = {
 		@tailrec
 		def run(items: scala.List[V], state: EnvWithValues, evaluate: Evaluator[V], originalValue: Value): Try[EnvWithValues] =
@@ -44,7 +49,7 @@ object Interpreter {
 
 		run(items, new EnvWithValues(state.environment, List.empty), evaluate, state.value) match {
 			case Failure(reason) => Failure(reason)
-			case Success(newEnvironment) => newEnvironment ~> newEnvironment.value.reverse
+			case Success(newEnvironment) => newEnvironment ~> newEnvironment.value
 		}
 	}
 

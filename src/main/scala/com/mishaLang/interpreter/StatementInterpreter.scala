@@ -29,8 +29,8 @@ object StatementInterpreter {
 		Interpreter.chainRun[Statement](sequence.statements, state, run(_)(_)) match {
 			case Failure(exception) => Failure(exception)
 			case Success(newEnvironment) =>
-				val (_ :: secondValue :: Nil) = newEnvironment.value
-				Success(EnvironmentWithValue(newEnvironment.environment, secondValue))
+				val lastValue = newEnvironment.value.head
+				Success(EnvironmentWithValue(newEnvironment.environment, lastValue))
 		}
 
 	private def runTypeAliasDeclaration(typeAlias: TypeAliasDeclaration)(implicit state: EnvWithValue): Try[EnvWithValue] = {
@@ -62,7 +62,7 @@ object StatementInterpreter {
 							Interpreter.chainRun[Block](steps.toList, stateAfterIterable, ExpressionInterpreter.runBlock(_)(_)) match {
 								case Failure(exception) => Failure(exception)
 								case Success(stateAfterIterations) =>
-									Success(EnvironmentWithValue(stateAfterIterations.environment, stateAfterIterations.value.last))
+									Success(EnvironmentWithValue(stateAfterIterations.environment, stateAfterIterations.value.head))
 							}
 						} else
 							Success(stateAfterIterable)

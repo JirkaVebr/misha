@@ -62,7 +62,7 @@ object TermInterpreter {
 		Interpreter.chainRun[Expression](scala.List(tuple.first, tuple.second), state, ExpressionInterpreter.run(_)(_)) match {
 			case Failure(reason) => Failure(reason)
 			case Success(newEnvironment) =>
-				val (first :: second :: Nil) = newEnvironment.value
+				val (second :: first :: Nil) = newEnvironment.value
 				Success(EnvironmentWithValue(newEnvironment.environment, Value.Tuple2(first, second)))
 		}
 	}
@@ -111,7 +111,7 @@ object TermInterpreter {
 		chainResult match {
 			case Failure(exception) => Failure(exception)
 			case Success(newEnvironment) =>
-				runListValue(Value.List(newEnvironment.value.toVector))(EnvironmentWithValue(newEnvironment.environment))
+				runListValue(Value.List(newEnvironment.value.toVector.reverse))(EnvironmentWithValue(newEnvironment.environment))
 		}
 	}
 
@@ -135,13 +135,14 @@ object TermInterpreter {
 						case Failure(exception) => Failure(exception)
 						case Success(stateAfterArguments) =>
 							val newestState = EnvironmentWithValue(stateAfterArguments.environment)
+							val arguments = stateAfterArguments.value.toVector.reverse
 							function match {
 								case lambda: Lambda =>
-									callLambda(lambda, functionCall, stateAfterArguments.value.toVector)(newestState)
+									callLambda(lambda, functionCall, arguments)(newestState)
 								case native: Native =>
-									callNative(native, functionCall, stateAfterArguments.value.toVector)(newestState)
+									callNative(native, functionCall, arguments)(newestState)
 								case group: PolymorphicGroup =>
-									callPolymorphicGroup(group, functionCall, stateAfterArguments.value.toVector)(newestState)
+									callPolymorphicGroup(group, functionCall, arguments)(newestState)
 							}
 					}
 				case _ => newState.fail(InvokingANonFunction, functionCall)
