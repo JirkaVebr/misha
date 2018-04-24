@@ -33,21 +33,21 @@ object Interpreter {
 		*/
 	def chainRun[V <: Language.Node](items: scala.List[V], state: EnvWithValue, evaluate: Evaluator[V]): Try[EnvWithValues] = {
 		@tailrec
-		def run(items: scala.List[V], state: EnvWithValues, evaluate: Evaluator[V], originalValue: Value): Try[EnvWithValues] =
+		def run(items: scala.List[V], state: EnvWithValues, evaluate: Evaluator[V]): Try[EnvWithValues] =
 			items match {
 				case Nil => Success(state)
 				case scala.collection.immutable.::(expression, tail) =>
-					val evaluationResult = evaluate(expression, EnvironmentWithValue(state.environment, originalValue))
+					val evaluationResult = evaluate(expression, EnvironmentWithValue(state.environment))
 					evaluationResult match {
 						case Failure(reason) => Failure(reason)
 						case Success(newValueEnvironment) =>
 							run(tail, new EnvWithValues(
 								newValueEnvironment.environment, newValueEnvironment.value :: state.value
-							), evaluate, newValueEnvironment.value)
+							), evaluate)
 					}
 			}
 
-		run(items, new EnvWithValues(state.environment, List.empty), evaluate, state.value)
+		run(items, new EnvWithValues(state.environment, List.empty), evaluate)
 	}
 
 }
