@@ -36,8 +36,8 @@ object Interpreter {
 		def run(items: scala.List[V], state: EnvWithValues, evaluate: Evaluator[V], originalValue: Value): Try[EnvWithValues] =
 			items match {
 				case Nil => Success(state)
-				case expression :: tail =>
-					val evaluationResult = evaluate(expression, new EnvWithValue(state.environment, originalValue))
+				case scala.collection.immutable.::(expression, tail) =>
+					val evaluationResult = evaluate(expression, EnvironmentWithValue(state.environment, originalValue))
 					evaluationResult match {
 						case Failure(reason) => Failure(reason)
 						case Success(newValueEnvironment) =>
@@ -47,10 +47,7 @@ object Interpreter {
 					}
 			}
 
-		run(items, new EnvWithValues(state.environment, List.empty), evaluate, state.value) match {
-			case Failure(reason) => Failure(reason)
-			case Success(newEnvironment) => newEnvironment ~> newEnvironment.value
-		}
+		run(items, new EnvWithValues(state.environment, List.empty), evaluate, state.value)
 	}
 
 }
