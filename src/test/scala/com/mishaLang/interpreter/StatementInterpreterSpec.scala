@@ -46,15 +46,13 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		val alternative = Value.Number(222)
 
 		assert(run(
-			Sequence(
-				Sequence(
-					VariableDeclaration(ValueSymbolDeclaration(symbol1, None, varValue1)),
-					VariableDeclaration(ValueSymbolDeclaration(symbol2, None,
-						Conditional(BinaryOperation(IsEqualTo, Variable(symbol1), varValue1), consequent, Some(alternative))
-					))
-				),
+			Sequence(List(
+				VariableDeclaration(ValueSymbolDeclaration(symbol1, None, varValue1)),
+				VariableDeclaration(ValueSymbolDeclaration(symbol2, None,
+					Conditional(BinaryOperation(IsEqualTo, Variable(symbol1), varValue1), consequent, Some(alternative))
+				)),
 				Variable(symbol2)
-			)
+			))
 		).value === consequent)
 	}
 
@@ -102,19 +100,19 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 		noException should be thrownBy {
 			run(
 				Rule(Vector(Left(".myClass")), Block(
-					Sequence(
+					Sequence(List(
 						Property(Value.String("background"), Value.String("none")),
 						Property(Value.String("background"), Value.String("somethingFancy"), Some(Value.List(Vector(Value.Duplicate))))
-					)
+					))
 				))
 			)
 		}
 		assertThrows[ProgramError[_]](
 			run(Rule(Vector(Left(".myClass")), Block(
-				Sequence(
+				Sequence(List(
 					Property(Value.String("background"), Value.String("none")),
 					Property(Value.String("background"), Value.String("somethingFancy"), Some(Value.Number(123)))
-				)
+				))
 			)))
 		)
 	}
@@ -125,35 +123,31 @@ class StatementInterpreterSpec extends BaseInterpreterSpec {
 
 	it should "ignore loops on empty lists" in {
 		assert(run(
-			Sequence(
-				Sequence(
-					VariableDeclaration(ValueSymbolDeclaration("n", None, Value.Number(123))),
-					Each(
-						Variable("i"), Value.List(Vector()), Block(
-							BinaryOperation(Equals, Variable("n"), Value.Number(456))
-						)
+			Sequence(List(
+				VariableDeclaration(ValueSymbolDeclaration("n", None, Value.Number(123))),
+				Each(
+					Variable("i"), Value.List(Vector()), Block(
+						BinaryOperation(Equals, Variable("n"), Value.Number(456))
 					)
 				),
 				Variable("n")
-			)
+			))
 		).value === Value.Number(123))
 	}
 
 	it should "correctly execute each loops" in {
 		assert(run(
-			Sequence(
-				Sequence(
-					VariableDeclaration(ValueSymbolDeclaration("n", None, Value.Number(0))),
-					Each(
-						Variable("i"), Value.List(Vector(
-							Value.Number(1), Value.Number(2), Value.Number(3), Value.Number(4), Value.Number(5)
-						)), Block(
-							BinaryOperation(Equals, Variable("n"), BinaryOperation(Addition, Variable("n"), Variable("i")))
-						)
+			Sequence(List(
+				VariableDeclaration(ValueSymbolDeclaration("n", None, Value.Number(0))),
+				Each(
+					Variable("i"), Value.List(Vector(
+						Value.Number(1), Value.Number(2), Value.Number(3), Value.Number(4), Value.Number(5)
+					)), Block(
+						BinaryOperation(Equals, Variable("n"), BinaryOperation(Addition, Variable("n"), Variable("i")))
 					)
 				),
 				Variable("n")
-			)
+			))
 		).value === Value.Number(15))
 	}
 

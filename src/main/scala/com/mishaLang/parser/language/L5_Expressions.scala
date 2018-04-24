@@ -225,7 +225,11 @@ trait L5_Expressions { this: org.parboiled2.Parser
 	}
 
 	private def sequence: Rule1[Statement] = rule {
-		sequenceNode ~ zeroOrMore(sequenceNode ~> Sequence)
+		oneOrMore(sequenceNode) ~> (
+			(statements: Seq[Statement]) =>
+				if (statements.lengthCompare(1) == 0) statements.head
+				else Sequence(statements.toList)
+		)
 	}
 
 	private def statementEnd: Rule0 = rule {

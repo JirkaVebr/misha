@@ -183,9 +183,7 @@ object TermInterpreter {
 					)
 					case None => Vector()
 				}
-				val newBody = (recursiveDeclaration ++ supplied ++ notSupplied).foldRight(firstExpression) {
-					case (declaration, accumulator) => Sequence(declaration, accumulator)
-				}
+				val newBody = Sequence((recursiveDeclaration ++ supplied ++ notSupplied :+ firstExpression).toList)
 				state.environment.getEnvironmentByScopeId(lambda.scopeId) match {
 					case Some(environment) =>
 						val subScope = state.environment.lookupContext() match {

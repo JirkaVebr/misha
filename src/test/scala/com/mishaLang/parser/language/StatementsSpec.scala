@@ -109,7 +109,7 @@ class StatementsSpec extends BaseParserSpec {
 			"""@let $myVar =
 				|	123
 				|	456
-				|""".stripMargin) === VariableDeclaration(ValueSymbolDeclaration("myVar", None, Block(Sequence(Number(123), Number(456))))))
+				|""".stripMargin) === VariableDeclaration(ValueSymbolDeclaration("myVar", None, Block(Sequence(List(Number(123), Number(456)))))))
 	}
 
 	it should "correctly parse a function declaration" in {

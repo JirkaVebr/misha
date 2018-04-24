@@ -118,7 +118,7 @@ object Language {
 
 		sealed trait Statement extends Node
 
-		case class Sequence(current: Statement, following: Statement) extends Statement
+		case class Sequence(statements: List[Statement]) extends Statement
 		case class Property(name: Expression, value: Expression, flags: Option[Expression] = None) extends Statement
 		//case class Import(destination: Expression, parameters: Option[Expression]) extends Statement
 		case class TypeAliasDeclaration(alias: TypeAlias, subType: Any) extends Statement

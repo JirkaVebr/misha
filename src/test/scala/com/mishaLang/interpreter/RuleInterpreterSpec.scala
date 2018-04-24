@@ -17,10 +17,10 @@ class RuleInterpreterSpec extends BaseInterpreterSpec {
 	behavior of "Rule interpreter"
 
 	it should "correctly interpret simple rules" in {
-		val newState = run(Rule(Vector(Left(".class")), Block(Sequence(
+		val newState = run(Rule(Vector(Left(".class")), Block(Sequence(List(
 			Property(Value.String("line-height"), Value.Number(1.6)),
 			Property(Value.String("width"), Value.Number(80, Percentage))
-		))))
+		)))))
 		val ruleEnvironment = newState.environment.subEnvironments.head
 
 		assert(ruleEnvironment.lookupCurrent(RuleContextSymbol).get === RuleSelector(Class("class")))

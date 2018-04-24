@@ -26,7 +26,7 @@ object StatementInterpreter {
 	}
 
 	private def runSequence(sequence: Sequence)(implicit state: EnvWithValue): Try[EnvWithValue] =
-		Interpreter.chainRun[Statement](List(sequence.current, sequence.following), state, run(_)(_)) match {
+		Interpreter.chainRun[Statement](sequence.statements, state, run(_)(_)) match {
 			case Failure(exception) => Failure(exception)
 			case Success(newEnvironment) =>
 				val (_ :: secondValue :: Nil) = newEnvironment.value
@@ -53,10 +53,10 @@ object StatementInterpreter {
 							val steps = iterable.values.map {
 								value =>
 									Block(
-										Sequence(
+										Sequence(List(
 											VariableDeclaration(ValueSymbolDeclaration(each.iterator.name, None, value)),
 											each.body.content
-										)
+										))
 									)
 							}
 							Interpreter.chainRun[Block](steps.toList, stateAfterIterable, ExpressionInterpreter.runBlock(_)(_)) match {
