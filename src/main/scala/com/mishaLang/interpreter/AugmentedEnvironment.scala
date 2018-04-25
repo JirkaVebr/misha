@@ -8,10 +8,10 @@ import com.mishaLang.interpreter.Symbol.Symbol
 import scala.util.{Failure, Success}
 
 
-case class AugmentedEnvironment[T](environment: Environment, value: T) {
+case class AugmentedEnvironment[+T](environment: Environment, value: T) {
 
-	def ~>(newValue: T): Success[AugmentedEnvironment[T]] =
-		Success(AugmentedEnvironment[T](environment, newValue))
+	def ~>[A >: T](newValue: A): Success[AugmentedEnvironment[A]] =
+		Success(AugmentedEnvironment[A](environment, newValue))
 
 	def withUpdatedSymbol(symbol: Symbol)(symbolValue: symbol.Value): Success[AugmentedEnvironment[T]] =
 		Success(AugmentedEnvironment[T](environment.updated(symbol)(symbolValue), value))
