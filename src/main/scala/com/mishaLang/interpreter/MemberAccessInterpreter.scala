@@ -8,18 +8,19 @@ import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError.NonStringMemberCastFail
 import com.mishaLang.interpreter.Symbol.ValueSymbol
 import com.mishaLang.interpreter.ops.{ColorOps, ListOps, NumberOps, StringOps}
+import shapeless._
 
 import scala.util.{Failure, Success, Try}
 
 object MemberAccessInterpreter {
 
 	def run(memberAccess: MemberAccess)(implicit state: EnvWithValue): Try[EnvWithValue] =
-		Interpreter.chainRun[Expression](List(
-			memberAccess.container, memberAccess.name
-		), state, ExpressionInterpreter.run(_)(_)) match {
+		Interpreter.productChainRun(
+			memberAccess.container :: memberAccess.name :: HNil, state.environment
+		) match {
 			case Failure(exception) => Failure(exception)
 			case Success(newEnvironment) =>
-				val (name :: container :: Nil) = newEnvironment.value
+				val container :: name :: HNil = newEnvironment.value
 				val newState = EnvironmentWithValue(newEnvironment.environment)
 
 				val memberName: Option[String] = name match {

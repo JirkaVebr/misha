@@ -11,6 +11,7 @@ import com.mishaLang.error.ProgramError._
 import com.mishaLang.interpreter.RuleContext.{AtRule, RuleSelector}
 import com.mishaLang.interpreter.Symbol.RuleStoreSymbol
 import com.mishaLang.interpreter.ops.{FunctionOps, TypeOps}
+import shapeless._
 
 import scala.util.{Failure, Success, Try}
 
@@ -59,10 +60,10 @@ object TermInterpreter {
 		state ~> tuple
 
 	private def runTupleTerm(tuple: Term.Tuple2)(implicit state: EnvWithValue): Try[EnvWithValue] = {
-		Interpreter.chainRun[Expression](scala.List(tuple.first, tuple.second), state, ExpressionInterpreter.run(_)(_)) match {
+		Interpreter.productChainRun(tuple.first :: tuple.second :: HNil, state.environment) match {
 			case Failure(reason) => Failure(reason)
 			case Success(newEnvironment) =>
-				val (second :: first :: Nil) = newEnvironment.value
+				val first :: second :: HNil = newEnvironment.value
 				Success(EnvironmentWithValue(newEnvironment.environment, Value.Tuple2(first, second)))
 		}
 	}

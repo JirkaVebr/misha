@@ -5,6 +5,7 @@ import com.mishaLang.ast.Language.Value.Value
 import com.mishaLang.ast.Language.{Term, Value}
 import com.mishaLang.error.CompilerError
 import com.mishaLang.error.ProgramError._
+import shapeless._
 
 import scala.util.{Failure, Success, Try}
 
@@ -14,12 +15,12 @@ object BinaryOperationInterpreter {
 		case _: Assignment => runAssignment(binaryOperation.left, binaryOperation.right)
 		case operator: LogicalOperator => runLogicalOperator(operator, binaryOperation.left, binaryOperation.right)
 		case _ =>
-			val chain = List(binaryOperation.left, binaryOperation.right)
+			val chain = binaryOperation.left :: binaryOperation.right :: HNil
 
-			Interpreter.chainRun[Expression](chain, state, ExpressionInterpreter.run(_)(_)) match {
+			Interpreter.productChainRun(chain, state.environment) match {
 				case Failure(exception) => Failure(exception)
 				case Success(newEnvironment) =>
-					val (right :: left :: Nil) = newEnvironment.value
+					val left :: right :: HNil = newEnvironment.value
 					val newState = EnvironmentWithValue(newEnvironment.environment)
 
 					binaryOperation.operator match {

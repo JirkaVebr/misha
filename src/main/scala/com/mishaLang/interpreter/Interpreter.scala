@@ -30,8 +30,6 @@ object Interpreter {
 
 	/**
 		* !!! The items are returned in *reversed* order !!!
-		* For actual sequences this is more convenient anyway and for artificial sequences such as binary operations,
-		* a polymorphic implementation is planned anyway.
 		*/
 	def chainRun[V <: Language.Node](items: scala.List[V], state: EnvWithValue, evaluate: Evaluator[V]): Try[EnvWithValues] = {
 		@tailrec
