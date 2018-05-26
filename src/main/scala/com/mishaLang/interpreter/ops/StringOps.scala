@@ -1,10 +1,13 @@
 package com.mishaLang.interpreter.ops
 
-import com.mishaLang.ast.Language.Value.{Native, Number, Primitive, Rgba, Value}
+import java.util.regex.Pattern
+
+import com.mishaLang.ast.Language.Value.{Native, Number, Primitive, Rgba}
 import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.ast.NumberUnit.{Atomic, Percentage}
 import com.mishaLang.error.NativeError
 import com.mishaLang.error.NativeError.StringIndexOutOfBounds
+import com.mishaLang.interpreter.validators.NumberValidator
 import com.mishaLang.spec.units.Length.Length
 
 import scala.util.{Failure, Success}
@@ -16,7 +19,7 @@ object StringOps {
 		case primitive: Primitive => primitive match {
 			case Value.String(string) => Some(Value.String(string))
 			case number: Number =>
-				val baseOutput =  NumberOps.formatDouble(number.value)
+				val baseOutput = NumberOps.formatDouble(number.value)
 
 				if (number.unit.isEmpty)
 					Some(baseOutput)
@@ -50,7 +53,6 @@ object StringOps {
 		Value.String(string.value * factor.value.toInt)
 
 
-
 	// Properties
 
 	def length(string: Value.String): Value.Number =
@@ -69,34 +71,56 @@ object StringOps {
 	// Method generators
 
 	def getCharAt(string: Value.String): Native =
-		Native(Vector(Type.Scalar), (arguments: Vector[Value]) => {
-			val position = arguments(0).asInstanceOf[Number].value
-
-			if (position >= string.value.length || position < 0)
-				Failure(NativeError(StringIndexOutOfBounds))
-			else
-				Success(Value.String(string.value.charAt(position.toInt).toString))
+		Native(Vector(Type.Scalar), {
+			case Vector(Value.Number(position, _)) => {
+				if (position >= string.value.length || position < 0)
+					Failure(NativeError(StringIndexOutOfBounds))
+				else
+					Success(Value.String(string.value.charAt(position.toInt).toString))
+			}
 		})
 
 	def getConcat(string: Value.String): Native =
-		Native(Vector(Type.String), (arguments: Vector[Value]) => {
-			val otherString = arguments(0).asInstanceOf[Value.String].value
-
-			Success(concatenate(string, otherString))
+		Native(Vector(Type.String), {
+			case Vector(Value.String(otherString)) => Success(concatenate(string, otherString))
 		})
 
 	def getEndsWith(string: Value.String): Native =
-		Native(Vector(Type.String), (arguments: Vector[Value]) => {
-			val otherString = arguments(0).asInstanceOf[Value.String].value
-
-			Success(Value.Boolean(string.value.endsWith(otherString)))
+		Native(Vector(Type.String), {
+			case Vector(Value.String(otherString)) => Success(Value.Boolean(string.value.endsWith(otherString)))
 		})
 
 	def getStartsWith(string: Value.String): Native =
-		Native(Vector(Type.String), (arguments: Vector[Value]) => {
-			val otherString = arguments(0).asInstanceOf[Value.String].value
+		Native(Vector(Type.String), {
+			case Vector(Value.String(otherString)) => Success(Value.Boolean(string.value.startsWith(otherString)))
+		})
 
-			Success(Value.Boolean(string.value.startsWith(otherString)))
+	def getSplit(string: Value.String): Native =
+		Native(Vector(Type.String), {
+			case Vector(Value.String(delimiter)) =>
+				Success(Value.List(string.value.split(Pattern.quote(delimiter), -1).map(Value.String).toVector))
+		})
+
+	def getReplace(string: Value.String): Native =
+		Native(Vector(Type.String, Type.String), {
+			case Vector(Value.String(oldChar), Value.String(newChar)) =>
+				Success(Value.String(string.value.replace(oldChar, newChar)))
+		})
+
+	def getIndexOf(haystack: Value.String) =
+		Native(Vector(Type.String), {
+			case Vector(Value.String(needle)) => Success(Value.Number(haystack.value.indexOf(needle)))
+		})
+
+	def getRepeat(string: Value.String) =
+		Native(Vector(Type.Scalar), {
+			case Vector(Value.Number(scalar, _)) => {
+				if (NumberValidator.isInteger(scalar)) {
+					Success(string.value * scalar.toInt)
+				} else {
+					Failure(NativeError(???))
+				}
+			}
 		})
 
 }

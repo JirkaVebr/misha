@@ -101,11 +101,11 @@ object MemberAccessInterpreter {
 						Some(newState.value)
 				}
 			case "endsWith" => Some(StringOps.getEndsWith(string))
-			case "indexOf" => ???
+			case "indexOf" => Some(StringOps.getIndexOf(string))
 			case "length" => Some(StringOps.length(string))
-			case "repeat" => ???
-			case "replace" => ???
-			case "split" => ???
+			case "repeat" => Some(StringOps.getRepeat(string))
+			case "replace" => Some(StringOps.getReplace(string))
+			case "split" => Some(StringOps.getSplit(string))
 			case "startsWith" => Some(StringOps.getStartsWith(string))
 			case "substring" => ???
 			case "toLowerCase" => Some(StringOps.toLowerCase(string))
