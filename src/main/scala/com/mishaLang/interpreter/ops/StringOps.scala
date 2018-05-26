@@ -2,7 +2,7 @@ package com.mishaLang.interpreter.ops
 
 import java.util.regex.Pattern
 
-import com.mishaLang.ast.Language.Value.{Native, Number, Primitive, Rgba}
+import com.mishaLang.ast.Language.Value.{Native, Number, PolymorphicGroup, Primitive, Rgba}
 import com.mishaLang.ast.Language.{Type, Value}
 import com.mishaLang.ast.NumberUnit.{Atomic, Percentage}
 import com.mishaLang.error.NativeError
@@ -10,7 +10,7 @@ import com.mishaLang.error.NativeError.StringIndexOutOfBounds
 import com.mishaLang.interpreter.validators.NumberValidator
 import com.mishaLang.spec.units.Length.Length
 
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 object StringOps {
 
@@ -122,5 +122,32 @@ object StringOps {
 				}
 			}
 		})
+
+	def getSubstring(string: Value.String) = {
+		def substring(start: Double, end: Double): Try[Value.String] = {
+			if (!NumberValidator.isInteger(start))
+				Failure(NativeError(NativeError.ArgumentIsNotInteger("start")))
+			else if (!NumberValidator.isInteger(end))
+				Failure(NativeError(NativeError.ArgumentIsNotInteger("end")))
+			else if(start < 0 || start > string.value.length())
+				Failure(NativeError(NativeError.ArgumentIsOutOfBounds("start")))
+			else if (end < start)
+				Failure(NativeError(NativeError.ArgumentIsOutOfBounds("end")))
+			else
+				Success(string.value.substring(start.toInt, end.toInt))
+		}
+
+		PolymorphicGroup(Seq(
+			Native(Vector(Type.Scalar, Type.Scalar), {
+				case Vector(Value.Number(start, _), Value.Number(end, _)) =>
+					substring(start, end)
+			}),
+			Native(Vector(Type.Scalar), {
+				case Vector(Value.Number(start, _)) =>
+					substring(start, string.value.length())
+			})
+		))
+	}
+
 
 }

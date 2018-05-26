@@ -18,4 +18,12 @@ object NativeError {
 
 
 	case object StringIndexOutOfBounds extends SimpleError("Invalid index passed to charAt")
+
+	case class ArgumentIsNotInteger(variable: String)
+		extends SimpleError("Argument " + variable + " is not integer as it should") {
+	}
+
+	case class ArgumentIsOutOfBounds(variable: String)
+		extends SimpleError("Argument " + variable + " is out of bounds") {
+	}
 }

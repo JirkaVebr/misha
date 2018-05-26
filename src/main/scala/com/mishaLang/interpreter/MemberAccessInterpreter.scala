@@ -107,7 +107,7 @@ object MemberAccessInterpreter {
 			case "replace" => Some(StringOps.getReplace(string))
 			case "split" => Some(StringOps.getSplit(string))
 			case "startsWith" => Some(StringOps.getStartsWith(string))
-			case "substring" => ???
+			case "substring" => Some(StringOps.getSubstring(string))
 			case "toLowerCase" => Some(StringOps.toLowerCase(string))
 			case "toString" => Some(string)
 			case "toUpperCase" => Some(StringOps.toUpperCase(string))

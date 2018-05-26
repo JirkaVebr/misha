@@ -204,6 +204,21 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		)
 	}
 
+	it should "interpret string.substring" in {
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("mishalang"), Value.String("substring")),
+				Vector(Value.Number(5))
+			)).value === Value.String("lang")
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("mishalang"), Value.String("substring")),
+				Vector(Value.Number(5), Value.Number(7))
+			)).value === Value.String("la")
+		)
+	}
+
 
 
 	it should "interpret color members" in {
