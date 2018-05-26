@@ -118,7 +118,7 @@ object StringOps {
 				if (NumberValidator.isInteger(scalar)) {
 					Success(string.value * scalar.toInt)
 				} else {
-					Failure(NativeError(???))
+					Failure(NativeError(NativeError.ArgumentIsNotInteger("multiplier")))
 				}
 			}
 		})
