@@ -114,12 +114,9 @@ object StringOps {
 
 	def getRepeat(string: Value.String) =
 		Native(Vector(Type.Scalar), {
-			case Vector(Value.Number(scalar, _)) => {
-				if (NumberValidator.isInteger(scalar)) {
-					Success(string.value * scalar.toInt)
-				} else {
-					Failure(NativeError(NativeError.ArgumentIsNotInteger("multiplier")))
-				}
+			case Vector(Value.Number(scalar, _)) => scalar match {
+				case NumberValidator.Int() => Success(string.value * scalar.toInt)
+				case _ => Failure(NativeError(NativeError.ArgumentIsNotInteger("multiplier")))
 			}
 		})
 
