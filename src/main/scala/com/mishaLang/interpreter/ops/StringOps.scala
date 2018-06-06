@@ -72,12 +72,11 @@ object StringOps {
 
 	def getCharAt(string: Value.String): Native =
 		Native(Vector(Type.Scalar), {
-			case Vector(Value.Number(position, _)) => {
+			case Vector(Value.Number(position, _)) =>
 				if (position >= string.value.length || position < 0)
 					Failure(NativeError(StringIndexOutOfBounds))
 				else
 					Success(Value.String(string.value.charAt(position.toInt).toString))
-			}
 		})
 
 	def getConcat(string: Value.String): Native =
@@ -107,26 +106,26 @@ object StringOps {
 				Success(Value.String(string.value.replace(oldChar, newChar)))
 		})
 
-	def getIndexOf(haystack: Value.String) =
+	def getIndexOf(haystack: Value.String): Native =
 		Native(Vector(Type.String), {
 			case Vector(Value.String(needle)) => Success(Value.Number(haystack.value.indexOf(needle)))
 		})
 
-	def getRepeat(string: Value.String) =
+	def getRepeat(string: Value.String): Native =
 		Native(Vector(Type.Scalar), {
-			case Vector(Value.Number(scalar, _)) => scalar match {
-				case NumberValidator.Int() => Success(string.value * scalar.toInt)
+			case Vector(num: Value.Number) => num.value match {
+				case NumberValidator.Integer() => Success(multiply(string, num))
 				case _ => Failure(NativeError(NativeError.ArgumentIsNotInteger("multiplier")))
 			}
 		})
 
-	def getSubstring(string: Value.String) = {
+	def getSubstring(string: Value.String): PolymorphicGroup = {
 		def substring(start: Double, end: Double): Try[Value.String] = {
 			if (!NumberValidator.isInteger(start))
 				Failure(NativeError(NativeError.ArgumentIsNotInteger("start")))
 			else if (!NumberValidator.isInteger(end))
 				Failure(NativeError(NativeError.ArgumentIsNotInteger("end")))
-			else if(start < 0 || start > string.value.length())
+			else if(start < 0 || start > string.value.length)
 				Failure(NativeError(NativeError.ArgumentIsOutOfBounds("start")))
 			else if (end < start)
 				Failure(NativeError(NativeError.ArgumentIsOutOfBounds("end")))
@@ -141,7 +140,7 @@ object StringOps {
 			}),
 			Native(Vector(Type.Scalar), {
 				case Vector(Value.Number(start, _)) =>
-					substring(start, string.value.length())
+					substring(start, string.value.length)
 			})
 		))
 	}

@@ -4,7 +4,7 @@ import com.mishaLang.ast.Language.Value
 import com.mishaLang.interpreter.ops.UnitOps
 
 object NumberValidator {
-	object Int {
+	object Integer {
 		def unapply(number: Double): Boolean = isInteger(number)
 	}
 
