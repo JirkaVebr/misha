@@ -115,7 +115,7 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		assert(
 			run(FunctionCall(
 				MemberAccess(Value.String("a|b|"), Value.String("split")),
-				Vector(Value.String("|"))
+				Vector(Value.String("\\|"))
 			)).value === Value.List(Vector(Value.String("a"), Value.String("b"), Value.String("")))
 		)
 	}
@@ -130,14 +130,14 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		assert(
 			run(FunctionCall(
 				MemberAccess(Value.String("(foo)?(@)+"), Value.String("replace")),
-				Vector(Value.String(")?"), Value.String(":)"))
+				Vector(Value.String("\\)\\?"), Value.String(":)"))
 			)).value === Value.String("(foo:)(@)+")
 		)
 		assert(
 			run(FunctionCall(
 				MemberAccess(Value.String("ololololo"), Value.String("replace")),
 				Vector(Value.String("(ol)+"), Value.String("hello"))
-			)).value === Value.String("ololololo")
+			)).value === Value.String("helloo")
 		)
 	}
 

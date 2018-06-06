@@ -97,13 +97,13 @@ object StringOps {
 	def getSplit(string: Value.String): Native =
 		Native(Vector(Type.String), {
 			case Vector(Value.String(delimiter)) =>
-				Success(Value.List(string.value.split(Pattern.quote(delimiter), -1).map(Value.String).toVector))
+				Success(Value.List(string.value.split(delimiter, -1).map(Value.String).toVector))
 		})
 
 	def getReplace(string: Value.String): Native =
 		Native(Vector(Type.String, Type.String), {
 			case Vector(Value.String(oldChar), Value.String(newChar)) =>
-				Success(Value.String(string.value.replace(oldChar, newChar)))
+				Success(Value.String(oldChar.r.replaceAllIn(string.value, newChar)))
 		})
 
 	def getIndexOf(haystack: Value.String): Native =
