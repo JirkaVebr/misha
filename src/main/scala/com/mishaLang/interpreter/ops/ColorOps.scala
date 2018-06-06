@@ -117,11 +117,11 @@ object ColorOps {
 		* @param amount It's really a percentage point
 		* @return
 		*/
-	private def adjustLightness(color: Rgba, amount: Value.Number, combine: (Double, Double) => Double): Rgba = {
+	private def adjustLightness(color: Rgba, amount: Value.Number, combine: (Double, Double) => Double, normalize: (Double) => Double): Rgba = {
 		val hsla = toHsla(color)
 
 		hslaToRgba(Hsla(
-			hsla.h, hsla.s, combine(hsla.l, amount.value / 100d), hsla.a
+			hsla.h, hsla.s, normalize(combine(hsla.l, amount.value / 100d)), hsla.a
 		))
 	}
 
@@ -130,9 +130,9 @@ object ColorOps {
 
 	def subtractColors(x: Rgba, y: Rgba): Rgba = combineColors(x, y, _ - _, _ max 0)
 
-	def lighten(color: Rgba, amount: Value.Number): Rgba = adjustLightness(color, amount, _ + _)
+	def lighten(color: Rgba, amount: Value.Number): Rgba = adjustLightness(color, amount, _ + _, _ min 1)
 
-	def darken(color: Rgba, amount: Value.Number): Rgba = adjustLightness(color, amount, _ - _)
+	def darken(color: Rgba, amount: Value.Number): Rgba = adjustLightness(color, amount, _ - _, _ max 0)
 
 
 	// Properties
