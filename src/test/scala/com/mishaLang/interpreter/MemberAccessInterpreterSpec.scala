@@ -98,6 +98,129 @@ class MemberAccessInterpreterSpec extends BaseInterpreterSpec {
 		)
 	}
 
+
+	it should "interpret string.split" in {
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("a,b,third"), Value.String("split")),
+				Vector(Value.String(","))
+			)).value === Value.List(Vector(Value.String("a"), Value.String("b"), Value.String("third")))
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("a,b,"), Value.String("split")),
+				Vector(Value.String(","))
+			)).value === Value.List(Vector(Value.String("a"), Value.String("b"), Value.String("")))
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("a|b|"), Value.String("split")),
+				Vector(Value.String("\\|"))
+			)).value === Value.List(Vector(Value.String("a"), Value.String("b"), Value.String("")))
+		)
+	}
+
+	it should "interpret string.replace" in {
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("hello"), Value.String("replace")),
+				Vector(Value.String("ll"), Value.String("llll"))
+			)).value === Value.String("hellllo")
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("(foo)?(@)+"), Value.String("replace")),
+				Vector(Value.String("\\)\\?"), Value.String(":)"))
+			)).value === Value.String("(foo:)(@)+")
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("ololololo"), Value.String("replace")),
+				Vector(Value.String("(ol)+"), Value.String("hello"))
+			)).value === Value.String("helloo")
+		)
+	}
+
+	it should "interpret string.startsWith" in {
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("mishalang"), Value.String("startsWith")),
+				Vector(Value.String("misha"))
+			)).value === Value.Boolean(true)
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("Mishalang"), Value.String("startsWith")),
+				Vector(Value.String("misha"))
+			)).value === Value.Boolean(false)
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("mishalang"), Value.String("startsWith")),
+				Vector(Value.String("(mi)?"))
+			)).value === Value.Boolean(false)
+		)
+	}
+
+	it should "interpret string.indexOf" in {
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("foobar"), Value.String("indexOf")),
+				Vector(Value.String("o"))
+			)).value === Value.Number(1)
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("foobar"), Value.String("indexOf")),
+				Vector(Value.String("ba"))
+			)).value === Value.Number(3)
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("alpha"), Value.String("indexOf")),
+				Vector(Value.String("beta"))
+			)).value === Value.Number(-1)
+		)
+	}
+
+	it should "interpret string.repeat" in {
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("Mi"), Value.String("repeat")),
+				Vector(Value.Number(3))
+			)).value === Value.String("MiMiMi")
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("zero"), Value.String("repeat")),
+				Vector(Value.Number(0))
+			)).value === Value.String("")
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("minus one"), Value.String("repeat")),
+				Vector(Value.Number(-1))
+			)).value === Value.String("")
+		)
+	}
+
+	it should "interpret string.substring" in {
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("mishalang"), Value.String("substring")),
+				Vector(Value.Number(5))
+			)).value === Value.String("lang")
+		)
+		assert(
+			run(FunctionCall(
+				MemberAccess(Value.String("mishalang"), Value.String("substring")),
+				Vector(Value.Number(5), Value.Number(7))
+			)).value === Value.String("la")
+		)
+	}
+
+
+
 	it should "interpret color members" in {
 		assert(
 			run(MemberAccess(Value.Rgba(253, 12, 199, 123), Value.String("alpha"))).value === Value.Number(0.482353)

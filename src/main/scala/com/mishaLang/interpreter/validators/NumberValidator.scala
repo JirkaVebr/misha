@@ -4,6 +4,9 @@ import com.mishaLang.ast.Language.Value
 import com.mishaLang.interpreter.ops.UnitOps
 
 object NumberValidator {
+	object Integer {
+		def unapply(number: Double): Boolean = isInteger(number)
+	}
 
 	def isInteger(number: Double): Boolean =
 		number.abs <= Double.MaxValue && number.floor == number
